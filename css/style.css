@@ -1,0 +1,228 @@
+html {
+}
+body {
+    margin: 0;
+    height: 100%;
+}
+menu {
+    position: fixed;
+    background-color: #CCFFCC;
+}
+menu li {
+    display: block;
+}
+#floatWindow {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+    background: rgba(0, 0, 0, 0.4);
+    display: none;
+}
+#floatWindow > iframe {
+    background-color: white;
+}
+#floatWindow > iframe,
+#floatWindow > div {
+    font-size: 16px;
+    position: absolute;
+    width: calc(100% - 100px);
+    height: calc(100% - 40px);
+    margin: 30px 50px 10px;
+}
+#floatWindow.show {
+    display: block;
+}
+main > menu {
+    width: 200px;
+    height: 100%;
+    background-color: #FFCCCC;
+}
+main > menu li {
+    border-width: 1px;
+    border-style: solid;
+    border-radius: 5px;
+    padding: 5px;
+}
+#context {
+    display: none;
+}
+#context.show {
+    display: block;
+}
+#fileList {
+    position: fixed;
+    margin-left: 200px;
+    height: 100%;
+    overflow-y: scroll;
+    width: calc(100% - 200px);
+}
+#fileList > div {
+    border-width: 1px;
+    border-style: solid;
+    font-size: 20px;
+}
+#fileList > .back:before,
+#fileList > .folder:before,
+#fileList > .file:before {
+    content: "";
+    vertical-align: middle;
+    height: 32px;
+    width: 32px;
+    margin: 0 2px;
+    display: inline-block;
+    background-repeat: no-repeat;
+    background-size: cover;
+    filter: drop-shadow(1px 1px 1px #369);
+}
+.fullPath {
+    background-color: #CCFFFF;
+}
+.back {
+    cursor: pointer;
+}
+.folder {
+    background-color: #CCCCFF;
+    cursor: pointer;
+}
+.file {
+    background-color: #CCFFCC;
+    cursor: context-menu;
+}
+.back:before {
+    background-image: url("../images/arrow collection/svg/back.svg");
+}
+
+.emptyFolder:before {
+    background-image: url("../images/essential collection/svg/folder-10.svg");
+}
+.emptinessFolder:before { /* 只含資料夾 */
+    background-image: url("../images/essential collection/svg/folder-10.svg");
+    -webkit-filter: hue-rotate(-10deg) saturate(100%);
+    filter: hue-rotate(-10deg) saturate(100%);
+}
+.fullFolder:before { /* 包含檔案 */
+    background-image: url("../images/essential collection/svg/folder-11.svg");
+}
+.file:before {
+    background-image: url("../images/file types/svg/file.svg");
+}
+
+.rtf:before {
+    background-image: url("../images/file types/svg/rtf.svg")
+}
+.search:before {
+    background-image: url("../images/file types/svg/search.svg")
+}
+.svg:before {
+    background-image: url("../images/file types/svg/svg.svg")
+}
+.txt:before {
+    background-image: url("../images/file types/svg/txt.svg")
+}
+.xls:before {
+    background-image: url("../images/file types/svg/xls.svg")
+}
+.xml:before {
+    background-image: url("../images/file types/svg/xml.svg")
+}
+.zip:before {
+    background-image: url("../images/file types/svg/zip.svg")
+}
+.zip:before {
+    background-image: url("../images/file types/svg/zip-1.svg")
+}
+.after:before {
+    background-image: url("../images/file types/svg/after-effects.svg")
+}
+.ai:before {
+    background-image: url("../images/file types/svg/ai.svg")
+}
+.audition:before {
+    background-image: url("../images/file types/svg/audition.svg")
+}
+.avi:before {
+    background-image: url("../images/file types/svg/avi.svg")
+}
+.bridge:before {
+    background-image: url("../images/file types/svg/bridge.svg")
+}
+.css:before {
+    background-image: url("../images/file types/svg/css.svg")
+}
+.csv:before {
+    background-image: url("../images/file types/svg/csv.svg")
+}
+.dbf:before {
+    background-image: url("../images/file types/svg/dbf.svg")
+}
+.doc:before {
+    background-image: url("../images/file types/svg/doc.svg")
+}
+.dreamweaver:before {
+    background-image: url("../images/file types/svg/dreamweaver.svg")
+}
+.dwg:before {
+    background-image: url("../images/file types/svg/dwg.svg")
+}
+.exe:before {
+    background-image: url("../images/file types/svg/exe.svg")
+}
+.fireworks:before {
+    background-image: url("../images/file types/svg/fireworks.svg")
+}
+.fla:before {
+    background-image: url("../images/file types/svg/fla.svg")
+}
+.flash:before {
+    background-image: url("../images/file types/svg/flash.svg")
+}
+.html:before {
+    background-image: url("../images/file types/svg/html.svg")
+}
+.illustrator:before {
+    background-image: url("../images/file types/svg/illustrator.svg")
+}
+.indesign:before {
+    background-image: url("../images/file types/svg/indesign.svg")
+}
+.iso:before {
+    background-image: url("../images/file types/svg/iso.svg")
+}
+.js:before {
+    background-image: url("../images/file types/svg/javascript.svg")
+}
+.jpg:before {
+    background-image: url("../images/file types/svg/jpg.svg")
+}
+.json:before {
+    background-image: url("../images/file types/svg/json-file.svg")
+}
+.mp3:before {
+    background-image: url("../images/file types/svg/mp3.svg")
+}
+.mp4:before {
+    background-image: url("../images/file types/svg/mp4.svg")
+}
+.pdf:before {
+    background-image: url("../images/file types/svg/pdf.svg")
+}
+.photoshop:before {
+    background-image: url("../images/file types/svg/photoshop.svg")
+}
+.png:before {
+    background-image: url("../images/file types/svg/png.svg")
+}
+.ppt:before {
+    background-image: url("../images/file types/svg/ppt.svg")
+}
+.prelude:before {
+    background-image: url("../images/file types/svg/prelude.svg")
+}
+.premiere:before {
+    background-image: url("../images/file types/svg/premiere.svg")
+}
+.psd:before {
+    background-image: url("../images/file types/svg/psd.svg")
+}

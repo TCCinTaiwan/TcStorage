@@ -1,3 +1,6 @@
+files/*
+functions/connect.inc
+
 # Windows image file caches
 Thumbs.db
 ehthumbs.db
