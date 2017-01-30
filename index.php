@@ -30,6 +30,9 @@
     </menu>
     <div id="floatWindow">
         <iframe></iframe>
+        <video controls="true"></video>
+        <audio controls="true"></audio>
+        <img></img>
     </div>
     <script src="js/main.js" charset="utf-8" async></script>
 </body>

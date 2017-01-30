@@ -5,6 +5,7 @@ php_value max_input_time 240
 
 RewriteEngine On
 RewriteRule ^index.htm$ index.php
+RewriteRule ^files/$ functions/list.php
 
 RewriteCond %{REQUEST_FILENAME} !-f
 RewriteCond %{REQUEST_FILENAME} !-d

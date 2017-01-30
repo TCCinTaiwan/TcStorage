@@ -47,15 +47,18 @@ function listPath(path) {
                     var file_div = document.createElement("div");
                     file_div.className = "file";
                     var fileName = info.files[fileIndex].name;
+                    var extension = "";
                     if (fileName.split('.').length > 1) {
-                        file_div.className += " " + fileName.split('.').pop();
+                        extension = fileName.split('.').pop();
+                        file_div.classList.add(extension);
                     }
                     file_div.innerText = fileName;
+                    file_div.extension;
                     file_div.file_id = info.files[fileIndex].id;
                     file_div.mime = info.files[fileIndex].mime;
                     file_div.onclick = function() {
-                        if (this.mime.match(/^image|audio|video\//g)) {
-                            raw(this.file_id, this.innerText);
+                        if (this.mime.match(/^(image|audio|video)/g)) {
+                            raw(this.file_id, this.innerText, this.mime);
                         } else if (this.mime.match(/^application\/octet-stream/g)) {
                             raw(this.file_id, this.innerText);
                         } else {
@@ -110,24 +113,30 @@ function createNew(type, name) {
     fd.append('type', type);
     xhr.send(fd);
 }
-function raw(file_id, file_name) {
+function raw(file_id, file_name, mime) {
+    file_name = file_name || "";
+    mime = mime || "";
     // image/
     // audio/
     // video/
     // application/octet-stream
-    file_name = file_name || "";
     // file_name = prompt("是否儲存檔案?", (file_name == "" ? "new.txt" : file_name));
     // if (file_name == null) {
     //     return;
     // }
     // window.open('files/raw/' + file_id + '/' + file_name);
-    floatWindow.children[0].src = 'files/raw/' + file_id + '/' + file_name;
-    floatWindow.children[0].onload = function() {
-        if (this.src != window.location) {
-            floatWindow.classList.add("show");
-            floatWindow.children[0].onload = null;
-        }
-    };
+
+    if (mime.match(/^video/g)) {
+        floatWindow.getElementsByTagName("video")[0].src = 'files/raw/' + file_id + '/' + file_name;
+    } else if (mime.match(/^audio/g)) {
+        floatWindow.getElementsByTagName("audio")[0].src = 'files/raw/' + file_id + '/' + file_name;
+    } else if (mime.match(/^image/g)) {
+        floatWindow.getElementsByTagName("img")[0].src = 'files/raw/' + file_id + '/' + file_name;
+    } else {
+        floatWindow.getElementsByTagName("iframe")[0].src = 'files/raw/' + file_id + '/' + file_name;
+
+    }
+
     // var xhr = new XMLHttpRequest();
     // xhr.onreadystatechange = function() {
     //     if (xhr.readyState == 4) { // 確認 readyState
@@ -142,13 +151,7 @@ function raw(file_id, file_name) {
     // xhr.send(fd);
 }
 function ace(file_id) {
-    floatWindow.children[0].src = 'functions/ace.php?id=' + file_id;
-    floatWindow.children[0].onload = function() {
-        if (this.src != window.location) {
-            floatWindow.classList.add("show");
-            floatWindow.children[0].onload = null;
-        }
-    };
+    floatWindow.getElementsByTagName("iframe")[0].src = 'functions/ace.php?id=' + file_id;
     // window.open('functions/ace.php?id=' + file_id);
     // var xhr = new XMLHttpRequest();
     // xhr.onreadystatechange = function() {
@@ -165,7 +168,7 @@ function ace(file_id) {
 }
 fileList.ondragover = function(evt) { // 拖曳事件
     evt.preventDefault();
-}
+};
 fileList.ondrop = function(evt) { // 放開事件
     evt.preventDefault();
     var xhr_upload = new XMLHttpRequest();
@@ -193,7 +196,7 @@ fileList.ondrop = function(evt) { // 放開事件
     //     }
     // }
     xhr_upload.send(upload_fd); // 開始上傳
-}
+};
 fileList.oncontextmenu = function(evt) {
 //     document.getElementById("context").classList.add("show");
 //     document.getElementById("context").style.top = evt.clientY + 'px';
@@ -201,15 +204,57 @@ fileList.oncontextmenu = function(evt) {
 //     console.log(evt);
 //     console.log(this);
 //     evt.preventDefault();
-}
+};
 fileList.onclick = function() {
     document.getElementById("context").classList.remove("show");
-}
+};
 document.onselectstart = function(evt) {
     evt.preventDefault();
+};
+floatWindow.getElementsByTagName("iframe")[0].onload = function() {
+    if (this.src != window.location && this.src != "about:blank") {
+        floatWindow.classList.add("show");
+        this.classList.add("show");
+    }
+};
+floatWindow.getElementsByTagName("video")[0].onloadeddata = function() {
+    if (this.src != window.location && this.src != "about:blank") {
+        floatWindow.classList.add("show");
+        this.classList.add("show");
+        this.play();
+    }
+};
+floatWindow.getElementsByTagName("audio")[0].onloadeddata = function() {
+    if (this.src != window.location && this.src != "about:blank") {
+        floatWindow.classList.add("show");
+        this.classList.add("show");
+        this.play();
+    }
+};
+floatWindow.getElementsByTagName("img")[0].onload = function() {
+    if (this.src != window.location && this.src != "about:blank") {
+        floatWindow.classList.add("show");
+        this.classList.add("show");
+    }
+};
+floatWindow.getElementsByTagName("video")[0].onclick = function(evt) {
+    evt.stopPropagation();
+}
+floatWindow.getElementsByTagName("audio")[0].onclick = function(evt) {
+    evt.stopPropagation();
+}
+floatWindow.getElementsByTagName("img")[0].onclick = function(evt) {
+    evt.stopPropagation();
 }
 floatWindow.onclick = function() {
     floatWindow.classList.remove("show");
-    floatWindow.children[0].src = "";
-}
+    floatWindow.getElementsByTagName("iframe")[0].classList.remove("show");
+    floatWindow.getElementsByTagName("video")[0].classList.remove("show");
+    floatWindow.getElementsByTagName("audio")[0].classList.remove("show");
+    floatWindow.getElementsByTagName("img")[0].classList.remove("show");
+    floatWindow.getElementsByTagName("iframe")[0].src = "about:blank";
+    floatWindow.getElementsByTagName("video")[0].src = "about:blank";
+    floatWindow.getElementsByTagName("audio")[0].src = "about:blank";
+    floatWindow.getElementsByTagName("img")[0].src = "about:blank";
+};
 listPath(sessionStorage.getItem('path_id') || 0);

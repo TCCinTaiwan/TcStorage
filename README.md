@@ -30,4 +30,4 @@
     - 上傳Github
     - 調整上傳限制
     - Ace中文字型
-    - 音樂影片開啟
+    - 音樂影片開啟(含application/octet-stream)
