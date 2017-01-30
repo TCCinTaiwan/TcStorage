@@ -9,6 +9,8 @@
     $file_location = dirname(dirname(__FILE__)) . "\\files\\" . $id;
     if (file_exists($file_location)) {
 
+        $mime_type = mime_content_type($file_location);
+
         header("Content-Type: " . ($download_file ? "application/force-download" : "text/plain") . ";charset=utf-8");
         header("Content-Disposition: " . ($download_file ? "attachment" : "inline") . "; filename=" .  $basename);
         header("Content-Length: " . filesize($file_location));
@@ -18,7 +20,7 @@
         } else {
             header('Pragma: no-cache');
         }
-        header('TcStorage-Debug:' . mime_content_type($file_location)); //
+        header('TcStorage-Debug:' . $mime_type); //
         readfile($file_location);
     } else {
         http_response_code(404);

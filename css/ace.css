@@ -85,6 +85,7 @@ scrollbar[orient="vertical"] slider {
     right: 0;
     bottom: 20px;
     left: 0;
+    font-family: 'Palatino Linotype', 'Palatino LT STD', Palatino, Georgia, stxihei, stheiti, microsoft yahei, simhei, serif;
 }
 #info {
     left: 0;

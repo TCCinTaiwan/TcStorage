@@ -54,7 +54,9 @@ function listPath(path) {
                     file_div.file_id = info.files[fileIndex].id;
                     file_div.mime = info.files[fileIndex].mime;
                     file_div.onclick = function() {
-                        if (this.mime.match(/^image\//g)) {
+                        if (this.mime.match(/^image|audio|video\//g)) {
+                            raw(this.file_id, this.innerText);
+                        } else if (this.mime.match(/^application\/octet-stream/g)) {
                             raw(this.file_id, this.innerText);
                         } else {
                             ace(this.file_id);
@@ -109,6 +111,10 @@ function createNew(type, name) {
     xhr.send(fd);
 }
 function raw(file_id, file_name) {
+    // image/
+    // audio/
+    // video/
+    // application/octet-stream
     file_name = file_name || "";
     // file_name = prompt("是否儲存檔案?", (file_name == "" ? "new.txt" : file_name));
     // if (file_name == null) {
@@ -168,6 +174,7 @@ fileList.ondrop = function(evt) { // 放開事件
     upload_fd.append('path_id', path_id);
     for (var file_index in upload_files) {
         if (typeof(upload_files[file_index].type) != "undefined") { // 判斷是檔案
+            console.log(upload_files[file_index]);
             upload_fd.append('files[]', upload_files[file_index]);
         }
     }
@@ -188,12 +195,12 @@ fileList.ondrop = function(evt) { // 放開事件
     xhr_upload.send(upload_fd); // 開始上傳
 }
 fileList.oncontextmenu = function(evt) {
-    document.getElementById("context").classList.add("show");
-    document.getElementById("context").style.top = evt.clientY + 'px';
-    document.getElementById("context").style.left = evt.clientX + 'px';
-    console.log(evt);
-    console.log(this);
-    evt.preventDefault();
+//     document.getElementById("context").classList.add("show");
+//     document.getElementById("context").style.top = evt.clientY + 'px';
+//     document.getElementById("context").style.left = evt.clientX + 'px';
+//     console.log(evt);
+//     console.log(this);
+//     evt.preventDefault();
 }
 fileList.onclick = function() {
     document.getElementById("context").classList.remove("show");
@@ -203,5 +210,6 @@ document.onselectstart = function(evt) {
 }
 floatWindow.onclick = function() {
     floatWindow.classList.remove("show");
+    floatWindow.children[0].src = "";
 }
 listPath(sessionStorage.getItem('path_id') || 0);
