@@ -1,4 +1,6 @@
 files/*
+_source/*
+.vscode/*
 functions/connect.inc
 
 # Windows image file caches
