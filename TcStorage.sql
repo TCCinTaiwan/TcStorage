@@ -3,7 +3,7 @@
 -- http://www.phpmyadmin.net
 --
 -- 主機: localhost
--- 產生時間： 2017-01-30 09:15:03
+-- 產生時間： 2017-01-31 02:46:35
 -- 伺服器版本: 10.1.10-MariaDB
 -- PHP 版本： 7.0.4
 
@@ -25,7 +25,8 @@ SET time_zone = "+00:00";
 CREATE TABLE `files` (
   `id` bigint(20) NOT NULL,
   `path_id` bigint(20) NOT NULL,
-  `name` longtext COLLATE utf8_general_mysql500_ci NOT NULL
+  `name` longtext COLLATE utf8_general_mysql500_ci NOT NULL,
+  `mime` tinytext COLLATE utf8_general_mysql500_ci NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_general_mysql500_ci;
 
 -- --------------------------------------------------------

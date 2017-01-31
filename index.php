@@ -30,8 +30,7 @@
     </menu>
     <div id="floatWindow">
         <iframe></iframe>
-        <video controls="true"></video>
-        <audio controls="true"></audio>
+        <video autoplay autobuffer controls poster="images/loading.gif"></video>
         <img></img>
     </div>
     <script src="js/main.js" charset="utf-8" async></script>

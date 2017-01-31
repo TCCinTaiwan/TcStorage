@@ -1,20 +1,25 @@
 var files = files || [{id: null, name: '', content: '',sessions: null}];
 var fileIndex = 0;
 var tabContainer = document.getElementsByClassName("tabs")[0];
-var modelist = ace.require("ace/ext/modelist");
-ace.require("ace/ext/language_tools");
-ace.require("ace/ext/emmet");
-ace.require("ace/ext/settings_menu").init(e);
-ace.require("ace/ext/old_ie");
 var e = ace.edit("e");
+e.getModeForPath = ace.require("ace/ext/modelist").getModeForPath;
+e.modesByName = ace.require("ace/ext/modelist").modesByName;
+
+ace.require("ace/ext/hoverlink");
+ace.require("ace/ext/language_tools");
+ace.require("ace/ext/settings_menu").init(e);
+ace.require("ace/ext/emmet");
+ace.require("ace/ext/old_ie");
+ace.require("ace/ext/linking");
 e.setTheme("ace/theme/monokai");
-e.getSession().setUseWrapMode(true);
 e.setOptions({
     // readOnly: true,
     autoScrollEditorIntoView: true,
     displayIndentGuides: true,
     showPrintMargin: true,
+    printMarginColumn: 50,
     showInvisibles: true,
+    fontFamily: "Menlo, Monaco, Consolas, 'Courier New', monospace",
 
     enableLinking: true,
 
@@ -31,25 +36,25 @@ e.commands.addCommands(
         {
             name: "showSettingsMenu",
             bindKey: {win: "esc", mac: "Command-q"},
-            exec: function(e) {
-                e.showSettingsMenu();
+            exec: function(evt) {
+                evt.showSettingsMenu();
             },
             readOnly: true
         },
         {
             name: "showKeyboardShortcuts",
             bindKey: {win: "Ctrl-Alt-h", mac: "Command-Alt-h"},
-            exec: function(e) {
+            exec: function(evt) {
                 ace.config.loadModule("ace/ext/keybinding_menu", function(module) {
-                    module.init(e);
-                    e.showKeyboardShortcuts();
+                    module.init(evt);
+                    evt.showKeyboardShortcuts();
                 })
             }
         },
         {
             name: "save",
             bindKey: {win: "Ctrl-S", mac: "Command-S", sender: "editor|cli"},
-            exec: function() {
+            exec: function(evt) {
                 // var _filename = prompt("是否儲存檔案?", (files[fileIndex].name == "" ? "new.txt" : files[fileIndex].name));
                 // if (_filename == null) {
                 //     return;
@@ -83,17 +88,7 @@ e.commands.addCommands(
         }
     ]
 );
-e.on("linkClick",function(data){
 
-    if(data && data.token){
-        var url = getURL(data.token.value);
-        if (url) {
-            console.log(url);
-            window.open(url, "_blank");
-        }
-    }
-
-});
 var observer = new MutationObserver(function(mutations) {
     mutations.forEach(function(mutation) {
         if (mutation.attributeName === "class") {
@@ -118,10 +113,11 @@ for (var i = 0; i < files.length; i++) {
         tab_li.className = "on";
         files[i].session = e.getSession();
         files[i].session.setValue(files[i].content);
-        files[i].session.setMode(modelist.getModeForPath(files[i].name).mode);
+        files[i].session.setMode(e.getModeForPath(files[i].name).mode);
     } else {
-        files[i].session = new ace.EditSession(files[i].content, {"path" : modelist.getModeForPath(files[i].name).mode});
+        files[i].session = new ace.EditSession(files[i].content, {"path" : e.getModeForPath(files[i].name).mode});
     }
+    files[i].session.setUseWrapMode(true);
     tabContainer.appendChild(tab_li);
 }
 function switchTab(newIndex) {
@@ -135,6 +131,26 @@ function switchTab(newIndex) {
         }
     }
 }
-function getURL(text) {
-    return (text.match(/^["']/g) ? text.replace(/(^["']|["']$)/g, '') : text).match("^(?:(?:https?|ftp)://)(?:\\S+(?::\\S*)?@)?(?:(?!(?:10|127)(?:\\.\\d{1,3}){3})(?!(?:169\\.254|192\\.168)(?:\\.\\d{1,3}){2})(?!172\\.(?:1[6-9]|2\\d|3[0-1])(?:\\.\\d{1,3}){2})(?:[1-9]\\d?|1\\d\\d|2[01]\\d|22[0-3])(?:\\.(?:1?\\d{1,2}|2[0-4]\\d|25[0-5])){2}(?:\\.(?:[1-9]\\d?|1\\d\\d|2[0-4]\\d|25[0-4]))|(?:(?:[a-z\\u00a1-\\uffff0-9]-*)*[a-z\\u00a1-\\uffff0-9]+)(?:\\.(?:[a-z\\u00a1-\\uffff0-9]-*)*[a-z\\u00a1-\\uffff0-9]+)*(?:\\.(?:[a-z\\u00a1-\\uffff]{2,}))\\.?)(?::\\d{2,5})?(?:[/?#]\\S*)?$", "i")[0];
+function updateCursorPosition() {
+    var pos = e.getCursorPosition();
+    document.getElementById("info").getElementsByClassName("pos")[0].innerHTML = "Line " + pos.row + ", Column " + pos.column;
+}
+e.on('changeSelection', updateCursorPosition);
+updateCursorPosition();
+Object.keys(e.modesByName).map(function(objectKey, index) {
+    var temp_option = document.createElement("option");
+    temp_option.textContent = e.modesByName[objectKey].caption;
+    temp_option.value = e.modesByName[objectKey].mode;
+    document.getElementById("info").getElementsByClassName("mode")[0].appendChild(temp_option);
+});
+document.getElementById("info").getElementsByClassName("mode")[0].onchange = function() {
+    e.session.setMode(this.value);
+}
+function updateMode() {
+    var mode = e.session.getMode();
+    document.getElementById("info").getElementsByClassName("mode")[0].value = mode.$id;
+}
+e.on('changeMode', updateMode);
+document.getElementById("info").getElementsByClassName("reload_mode")[0].onclick = function() {
+    e.session.setMode(e.getModeForPath(files[fileIndex].name).mode);
 }

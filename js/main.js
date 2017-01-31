@@ -52,15 +52,21 @@ function listPath(path) {
                         extension = fileName.split('.').pop();
                         file_div.classList.add(extension);
                     }
-                    file_div.innerText = fileName;
+                    file_div.innerText = file_div.file_name = fileName;
                     file_div.extension;
                     file_div.file_id = info.files[fileIndex].id;
                     file_div.mime = info.files[fileIndex].mime;
+                    file_div.onauxclick  = function(evt) {
+                        console.log(evt);
+                        if (evt.button == 1) {
+                            window.open('files/raw/' + this.file_id + '/' + this.file_name);
+                        }
+                    }
                     file_div.onclick = function() {
                         if (this.mime.match(/^(image|audio|video)/g)) {
-                            raw(this.file_id, this.innerText, this.mime);
+                            raw(this.file_id, this.file_name, this.$mime);
                         } else if (this.mime.match(/^application\/octet-stream/g)) {
-                            raw(this.file_id, this.innerText);
+                            raw(this.file_id, this.file_name, 'video/mpeg');
                         } else {
                             ace(this.file_id);
                         }
@@ -126,10 +132,8 @@ function raw(file_id, file_name, mime) {
     // }
     // window.open('files/raw/' + file_id + '/' + file_name);
 
-    if (mime.match(/^video/g)) {
+    if (mime.match(/^(video|audio)/g)) {
         floatWindow.getElementsByTagName("video")[0].src = 'files/raw/' + file_id + '/' + file_name;
-    } else if (mime.match(/^audio/g)) {
-        floatWindow.getElementsByTagName("audio")[0].src = 'files/raw/' + file_id + '/' + file_name;
     } else if (mime.match(/^image/g)) {
         floatWindow.getElementsByTagName("img")[0].src = 'files/raw/' + file_id + '/' + file_name;
     } else {
@@ -213,18 +217,19 @@ document.onselectstart = function(evt) {
 };
 floatWindow.getElementsByTagName("iframe")[0].onload = function() {
     if (this.src != window.location && this.src != "about:blank") {
-        floatWindow.classList.add("show");
-        this.classList.add("show");
+        if (this.contentDocument.contentType.match(/^(video|audio)/g)) {
+            floatWindow.getElementsByTagName("video")[0].src = this.src;
+            this.src = "about:blank";
+        } else if (this.contentDocument.contentType.match(/^image/g)) {
+            floatWindow.getElementsByTagName("img")[0].src = this.src;
+            this.src = "about:blank";
+        } else {
+            floatWindow.classList.add("show");
+            this.classList.add("show");
+        }
     }
 };
 floatWindow.getElementsByTagName("video")[0].onloadeddata = function() {
-    if (this.src != window.location && this.src != "about:blank") {
-        floatWindow.classList.add("show");
-        this.classList.add("show");
-        this.play();
-    }
-};
-floatWindow.getElementsByTagName("audio")[0].onloadeddata = function() {
     if (this.src != window.location && this.src != "about:blank") {
         floatWindow.classList.add("show");
         this.classList.add("show");
@@ -240,9 +245,6 @@ floatWindow.getElementsByTagName("img")[0].onload = function() {
 floatWindow.getElementsByTagName("video")[0].onclick = function(evt) {
     evt.stopPropagation();
 }
-floatWindow.getElementsByTagName("audio")[0].onclick = function(evt) {
-    evt.stopPropagation();
-}
 floatWindow.getElementsByTagName("img")[0].onclick = function(evt) {
     evt.stopPropagation();
 }
@@ -250,11 +252,9 @@ floatWindow.onclick = function() {
     floatWindow.classList.remove("show");
     floatWindow.getElementsByTagName("iframe")[0].classList.remove("show");
     floatWindow.getElementsByTagName("video")[0].classList.remove("show");
-    floatWindow.getElementsByTagName("audio")[0].classList.remove("show");
     floatWindow.getElementsByTagName("img")[0].classList.remove("show");
     floatWindow.getElementsByTagName("iframe")[0].src = "about:blank";
     floatWindow.getElementsByTagName("video")[0].src = "about:blank";
-    floatWindow.getElementsByTagName("audio")[0].src = "about:blank";
     floatWindow.getElementsByTagName("img")[0].src = "about:blank";
 };
 listPath(sessionStorage.getItem('path_id') || 0);

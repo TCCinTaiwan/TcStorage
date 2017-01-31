@@ -49,7 +49,9 @@
         $data['files'][$index] = $row;
         $file_location = dirname(dirname(__FILE__)) . "\\files\\" . $row['id'];
         $data['files'][$index]['size'] = filesize($file_location);
-        $data['files'][$index]['mime'] = mime_content_type($file_location);
+        if ($data['files'][$index]['mime'] == "") {
+            $data['files'][$index]['mime'] = mime_content_type($file_location);
+        }
 
     }
     echo json_encode($data);

@@ -1,6 +1,7 @@
 body {
     margin: 0;
     height: 100%;
+    font-family: "微軟正黑體";
 }
 menu {
     position: fixed;
@@ -113,7 +114,7 @@ main > menu li[onclick] {
 }
 .emptinessFolder:before { /* 只含資料夾 */
     background-image: url("../images/essential collection/svg/folder-10.svg");
-    -webkit-filter: hue-rotate(-10deg) saturate(100%);
+    /*-webkit-filter: hue-rotate(-10deg) saturate(100%);*/
     filter: hue-rotate(-10deg) saturate(100%);
 }
 .fullFolder:before { /* 包含檔案 */

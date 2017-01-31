@@ -50,7 +50,7 @@
     <ul class="tabs"></ul>
 </nav>
 <div id="e"></div>
-<div id="info"><div class="pos"></div><div class="mode"></div></div>
+<div id="info"><div class="pos"></div><select class="mode"></select><div class="reload_mode">⟳</div></div>
 <script src="<?=$baseurl;?>../lib/ace-1.2.6/src/ace.js"></script>
 <script src="<?=$baseurl;?>../lib/ace-1.2.6/src/ext-modelist.js"></script><!-- 副檔名判斷語法 -->
 <script src="<?=$baseurl;?>../lib/ace-1.2.6/src/ext-language_tools.js"></script><!-- 自動完成 -->
@@ -58,8 +58,8 @@
 <script src="<?=$baseurl;?>../lib/ace-1.2.6/src/ext-settings_menu.js"></script><!-- 選項 -->
 <script src="<?=$baseurl;?>../lib/ace-1.2.6/src/ext-keybinding_menu.js"></script><!-- 快捷鍵清單 -->
 <script src="<?=$baseurl;?>../lib/ace-1.2.6/src/ext-old_ie.js"></script><!-- IE7 -->
-
 <script src="<?=$baseurl;?>../lib/ace-1.2.6/src/ext-linking.js"></script>
+<script src="<?=$baseurl;?>../js/ext-hoverlink.js"></script>
 
 <!-- <script src="https://ace.c9.io/build/src/ace.js"></script>
 <script src="https://ace.c9.io/build/src/ext-modelist.js"></script>
