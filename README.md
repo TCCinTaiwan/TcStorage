@@ -43,3 +43,5 @@
     - Ace加入重新讀取檔名選擇語法
     - 引用ajaxorg/ace
     - 將網址改為引用Repo
+    - 移除原本ace-builds引用
+    - 加入Font-Awesome引用

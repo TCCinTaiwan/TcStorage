@@ -1,3 +1,6 @@
 [submodule "lib/ace-builds"]
 	path = lib/ace-builds
 	url = https://github.com/ajaxorg/ace-builds
+[submodule "lib/Font-Awesome"]
+	path = lib/Font-Awesome
+	url = https://github.com/FortAwesome/Font-Awesome
