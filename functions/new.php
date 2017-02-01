@@ -2,10 +2,17 @@
     include_once 'connect.inc';
     $path_id = (isset($_POST['path_id']) ? $_POST['path_id'] : 0);
     $type = (isset($_POST['type']) ? $_POST['type'] : "folder");
-    $name = (isset($_POST['name']) ? $_POST['name'] : ($type == "folder" ? "新資料夾" : "空白檔案"));
+    $file = isset($_POST['name']) ? $_POST['name'] : ($type == "folder" ? "新資料夾" : "空白檔案");
+    if ($type == "file") {
+        $file_info = pathinfo($file);
+    }
     $serial_number = 0;
     while (true) {
-        $serial_number_name = $name . ($serial_number > 0 ? $serial_number : "");
+        if ($type == "file") {
+            $serial_number_name = $file_info['filename'] . ($serial_number > 0 ? "(" . $serial_number . ")" : "") . ($file_info['extension'] == "" ? "" : ".") . $file_info['extension'];
+        } else {
+            $serial_number_name = $file . ($serial_number > 0 ? "(" . $serial_number . ")" : "");
+        }
         $sql = "SELECT COUNT(*) AS count FROM `" . $type . "s` WHERE `path_id` = '" . $path_id . "' and `name` = '" . $serial_number_name . "';";
         $result = mysqli_query($conn, $sql);
         if ($row = mysqli_fetch_assoc($result)) {
@@ -15,7 +22,6 @@
         }
         $serial_number++;
     }
-    // $sql = "INSERT INTO `" . $type . "s` (`id`, `path_id`, `name`" . ($type == "folder" ? ", `descendant`" : "") . ") VALUES (NULL, '" . $path_id . "', '" . $serial_number_name . "'" . ($type == "folder" ? ", '0'" : "") . ");";
     $sql = "INSERT INTO `" . $type . "s` (`id`, `path_id`, `name`) VALUES (NULL, '" . $path_id . "', '" . $serial_number_name . "');";
     echo $sql;
     mysqli_query($conn, $sql);

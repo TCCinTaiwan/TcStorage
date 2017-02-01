@@ -1,3 +1,6 @@
+function github() {
+    window.open('https://github.com/TCCinTaiwan/TcStorage');
+}
 function listPath(path) {
     path = typeof path == "undefined" ? (typeof path_id == "undefined" ? 0 : path_id) : path;
     sessionStorage.setItem('path_id', path);
