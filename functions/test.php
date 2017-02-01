@@ -3,5 +3,10 @@
     // echo $_SERVER['REQUEST_METHOD'];
     // echo count([1, 2, 3]);
     // phpinfo();
-    echo null ? null : "GG";
+    $temp = [
+        array("id" => 5, "g" => 123),
+        array("id" => 2),
+        array("id" => 1)
+    ];
+    var_dump(json_encode(file_get_contents("../files/1")));
 ?>

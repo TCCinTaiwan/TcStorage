@@ -108,13 +108,18 @@ scrollbar[orient="vertical"] slider {
     position: relative;
     border: none;
     box-shadow: none;
+    font-family: fantasy;
 }
 #info > .reload_mode {
     cursor: pointer;
 }
+#info > .reload_mode:hover {
+    color: peru;
+    font-weight: bold;
+}
 #info > select {
+    font-family: monospace;
     background: rgba(128, 128, 128, 0.5);
-    /*outline: none;*/
 }
 #info > .pos {
     float: left;

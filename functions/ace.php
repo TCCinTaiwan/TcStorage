@@ -14,14 +14,19 @@
             $sql = "SELECT * FROM `files` WHERE `id` = '" . $id . "';";
             $result = mysqli_query($conn, $sql);
             if ($row = mysqli_fetch_assoc($result)) {
-                array_push(
-                    $fileList,
-                    array(
-                        'id' => $id,
-                        'basename' => $row['name'],
-                        'file_location' => dirname(dirname(__FILE__)) . "\\files\\" . $id
-                    )
-                );
+                $file_location = dirname(dirname(__FILE__)) . "\\files\\" . $id;
+                if (file_exists($file_location))
+                    if ($content = json_encode(file_get_contents($file_location))) {
+                        array_push(
+                            $fileList,
+                            array(
+                                'id' => $id,
+                                'basename' => $row['name'],
+                                'file_location' => $file_location,
+                                'content' => $content
+                            )
+                        );
+                    }
             }
         }
     }
@@ -30,21 +35,22 @@
         echo '<link rel="stylesheet" href="' . $baseurl . '../css/reset.css">';
         echo '<link rel="stylesheet" href="' . $baseurl . '../css/ace.css">';
     }
+    echo "<script>
+        window.history.replaceState(window.history.state, null, window.location.pathname + '" . (empty($fileList) ? "" : "?id=".join(array_column($fileList, "id"), ",")) . "');";
     if (!empty($fileList)) {
-        echo "<script>
-            var files = [";
+        echo "var files = [";
         for ($i = 0; $i < count($fileList); $i++) {
             echo "{
                 id: " . $fileList[$i]['id'] . ",
                 name: '" . $fileList[$i]['basename'] . "',
-                content: " . json_encode(file_get_contents($fileList[$i]['file_location'])) . ",
+                content: " . $fileList[$i]['content'] . ",
                 sessions: null
             },";
         }
         // str_replace("\n", ($quotation_mark == "\"" ? "\\" : "") . "\n", file_get_contents($fileList[$i]['file_location']))
-        echo '];
-            </script>';
+        echo '];';
     }
+    echo '</script>';
 ?>
 <nav>
     <ul class="tabs"></ul>

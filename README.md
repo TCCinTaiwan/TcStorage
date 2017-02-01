@@ -45,3 +45,9 @@
     - 將網址改為引用Repo
     - 移除原本ace-builds引用
     - 加入Font-Awesome引用
+* 2017-02-01
+    - Ace 網址自動格式化
+    - Ace檔案存在修正
+    - Ace.js整理
+    - Ace檔案重新命名
+    - Ace Base64編碼修正

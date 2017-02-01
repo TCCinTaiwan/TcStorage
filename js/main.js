@@ -56,19 +56,24 @@ function listPath(path) {
                     file_div.extension;
                     file_div.file_id = info.files[fileIndex].id;
                     file_div.mime = info.files[fileIndex].mime;
-                    file_div.onauxclick  = function(evt) {
-                        console.log(evt);
+                    file_div.onmousedown = function(evt) {
                         if (evt.button == 1) {
-                            window.open('files/raw/' + this.file_id + '/' + this.file_name);
+                            evt.preventDefault();
+                            return false;
                         }
                     }
-                    file_div.onclick = function() {
-                        if (this.mime.match(/^(image|audio|video)/g)) {
-                            raw(this.file_id, this.file_name, this.$mime);
-                        } else if (this.mime.match(/^application\/octet-stream/g)) {
-                            raw(this.file_id, this.file_name, 'video/mpeg');
-                        } else {
-                            ace(this.file_id);
+                    file_div.onmouseup = function(evt) {
+                        if (evt.button == 0) { // 滑鼠右鍵
+                            if (this.mime.match(/^(image|audio|video)/g)) {
+                                raw(this.file_id, this.file_name, this.$mime);
+                            } else if (this.mime.match(/^application\/octet-stream/g)) {
+                                raw(this.file_id, this.file_name, 'video/mpeg');
+                            } else {
+                                ace(this.file_id);
+                            }
+                        } else if (evt.button == 1) { // 滑鼠中鍵
+                            window.open('files/raw/' + this.file_id + '/' + this.file_name);
+                            evt.preventDefault();
                         }
                     }
                     fileList.appendChild(file_div);
