@@ -4,6 +4,7 @@
     //     exit();
     // }
     include_once 'connect.inc';
+    header("Content-Type: application/json;charset=utf-8");
     $data = array(
         "path_info" => array(
             "id" => (isset($_POST['path_id']) ? $_POST['path_id'] : 0),
@@ -43,7 +44,7 @@
         $data['folders'][$index] = $row;
     }
 
-    $sql = 'SELECT * FROM `files` WHERE `path_id` = ' . $data['path_info']['id'] . ';';
+    $sql = 'SELECT * FROM `files` WHERE `path_id` = ' . $data['path_info']['id'] . ' ORDER BY `name` ASC;';
     $result = mysqli_query($conn, $sql);
     for ($index = 0; $row = mysqli_fetch_assoc($result); $index++) {
         $data['files'][$index] = $row;

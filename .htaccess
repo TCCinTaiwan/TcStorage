@@ -9,26 +9,34 @@ RewriteRule ^files/$ functions/list.php
 
 RewriteCond %{REQUEST_FILENAME} !-f
 RewriteCond %{REQUEST_FILENAME} !-d
-RewriteRule ^files/raw/([0-9]+) functions/raw.php?id=$1 [NC,L]
+RewriteRule ^files/raw/([0-9]+)$/? functions/raw.php?id=$1 [NC,L]
 
 RewriteCond %{REQUEST_METHOD} POST
 RewriteCond %{REQUEST_FILENAME} !-f
 RewriteCond %{REQUEST_FILENAME} !-d
-RewriteRule ^files/raw/(.*) functions/raw.php?name=$1 [NC,L]
+RewriteRule ^files/raw/(.*)$ functions/raw.php?name=$1 [NC,L]
 
 RewriteCond %{REQUEST_FILENAME} !-f
 RewriteCond %{REQUEST_FILENAME} !-d
-RewriteRule ^files/raw/([0-9]+)/(.*) functions/raw.php?id=$1&name=$2 [NC,L]
+RewriteRule ^files/raw/([0-9]+)/(.*)$ functions/raw.php?id=$1&name=$2 [NC,L]
 
 RewriteCond %{REQUEST_FILENAME} !-f
 RewriteCond %{REQUEST_FILENAME} !-d
-RewriteRule ^files/download/([0-9]+) functions/raw.php?id=$1&download=1 [NC,L]
+RewriteRule ^files/download/([0-9]+)$/? functions/raw.php?id=$1&download=1 [NC,L]
 
 RewriteCond %{REQUEST_METHOD} POST
 RewriteCond %{REQUEST_FILENAME} !-f
 RewriteCond %{REQUEST_FILENAME} !-d
-RewriteRule ^files/download/(.*) functions/raw.php?name=$1&download=1 [NC,L]
+RewriteRule ^files/download/(.*)$ functions/raw.php?name=$1&download=1 [NC,L]
 
 RewriteCond %{REQUEST_FILENAME} !-f
 RewriteCond %{REQUEST_FILENAME} !-d
-RewriteRule ^files/download/([0-9]+)/(.*) functions/raw.php?id=$1&name=$2&download=1 [NC,L]
+RewriteRule ^files/download/([0-9]+)/(.*)$ functions/raw.php?id=$1&name=$2&download=1 [NC,L]
+
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule ^files/zip/([0-9]+)/?$ functions/zip.php?id=$1 [NC,L]
+
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule ^files/zip/([0-9]+)/(.+)$ functions/zip.php?id=$1&file=$2 [NC,L]

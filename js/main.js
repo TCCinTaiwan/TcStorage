@@ -56,9 +56,10 @@ function listPath(path) {
                         file_div.classList.add(extension);
                     }
                     file_div.innerText = file_div.file_name = fileName;
-                    file_div.extension;
+                    file_div.extension = extension;
                     file_div.file_id = info.files[fileIndex].id;
                     file_div.mime = info.files[fileIndex].mime;
+                    file_div.title = info.files[fileIndex].size;
                     file_div.onmousedown = function(evt) {
                         if (evt.button == 1) {
                             evt.preventDefault();
@@ -68,11 +69,14 @@ function listPath(path) {
                     file_div.onmouseup = function(evt) {
                         if (evt.button == 0) { // 滑鼠右鍵
                             if (this.mime.match(/^(image|audio|video)/g)) {
-                                raw(this.file_id, this.file_name, this.$mime);
+                                raw(this.file_id, this.file_name, this.mime);
                             } else if (this.mime.match(/^application\/octet-stream/g)) {
                                 raw(this.file_id, this.file_name, 'video/mpeg');
-                            } else {
+                            } else if (this.mime.match(/^(text|inode\/x-empty)/g)) {
                                 ace(this.file_id);
+                            } else {
+                                raw(this.file_id, this.file_name, this.mime);
+                                // ace(this.file_id);
                             }
                         } else if (evt.button == 1) { // 滑鼠中鍵
                             window.open('files/raw/' + this.file_id + '/' + this.file_name);
@@ -98,15 +102,15 @@ function listPath(path) {
     fd.append('path_id', path);
     xhr.send(fd);
 }
-function downloadFile(url, file_name, target) {
-    file_name = file_name || "";
-    target = target || "";
-    var link = document.createElement("a");
-    link.href = url;
-    link.target = target;
-    link.download = file_name;
-    link.click();
-}
+// function downloadFile(url, file_name, target) {
+//     file_name = file_name || "";
+//     target = target || "";
+//     var link = document.createElement("a");
+//     link.href = url;
+//     link.target = target;
+//     link.download = file_name;
+//     link.click();
+// }
 function createNew(type, name) {
     type = (type || "folder") == "folder" ? "folder" : "file";
     name = name || null;
@@ -133,13 +137,13 @@ function raw(file_id, file_name, mime) {
     // image/
     // audio/
     // video/
-    // application/octet-stream
     // file_name = prompt("是否儲存檔案?", (file_name == "" ? "new.txt" : file_name));
     // if (file_name == null) {
     //     return;
     // }
     // window.open('files/raw/' + file_id + '/' + file_name);
 
+    // application/octet-stream
     if (mime.match(/^(video|audio)/g)) {
         floatWindow.getElementsByTagName("video")[0].src = 'files/raw/' + file_id + '/' + file_name;
     } else if (mime.match(/^image/g)) {
@@ -148,35 +152,9 @@ function raw(file_id, file_name, mime) {
         floatWindow.getElementsByTagName("iframe")[0].src = 'files/raw/' + file_id + '/' + file_name;
 
     }
-
-    // var xhr = new XMLHttpRequest();
-    // xhr.onreadystatechange = function() {
-    //     if (xhr.readyState == 4) { // 確認 readyState
-    //         if (xhr.status == 200) { // 確認 status
-    //         }
-    //     }
-    // };
-    // xhr.open('POST', 'files/raw/' + file_name); // 傳資料給raw.php
-    // var fd = new FormData();
-    // fd.append('id', file_id);
-    // fd.append('name', file_name);
-    // xhr.send(fd);
 }
 function ace(file_id) {
     floatWindow.getElementsByTagName("iframe")[0].src = 'functions/ace.php?id=' + file_id;
-    // window.open('functions/ace.php?id=' + file_id);
-    // var xhr = new XMLHttpRequest();
-    // xhr.onreadystatechange = function() {
-    //     if (xhr.readyState == 4) { // 確認 readyState
-    //         if (xhr.status == 200) { // 確認 status
-
-    //         }
-    //     }
-    // };
-    // xhr.open('POST', 'functions/ace.php'); // 傳資料給ace.php
-    // var fd = new FormData();
-    // fd.append('id', file_id);
-    // xhr.send(fd);
 }
 fileList.ondragover = function(evt) { // 拖曳事件
     evt.preventDefault();

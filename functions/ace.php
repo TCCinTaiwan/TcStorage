@@ -16,7 +16,7 @@
             if ($row = mysqli_fetch_assoc($result)) {
                 $file_location = dirname(dirname(__FILE__)) . "\\files\\" . $id;
                 if (file_exists($file_location))
-                    if ($content = json_encode(file_get_contents($file_location))) {
+                    if ($content = json_encode(file_get_contents($file_location))) { // 假如是binary檔案會回傳null(non-utf-8)
                         array_push(
                             $fileList,
                             array(

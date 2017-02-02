@@ -80,13 +80,13 @@ function save() {
             );
         }
 
-        var data2objectURL = function(content, isBase64, mimetype, charset) {
+        var data2URL = function(content, isBase64, mimetype, charset) {
             mimetype = typeof(mimetype) == "undefined" ? "text/plain" : mimetype;
             charset = typeof(charset) == "undefined" ? "utf-8" : charset;
             isBase64 = typeof(isBase64) == "undefined" ? false : isBase64;
             return "data:" + mimetype + ";charset=" + charset + (isBase64 ? ";base64" : "") + "," + (isBase64 ? base64EncodeUnicode(content) : content);
         }
-        window.open(data2objectURL(e.getSession().getValue(), true));
+        window.open(data2URL(e.getSession().getValue(), true));
         var data2blob = function(content, mimetype, charset) {
             mimetype = typeof(mimetype) == "undefined" ? "text/plain" : mimetype;
             charset = typeof(charset) == "undefined" ? "utf-8" : charset;
