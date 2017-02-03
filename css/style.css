@@ -1,7 +1,7 @@
 body {
     margin: 0;
     height: 100%;
-    font-family: "微軟正黑體";
+    font-family: consolas;
 }
 html,
 body,
@@ -18,7 +18,7 @@ main {
     bottom: 0;
     left: 0;
     pointer-events:none;
-    /*background: rgba(0, 0, 0, 0.05);*/
+    background: rgba(0, 0, 255, 0.1);
 }
 #dropzone.show {
     display: block;
@@ -35,10 +35,11 @@ main {
 }
 menu {
     position: fixed;
-    background-color: #CCFFCC;
 }
 menu li {
+    cursor: pointer;
     display: block;
+    padding: 2px 10px;
 }
 #floatWindow {
     position: absolute;
@@ -82,7 +83,6 @@ main > menu {
     background-color: #FFCCCC;
 }
 main > menu li {
-    cursor: pointer;
     border-width: 1px;
     border-style: solid;
     border-radius: 5px;
@@ -91,14 +91,40 @@ main > menu li {
 main > menu li[onclick] {
     background-color: #FFFFFF;
 }
-main > menu li:hover {
+main > menu li[onclick]:hover {
     background-color: #AAAAFF;
 }
 #context {
+    border: 1px solid gray;
     display: none;
+    background-color: white;
 }
 #context.show {
     display: block;
+}
+#context > li {
+    display: none; /* 預設隱藏 */
+}
+#context > li[for~=any] {
+    display: block;
+}
+#context.file > li[for~=file] {
+    display: block;
+}
+#context.files > li[for~=files] {
+    display: block;
+}
+#context.folder > li[for~=folder] {
+    display: block;
+}
+#context.folders > li[for~=folders] {
+    display: block;
+}
+#context.multiple > li[for~=multiple] {
+    display: block;
+}
+#context > li:hover {
+    background-color: #AAAAFF;
 }
 #fileList {
     position: relative;
@@ -129,10 +155,23 @@ main > menu li:hover {
     background-size: cover;
     filter: drop-shadow(1px 1px 1px #369);
 }
-#fileList > .back:hover,
-#fileList > .folder:hover,
-#fileList > .file:hover {
+#fileList > .back.select,
+#fileList > .folder.select,
+#fileList > .file.select,
+#fileList:not(.context) > .back:hover,
+#fileList:not(.context) > .folder:hover,
+#fileList:not(.context) > .file:hover {
     background-color: #AAAAFF;
+}
+#fileList > .back.drop,
+#fileList > .folder.drop,
+#fileList > .file.drop {
+    background-color: #88FF88;
+}
+#fileList:not(.context) > .back.drag,
+#fileList:not(.context) > .folder.drag,
+#fileList:not(.context) > .file.drag {
+    background-color: #FF8888;
 }
 /*#fileList > .back:active,
 #fileList > .folder:active,

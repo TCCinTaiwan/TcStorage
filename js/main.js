@@ -1,3 +1,47 @@
+var mouseDownElement = null;
+var selectedElements = [];
+selectedElements.clearSelected = function() {
+    var element = null;
+    while (element = this.pop()) {
+        element.classList.remove("select");
+        element.draggable = false;
+    }
+}
+selectedElements.addSelect = function(element) {
+    element.draggable = true;
+    element.classList.add("select");
+    this.push(element);
+}
+selectedElements.removeSelected = function(element) {
+    element.draggable = false;
+    element.classList.remove("select");
+    this.splice(selectedElements.indexOf(element), 1);
+}
+selectedElements.type = function(element) {
+    var type = "none";
+    var element;
+    for (var i = 0; i < selectedElements.length; i++) {
+        element = selectedElements[i];
+        if (element.classList.contains("folder")) {
+            if (type == "none") {
+                type = "folder";
+            } else if (type == "folder") {
+                type = "folders";
+            } else if (type == "file" || type == "files") {
+                return "multiple";
+            }
+        } else if (element.classList.contains("file")) {
+            if (type == "none") {
+                type = "file";
+            } else if (type == "file") {
+                type = "files";
+            } else if (type == "folder" || type == "folders") {
+                return "multiple";
+            }
+        }
+    }
+    return type;
+}
 function formatBytes(bytes, decimals) {
     if(bytes == 0) return '0 Byte';
     var k = 1024;
@@ -6,7 +50,6 @@ function formatBytes(bytes, decimals) {
     var i = Math.floor(Math.log(bytes) / Math.log(k));
     return parseFloat((bytes / Math.pow(k, i)).toFixed(dm)) + ' ' + sizes[i];
 }
-var mouseDownIndex = null;
 function github() {
     window.open('https://github.com/TCCinTaiwan/TcStorage');
 }
@@ -27,16 +70,13 @@ function listPath(path) {
                     var back_div = document.createElement("div");
                     back_div.className = "back";
                     back_div.path_id = info.path_info.root_id;
-                    back_div.onclick = function() {
-                        listPath(this.path_id);
-                    }
                     back_div.innerText = "返回上層";
                     fileList.appendChild(back_div);
                 }
                 for (var folderIndex = 0; folderIndex < info.folders.length; folderIndex++) {
                     var folder_div = document.createElement("div");
                     folder_div.className = "folder";
-                    folder_div.draggable = true;
+                    // folder_div.draggable = true;
                     if (info.folders[folderIndex].descendant | info.folders[folderIndex].file_count > 0) {
                         folder_div.className += " fullFolder";
                     } else if (info.folders[folderIndex].folder_count > 0) {
@@ -44,37 +84,11 @@ function listPath(path) {
                     } else {
                         folder_div.className += " emptyFolder";
                     }
-                    folder_div.ondragstart = function(evt) {
-                        evt.dataTransfer.setData(
-                            "application/json",
-                            JSON.stringify(
-                                [
-                                    {
-                                        type: "file",
-                                        id: this.file_id
-                                    }
-                                ]
-                            )
-                        );
-                        evt.dataTransfer.dropEffect = 'move';
-                    }
-                    folder_div.ondrop = function(evt) {
-                        evt.preventDefault();
-                        var dataList = JSON.parse(evt.dataTransfer.getData("application/json"));
-                        for (var i = 0; i < dataList.length; i++) {
-                            move(dataList[i].type, dataList[i].id, path_id, this.path_id)
-                            // alert("move " + dataList[i].type + "(" + dataList[i].id + ") to " + this.path_id);
-                        }
-                        // evt.target.appendChild(document.getElementById(data));
-                    }
                     // var img = new Image();
                     // img.src = "images/file types/svg/file.svg";
                     // folder_div.appendChild(img);
                     folder_div.innerHTML += info.folders[folderIndex].name;
                     folder_div.path_id = info.folders[folderIndex].id;
-                    folder_div.onclick = function(evt) {
-                        listPath(this.path_id);
-                    }
                     fileList.appendChild(folder_div);
                 }
                 for (var fileIndex = 0; fileIndex < info.files.length; fileIndex++) {
@@ -91,52 +105,7 @@ function listPath(path) {
                     file_div.file_id = info.files[fileIndex].id;
                     file_div.mime = info.files[fileIndex].mime;
                     file_div.title = formatBytes(info.files[fileIndex].size);
-                    file_div.draggable = true;
-                    file_div.ondragstart = function(evt) {
-                        evt.dataTransfer.setData(
-                            "application/json",
-                            JSON.stringify(
-                                [
-                                    {
-                                        type: "file",
-                                        id: this.file_id
-                                    }
-                                ]
-                            )
-                        );
-                        evt.dataTransfer.dropEffect = 'move';
-                    }
-                    file_div.onmousedown = function(evt) {
-                        if (evt.button == 0) { // 滑鼠右鍵
-                            mouseDownIndex = this.file_id;
-                        } else if (evt.button == 1) { // 滑鼠中鍵
-                            evt.preventDefault();
-                            return false;
-                        }
-                    }
-                    file_div.onmouseout = function(evt) {
-                        mouseDownIndex = null;
-                    }
-                    file_div.onmouseup = function(evt) {
-                        if (evt.button == 0) { // 滑鼠右鍵
-                            if (mouseDownIndex == this.file_id) {
-                                if (this.mime.match(/^(image|audio|video)/g)) {
-                                    raw(this.file_id, this.file_name, this.mime);
-                                } else if (this.mime.match(/^application\/octet-stream/g)) {
-                                    raw(this.file_id, this.file_name, 'video/mpeg');
-                                } else if (this.mime.match(/^(text|inode\/x-empty)/g)) {
-                                    ace(this.file_id);
-                                } else {
-                                    raw(this.file_id, this.file_name, this.mime);
-                                    // ace(this.file_id);
-                                }
-                            }
-                        } else if (evt.button == 1) { // 滑鼠中鍵
-                            window.open('files/raw/' + this.file_id + '/' + this.file_name);
-                            evt.preventDefault();
-                        }
-                        mouseDownIndex = null;
-                    }
+                    // file_div.draggable = true;
                     fileList.appendChild(file_div);
                 }
                 var elements = document.getElementsByClassName("fullPath");
@@ -186,6 +155,7 @@ function createNew(type, name) {
     xhr.send(fd);
 }
 function move(type, id, old_path, new_path) {
+    // alert("move " + type + "(" + id + ") to " + evt.target.path_id);
     type = (type || "folder") == "folder" ? "folder" : "file";
     id = id || null;
     old_path = old_path || path_id;
@@ -233,45 +203,74 @@ function raw(file_id, file_name, mime) {
 function ace(file_id) {
     floatWindow.getElementsByTagName("iframe")[0].src = 'functions/ace.php?id=' + file_id;
 }
-document.ondragover = function(evt) { // 拖曳事件
-    if (evt.dataTransfer.types.includes("application/json")) {
+document.ondragover = function(evt) { // 拖曳經過
+    if (evt.dataTransfer.types.includes("application/json")) { // Firfox: includes->contains
         if (evt.target.classList.contains("folder")) {
             evt.preventDefault();
+            evt.dataTransfer.dropEffect = 'move';
+            // evt.dataTransfer.dropEffect = evt.ctrlKey ? 'copy' : 'move';
+        } else if (evt.target.classList.contains("back")) {
+            evt.preventDefault();
+            evt.dataTransfer.dropEffect = 'move';
+        } else {
+            // evt.preventDefault();
+            // evt.dataTransfer.dropEffect = 'copy';
         }
     } else if (evt.dataTransfer.types.includes("Files")) {
-
         evt.preventDefault();
+        evt.dataTransfer.dropEffect = 'copy';
     }
 };
-document.ondragenter = function(evt) {
-    if (evt.target.classList.contains("folder")) {
-        if (evt.dataTransfer.types.includes("application/json")) {
-            // event.target.style.border = "3px dotted red";
-        } else if (evt.dataTransfer.types.includes("Files")) {
-            document.getElementById("dropzone").classList.remove("show");
-        }
+document.ondragenter = function(evt) { // 拖曳進入
+    if (evt.target.classList.contains("folder") || evt.target.classList.contains("back")) {
+        document.getElementById("dropzone").classList.remove("show");
+        evt.target.classList.add("drop");
     } else {
         if (evt.dataTransfer.types.includes("Files")) {
             document.getElementById("dropzone").classList.add("show");
         }
     }
 }
-document.ondragleave = function(evt) {
+document.ondragleave = function(evt) { // 拖曳離開
     if (evt.clientX == 0 && evt.clientY == 0) { // 取消
         document.getElementById("dropzone").classList.remove("show");
     }
+    if (evt.target.classList.contains("folder") || evt.target.classList.contains("back")) {
+        evt.target.classList.remove("drop");
+    }
 }
-document.onselectstart = function(evt) {
-    evt.preventDefault();
-};
-fileList.ondrop = function(evt) { // 放開事件
+fileList.ondragstart = function(evt) { // 開始拖曳
+    if (evt.target.classList.contains("file") || evt.target.classList.contains("folder")) {
+        // if (!selectedElements.includes(evt.target)) {
+        //     if (!evt.ctrlKey) {
+        //         selectedElements.clearSelected();
+        //     }
+        //     selectedElements.addSelect(evt.target);
+        // }
+        for (var i = 0; i < selectedElements.length; i++) {
+            selectedElements[i].classList.add("drag");
+        }
+        evt.dataTransfer.setData(
+            "application/json",
+            JSON.stringify("select")
+        );
+        evt.dataTransfer.effectAllowed = 'copyMove';
+    }
+}
+fileList.ondragend = function(evt) { // 結束拖曳
+    // evt.target.classList.remove("drag");
+    for (var i = 0; i < selectedElements.length; i++) {
+        selectedElements[i].classList.remove("drag");
+    }
+}
+fileList.ondrop = function(evt) { // 放下拖曳
     evt.preventDefault();
     document.getElementById("dropzone").classList.remove("show");
     if (evt.dataTransfer.types.includes("Files")) {
         var xhr_upload = new XMLHttpRequest();
         var upload_fd = new FormData(); // 要傳過去給upload.php的資料
         var upload_files = evt.dataTransfer.files; // 要上傳的檔案
-        upload_fd.append('path_id', path_id);
+        upload_fd.append('path_id', evt.target.classList.contains("folder") || evt.target.classList.contains("back") ? evt.target.path_id : path_id);
         for (var file_index in upload_files) {
             if (typeof(upload_files[file_index].type) != "undefined") { // 判斷是檔案
                 console.log(upload_files[file_index]);
@@ -293,19 +292,133 @@ fileList.ondrop = function(evt) { // 放開事件
         //     }
         // }
         xhr_upload.send(upload_fd); // 開始上傳
+    } else if (evt.dataTransfer.types.includes("application/json")) {
+        if (evt.target.classList.contains("folder") || evt.target.classList.contains("back")) {
+            evt.preventDefault();
+            var data = JSON.parse(evt.dataTransfer.getData("application/json"));
+            if (data == "select") {
+                for (var i = 0; i < selectedElements.length; i++) {
+                    var element = selectedElements[i], type, id;
+                    if (element.classList.contains("folder")) {
+                        type = "folder";
+                        id = element.path_id;
+                    } else if (element.classList.contains("file")) {
+                        type = "file";
+                        id = element.file_id;
+                    }
+                    move(type, id, path_id, evt.target.path_id)
+                }
+            }
+        }
     }
 };
+document.onselectstart = function(evt) { //開始選擇
+    evt.preventDefault();
+};
+fileList.onmousedown = function(evt) {
+    if (document.getElementById("context").classList.contains("show")) {
+        document.getElementById("context").classList.remove(selectedElements.type());
+        document.getElementById("context").classList.remove("show");
+        fileList.classList.remove("context");
+        if (!selectedElements.includes(evt.target)) {
+            selectedElements.clearSelected();
+        }
+    } else {
+        mouseDownElement = evt.target;
+        if (evt.button == 1) { // 滑鼠中鍵
+            evt.preventDefault();
+        } else if (evt.button == 0) { // 滑鼠右鍵
+            if (evt.target.classList.contains("file") || evt.target.classList.contains("folder")) {
+                if (evt.offsetX <= 34) { // 點的位置是ICON
+                    evt.target.draggable = true;
+                }
+            }
+        }
+    }
+}
+fileList.onmouseup = function(evt) {
+    if (evt.button == 1) { // 滑鼠中鍵
+        if (evt.target.classList.contains("file")) {
+            window.open('files/raw/' + evt.target.file_id + '/' + evt.target.file_name);
+            evt.preventDefault();
+        }  else if (evt.target.classList.contains("folder") || evt.target.classList.contains("back")) {
+            listPath(evt.target.path_id);
+            evt.preventDefault();
+        }
+    } else if (evt.button == 0) { // 滑鼠右鍵
+        if (evt.target.classList.contains("file") || evt.target.classList.contains("folder")) {
+            evt.target.draggable = false;
+            if (mouseDownElement == evt.target) {
+                if (evt.ctrlKey) {
+                    if (selectedElements.includes(evt.target)) {
+                        selectedElements.removeSelected(evt.target);
+                    } else {
+                        selectedElements.addSelect(evt.target);
+                    }
+                } else {
+                    if (selectedElements.includes(evt.target)) {
+                        console.log("rename");
+                    } else {
+                        selectedElements.clearSelected();
+                        selectedElements.addSelect(evt.target);
+                    }
+                }
+            }
+        }
+    }
+    mouseDownElement = null;
+}
+fileList.ondblclick = function(evt) {
+    if (evt.target.classList.contains("file")) {
+        if (evt.button == 0) { // 滑鼠右鍵
+            if (evt.target.mime.match(/^(image|audio|video)/g)) {
+                raw(evt.target.file_id, evt.target.file_name, evt.target.mime);
+            } else if (evt.target.mime.match(/^application\/octet-stream/g)) {
+                raw(evt.target.file_id, evt.target.file_name, 'video/mpeg');
+            } else if (evt.target.mime.match(/^(text|inode\/x-empty)/g)) {
+                ace(evt.target.file_id);
+            } else {
+                raw(evt.target.file_id, evt.target.file_name, evt.target.mime);
+                // ace(evt.target.file_id);
+            }
+        }
+    } else if (evt.target.classList.contains("folder") || evt.target.classList.contains("back")) {
+        if (evt.button == 0) { // 滑鼠右鍵
+            listPath(evt.target.path_id);
+        }
+    }
+}
+fileList.onmouseover = function(evt) {
+    if (fileList.classList.contains("context")) { // 當已經有右鍵就不顯示Hover
+        evt.preventDefault();
+    }
+}
+fileList.onmouseout = function(evt) {
+    mouseDownElement = null;
+    if (!selectedElements.includes(evt.target)) {
+        evt.target.draggable = false;
+    }
+}
 fileList.oncontextmenu = function(evt) {
-//     document.getElementById("context").classList.add("show");
-//     document.getElementById("context").style.top = evt.clientY + 'px';
-//     document.getElementById("context").style.left = evt.clientX + 'px';
-//     console.log(evt);
-//     console.log(this);
-//     evt.preventDefault();
+    if (!selectedElements.includes(evt.target)) {
+        selectedElements.addSelect(evt.target);
+    }
+    fileList.classList.add("context");
+    document.getElementById("context").classList.add("show");
+    document.getElementById("context").classList.add(selectedElements.type());
+    document.getElementById("context").style.top = evt.clientY + 'px';
+    // console.log(fileList.scrollLeft + fileList.clientWidth, evt.clientX + document.getElementById("context").clientWidth);
+    console.log(evt, fileList.offsetLeft, fileList.clientWidth, evt.clientX, document.getElementById("context").clientWidth);
+    if (fileList.offsetLeft + fileList.clientWidth < evt.clientX + document.getElementById("context").clientWidth) {
+        document.getElementById("context").style.left = fileList.offsetLeft + fileList.clientWidth - document.getElementById("context").clientWidth + 'px';
+    } else {
+        document.getElementById("context").style.left = evt.clientX + 'px';
+    }
+    evt.preventDefault();
 };
-fileList.onclick = function() {
-    document.getElementById("context").classList.remove("show");
-};
+document.oncontextmenu = function(evt) {
+    evt.preventDefault();
+}
 floatWindow.getElementsByTagName("iframe")[0].onload = function() {
     if (this.src != window.location && this.src != "about:blank") {
         if (this.contentDocument.contentType.match(/^(video|audio)/g)) {
@@ -339,14 +452,19 @@ floatWindow.getElementsByTagName("video")[0].onclick = function(evt) {
 floatWindow.getElementsByTagName("img")[0].onclick = function(evt) {
     evt.stopPropagation();
 }
-floatWindow.onclick = function() {
+floatWindow.onclick = function(evt) {
     floatWindow.classList.remove("show");
-    floatWindow.getElementsByTagName("iframe")[0].classList.remove("show");
-    floatWindow.getElementsByTagName("video")[0].classList.remove("show");
-    floatWindow.getElementsByTagName("img")[0].classList.remove("show");
-    floatWindow.getElementsByTagName("iframe")[0].src = "about:blank";
-    floatWindow.getElementsByTagName("video")[0].src = "about:blank";
-    floatWindow.getElementsByTagName("img")[0].src = "about:blank";
+    if (floatWindow.getElementsByTagName("iframe")[0].classList.contains("show")) {
+        floatWindow.getElementsByTagName("iframe")[0].classList.remove("show");
+        floatWindow.getElementsByTagName("iframe")[0].src = "about:blank";
+    } else if (floatWindow.getElementsByTagName("video")[0].classList.contains("show")) {
+        floatWindow.getElementsByTagName("video")[0].classList.remove("show");
+        floatWindow.getElementsByTagName("video")[0].src = "about:blank";
+    } else if (floatWindow.getElementsByTagName("img")[0].classList.contains("show")) {
+        floatWindow.getElementsByTagName("img")[0].classList.remove("show");
+        floatWindow.getElementsByTagName("img")[0].src = "about:blank";
+    }
+    evt.stopPropagation();
 };
 listPath(sessionStorage.getItem('path_id') || 0);
 // document.onselectstart = function() {

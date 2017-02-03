@@ -5,7 +5,7 @@
 * **[History](#history)**
 
 ## Introduction[↶](#)
-這是以寫[:octocat:舊版](https://github.com/TCCinTaiwan/file-manager)的經驗為基礎，重構的新版本。
+這是以寫[:octocat:舊版](https://github.com/TCCinTaiwan/file-manager)的經驗為基礎，重構的新版本，目前主要是在Chrome環境中執行，其他瀏覽器不一定支援。
 ![截圖](screenshot.png)
 ![截圖2](screenshot-2.png)
 ![截圖3](screenshot-3.png)
@@ -63,3 +63,7 @@
     - 優化拖曳
     - 啟用Move
     - 加入可讀檔案大小
+    - 優化拖曳流程
+    - 整理事件
+    - 優化UX
+    - 加入多選(測試中)

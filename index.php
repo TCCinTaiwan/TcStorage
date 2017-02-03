@@ -20,13 +20,18 @@
         </menu>
         <div id="fileList"></div>
         <div id="dropzone"></div>
+        <div id="selectzone"></div>
     </main>
-    <menu id="context">
+    <menu id="context" type="context">
+        <li for="folder">開啟</li>
         <li for="file">預覽</li>
         <li for="file">編輯</li>
         <li for="file">下載</li>
         <li for="folder folders file files multiple">刪除</li>
         <li for="folder folders file files">重新命名</li>
+        <li for="any">建立新資料夾</li>
+        <li for="any">建立空白檔案</li>
+        <li for="any">重新整理</li>
     </menu>
     <div id="floatWindow">
         <iframe></iframe>
