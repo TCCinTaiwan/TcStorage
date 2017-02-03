@@ -8,6 +8,7 @@
 這是以寫[:octocat:舊版](https://github.com/TCCinTaiwan/file-manager)的經驗為基礎，重構的新版本。
 ![截圖](screenshot.png)
 ![截圖2](screenshot-2.png)
+![截圖3](screenshot-3.png)
 
 ## History[↶](#)
 * 2017-01-25
@@ -58,3 +59,7 @@
     - Mime Type測試
     - 加入Mime Type清單更新
     - 建立函數引用檔
+* 2017-02-03
+    - 優化拖曳
+    - 啟用Move
+    - 加入可讀檔案大小

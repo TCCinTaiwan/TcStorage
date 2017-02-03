@@ -1,3 +1,12 @@
+function formatBytes(bytes, decimals) {
+    if(bytes == 0) return '0 Byte';
+    var k = 1024;
+    var dm = decimals + 1 || 3;
+    var sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB'];
+    var i = Math.floor(Math.log(bytes) / Math.log(k));
+    return parseFloat((bytes / Math.pow(k, i)).toFixed(dm)) + ' ' + sizes[i];
+}
+var mouseDownIndex = null;
 function github() {
     window.open('https://github.com/TCCinTaiwan/TcStorage');
 }
@@ -8,7 +17,6 @@ function listPath(path) {
     xhr.onreadystatechange = function() {
         if (xhr.readyState == 4) { // 確認 readyState
             if (xhr.status == 200) { // 確認 status
-                console.log();
                 var info = typeof xhr.response == "string" ?　JSON.parse(xhr.response) : xhr.response;
                 fileList.innerHTML = "";
                 path_id = info.path_info.id;
@@ -28,6 +36,7 @@ function listPath(path) {
                 for (var folderIndex = 0; folderIndex < info.folders.length; folderIndex++) {
                     var folder_div = document.createElement("div");
                     folder_div.className = "folder";
+                    folder_div.draggable = true;
                     if (info.folders[folderIndex].descendant | info.folders[folderIndex].file_count > 0) {
                         folder_div.className += " fullFolder";
                     } else if (info.folders[folderIndex].folder_count > 0) {
@@ -35,7 +44,29 @@ function listPath(path) {
                     } else {
                         folder_div.className += " emptyFolder";
                     }
-
+                    folder_div.ondragstart = function(evt) {
+                        evt.dataTransfer.setData(
+                            "application/json",
+                            JSON.stringify(
+                                [
+                                    {
+                                        type: "file",
+                                        id: this.file_id
+                                    }
+                                ]
+                            )
+                        );
+                        evt.dataTransfer.dropEffect = 'move';
+                    }
+                    folder_div.ondrop = function(evt) {
+                        evt.preventDefault();
+                        var dataList = JSON.parse(evt.dataTransfer.getData("application/json"));
+                        for (var i = 0; i < dataList.length; i++) {
+                            move(dataList[i].type, dataList[i].id, path_id, this.path_id)
+                            // alert("move " + dataList[i].type + "(" + dataList[i].id + ") to " + this.path_id);
+                        }
+                        // evt.target.appendChild(document.getElementById(data));
+                    }
                     // var img = new Image();
                     // img.src = "images/file types/svg/file.svg";
                     // folder_div.appendChild(img);
@@ -59,29 +90,52 @@ function listPath(path) {
                     file_div.extension = extension;
                     file_div.file_id = info.files[fileIndex].id;
                     file_div.mime = info.files[fileIndex].mime;
-                    file_div.title = info.files[fileIndex].size;
+                    file_div.title = formatBytes(info.files[fileIndex].size);
+                    file_div.draggable = true;
+                    file_div.ondragstart = function(evt) {
+                        evt.dataTransfer.setData(
+                            "application/json",
+                            JSON.stringify(
+                                [
+                                    {
+                                        type: "file",
+                                        id: this.file_id
+                                    }
+                                ]
+                            )
+                        );
+                        evt.dataTransfer.dropEffect = 'move';
+                    }
                     file_div.onmousedown = function(evt) {
-                        if (evt.button == 1) {
+                        if (evt.button == 0) { // 滑鼠右鍵
+                            mouseDownIndex = this.file_id;
+                        } else if (evt.button == 1) { // 滑鼠中鍵
                             evt.preventDefault();
                             return false;
                         }
                     }
+                    file_div.onmouseout = function(evt) {
+                        mouseDownIndex = null;
+                    }
                     file_div.onmouseup = function(evt) {
                         if (evt.button == 0) { // 滑鼠右鍵
-                            if (this.mime.match(/^(image|audio|video)/g)) {
-                                raw(this.file_id, this.file_name, this.mime);
-                            } else if (this.mime.match(/^application\/octet-stream/g)) {
-                                raw(this.file_id, this.file_name, 'video/mpeg');
-                            } else if (this.mime.match(/^(text|inode\/x-empty)/g)) {
-                                ace(this.file_id);
-                            } else {
-                                raw(this.file_id, this.file_name, this.mime);
-                                // ace(this.file_id);
+                            if (mouseDownIndex == this.file_id) {
+                                if (this.mime.match(/^(image|audio|video)/g)) {
+                                    raw(this.file_id, this.file_name, this.mime);
+                                } else if (this.mime.match(/^application\/octet-stream/g)) {
+                                    raw(this.file_id, this.file_name, 'video/mpeg');
+                                } else if (this.mime.match(/^(text|inode\/x-empty)/g)) {
+                                    ace(this.file_id);
+                                } else {
+                                    raw(this.file_id, this.file_name, this.mime);
+                                    // ace(this.file_id);
+                                }
                             }
                         } else if (evt.button == 1) { // 滑鼠中鍵
                             window.open('files/raw/' + this.file_id + '/' + this.file_name);
                             evt.preventDefault();
                         }
+                        mouseDownIndex = null;
                     }
                     fileList.appendChild(file_div);
                 }
@@ -131,6 +185,29 @@ function createNew(type, name) {
     fd.append('type', type);
     xhr.send(fd);
 }
+function move(type, id, old_path, new_path) {
+    type = (type || "folder") == "folder" ? "folder" : "file";
+    id = id || null;
+    old_path = old_path || path_id;
+    new_path = new_path || null;
+    if (id && old_path && new_path) {
+        var xhr = new XMLHttpRequest();
+        xhr.onreadystatechange = function() {
+            if (xhr.readyState == 4) { // 確認 readyState
+                if (xhr.status == 200) { // 確認 status
+                    listPath();
+                }
+            }
+        };
+        xhr.open('POST', 'functions/move.php'); // 傳資料給new.php
+        var fd = new FormData();
+        fd.append('id', id);
+        fd.append('from', old_path);
+        fd.append('to', new_path);
+        fd.append('type', type);
+        xhr.send(fd);
+    }
+}
 function raw(file_id, file_name, mime) {
     file_name = file_name || "";
     mime = mime || "";
@@ -156,36 +233,67 @@ function raw(file_id, file_name, mime) {
 function ace(file_id) {
     floatWindow.getElementsByTagName("iframe")[0].src = 'functions/ace.php?id=' + file_id;
 }
-fileList.ondragover = function(evt) { // 拖曳事件
+document.ondragover = function(evt) { // 拖曳事件
+    if (evt.dataTransfer.types.includes("application/json")) {
+        if (evt.target.classList.contains("folder")) {
+            evt.preventDefault();
+        }
+    } else if (evt.dataTransfer.types.includes("Files")) {
+
+        evt.preventDefault();
+    }
+};
+document.ondragenter = function(evt) {
+    if (evt.target.classList.contains("folder")) {
+        if (evt.dataTransfer.types.includes("application/json")) {
+            // event.target.style.border = "3px dotted red";
+        } else if (evt.dataTransfer.types.includes("Files")) {
+            document.getElementById("dropzone").classList.remove("show");
+        }
+    } else {
+        if (evt.dataTransfer.types.includes("Files")) {
+            document.getElementById("dropzone").classList.add("show");
+        }
+    }
+}
+document.ondragleave = function(evt) {
+    if (evt.clientX == 0 && evt.clientY == 0) { // 取消
+        document.getElementById("dropzone").classList.remove("show");
+    }
+}
+document.onselectstart = function(evt) {
     evt.preventDefault();
 };
 fileList.ondrop = function(evt) { // 放開事件
     evt.preventDefault();
-    var xhr_upload = new XMLHttpRequest();
-    var upload_fd = new FormData(); // 要傳過去給upload.php的資料
-    var upload_files = evt.dataTransfer.files; // 要上傳的檔案
-    upload_fd.append('path_id', path_id);
-    for (var file_index in upload_files) {
-        if (typeof(upload_files[file_index].type) != "undefined") { // 判斷是檔案
-            console.log(upload_files[file_index]);
-            upload_fd.append('files[]', upload_files[file_index]);
+    document.getElementById("dropzone").classList.remove("show");
+    if (evt.dataTransfer.types.includes("Files")) {
+        var xhr_upload = new XMLHttpRequest();
+        var upload_fd = new FormData(); // 要傳過去給upload.php的資料
+        var upload_files = evt.dataTransfer.files; // 要上傳的檔案
+        upload_fd.append('path_id', path_id);
+        for (var file_index in upload_files) {
+            if (typeof(upload_files[file_index].type) != "undefined") { // 判斷是檔案
+                console.log(upload_files[file_index]);
+                upload_fd.append('files[]', upload_files[file_index]);
+            }
         }
+        xhr_upload.onload = function() {
+            // 上傳完成
+            listPath();
+        };
+        xhr_upload.open('POST', 'functions/upload.php'); // 傳資料給upload.php
+        // xhr_upload.upload.onprogress = function (evt) {
+        //     // 上傳進度
+        //     if (evt.lengthComputable) {
+        //         var complete = (evt.loaded / evt.total * 100 | 0);
+        //         if(100 == complete) {
+        //             complete = 99.9;
+        //         }
+        //     }
+        // }
+        xhr_upload.send(upload_fd); // 開始上傳
     }
-    xhr_upload.onload = function() {
-        // 上傳完成
-        listPath();
-    };
-    xhr_upload.open('POST', 'functions/upload.php'); // 傳資料給upload.php
-    // xhr_upload.upload.onprogress = function (evt) {
-    //     // 上傳進度
-    //     if (evt.lengthComputable) {
-    //         var complete = (evt.loaded / evt.total * 100 | 0);
-    //         if(100 == complete) {
-    //             complete = 99.9;
-    //         }
-    //     }
-    // }
-    xhr_upload.send(upload_fd); // 開始上傳
 };
 fileList.oncontextmenu = function(evt) {
 //     document.getElementById("context").classList.add("show");
@@ -197,9 +305,6 @@ fileList.oncontextmenu = function(evt) {
 };
 fileList.onclick = function() {
     document.getElementById("context").classList.remove("show");
-};
-document.onselectstart = function(evt) {
-    evt.preventDefault();
 };
 floatWindow.getElementsByTagName("iframe")[0].onload = function() {
     if (this.src != window.location && this.src != "about:blank") {
@@ -244,3 +349,6 @@ floatWindow.onclick = function() {
     floatWindow.getElementsByTagName("img")[0].src = "about:blank";
 };
 listPath(sessionStorage.getItem('path_id') || 0);
+// document.onselectstart = function() {
+//     window.getSelection().removeAllRanges();
+// };

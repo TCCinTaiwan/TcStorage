@@ -15,9 +15,11 @@
             <li onclick="createNew('folder');">建立新資料夾</li>
             <li onclick="createNew('file');">建立空白檔案</li>
             <li>批次命名</li>
+            <li>設定</li>
             <li onclick="github();">Github</li>
         </menu>
         <div id="fileList"></div>
+        <div id="dropzone"></div>
     </main>
     <menu id="context">
         <li for="file">預覽</li>

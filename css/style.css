@@ -3,6 +3,36 @@ body {
     height: 100%;
     font-family: "微軟正黑體";
 }
+html,
+body,
+main {
+    display: block;
+    height: 100%;
+    overflow: hidden;
+}
+#dropzone {
+    display: none;
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    pointer-events:none;
+    /*background: rgba(0, 0, 0, 0.05);*/
+}
+#dropzone.show {
+    display: block;
+}
+#dropzone:before {
+    position: absolute;
+    content: "";
+    margin: 4px;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    border: 4px dashed #79C900;
+}
 menu {
     position: fixed;
     background-color: #CCFFCC;
@@ -52,6 +82,7 @@ main > menu {
     background-color: #FFCCCC;
 }
 main > menu li {
+    cursor: pointer;
     border-width: 1px;
     border-style: solid;
     border-radius: 5px;
@@ -60,6 +91,9 @@ main > menu li {
 main > menu li[onclick] {
     background-color: #FFFFFF;
 }
+main > menu li:hover {
+    background-color: #AAAAFF;
+}
 #context {
     display: none;
 }
@@ -67,18 +101,20 @@ main > menu li[onclick] {
     display: block;
 }
 #fileList {
-    position: fixed;
+    position: relative;
     margin-left: 200px;
     height: 100%;
     overflow-y: scroll;
     width: calc(100% - 200px);
 }
 #fileList > div {
-    border-width: 1px;
+    /*border-width: 1px;*/
     border-style: solid;
+    border-bottom-width: 1px;
     font-size: 20px;
     background-color: #CCFFCC;
-    /*background-color: #CCCCFF;*/
+    width: 100%;
+    position: relative;
 }
 #fileList > .back:before,
 #fileList > .folder:before,
@@ -87,12 +123,23 @@ main > menu li[onclick] {
     vertical-align: middle;
     height: 32px;
     width: 32px;
-    margin: 0 2px;
+    margin: 1px 2px;
     display: inline-block;
     background-repeat: no-repeat;
     background-size: cover;
     filter: drop-shadow(1px 1px 1px #369);
 }
+#fileList > .back:hover,
+#fileList > .folder:hover,
+#fileList > .file:hover {
+    background-color: #AAAAFF;
+}
+/*#fileList > .back:active,
+#fileList > .folder:active,
+#fileList > .file:active {
+    position: absolute;
+    z-index: 100;
+}*/
 .fullPath {
     /*background-color: #CCFFFF;*/
 }
