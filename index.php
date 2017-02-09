@@ -1,3 +1,9 @@
+<?
+    if (!file_exists("functions/connect.inc")) {
+        header('Location: install/');
+        exit;
+    }
+?>
 <!DOCTYPE html>
 <html>
 <head>
