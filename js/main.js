@@ -1,4 +1,8 @@
-var mouseDownElement = null;
+var mouseDownInfo = {
+    element: null,
+    x: null,
+    y: null
+};
 var selectedElements = [];
 selectedElements.clearSelected = function() {
     var element = null;
@@ -203,6 +207,16 @@ function raw(file_id, file_name, mime) {
 function ace(file_id) {
     floatWindow.getElementsByTagName("iframe")[0].src = 'functions/ace.php?id=' + file_id;
 }
+function reCalc(x1, y1, x2, y2) {
+    var minX = Math.max(Math.min(x1, x2), fileList.offsetLeft);
+    var maxX = Math.min(Math.max(x1, x2), fileList.offsetLeft + fileList.clientWidth - 2);
+    var minY = Math.max(Math.min(y1, y2), fileList.offsetTop);
+    var maxY = Math.min(Math.max(y1, y2), fileList.offsetTop + fileList.clientHeight - 2);
+    document.getElementById("selectzone").style.left = minX + 'px';
+    document.getElementById("selectzone").style.top = minY + 'px';
+    document.getElementById("selectzone").style.width = maxX - minX + 'px';
+    document.getElementById("selectzone").style.height = maxY - minY + 'px';
+}
 document.ondragover = function(evt) { // 拖曳經過
     if (evt.dataTransfer.types.includes("application/json")) { // Firfox: includes->contains
         if (evt.target.classList.contains("folder")) {
@@ -324,16 +338,58 @@ fileList.onmousedown = function(evt) {
             selectedElements.clearSelected();
         }
     } else {
-        mouseDownElement = evt.target;
         if (evt.button == 1) { // 滑鼠中鍵
             evt.preventDefault();
         } else if (evt.button == 0) { // 滑鼠右鍵
+            mouseDownInfo = {
+                element: evt.target,
+                x: evt.clientX,
+                y: evt.clientY
+            }
             if (evt.target.classList.contains("file") || evt.target.classList.contains("folder")) {
                 if (evt.offsetX <= 34) { // 點的位置是ICON
                     evt.target.draggable = true;
+                    return;
                 }
             }
+            document.getElementById("selectzone").style.display = "block";
+            // console.log(evt);
+            reCalc(mouseDownInfo.x, mouseDownInfo.y, mouseDownInfo.x, mouseDownInfo.y);
+            // document.getElementById("selectzone").style.top =  + "px";
+            // document.getElementById("selectzone").style.left =  + "px";
+            // document.getElementById("selectzone").style.width = "0px";
+            // document.getElementById("selectzone").style.height = "0px";
         }
+    }
+}
+document.getElementById("context").onclick = function(evt) {
+    if (document.getElementById("context").classList.contains("show")) {
+        document.getElementById("context").classList.remove(selectedElements.type());
+        document.getElementById("context").classList.remove("show");
+        fileList.classList.remove("context");
+        if (!selectedElements.includes(evt.target)) {
+            selectedElements.clearSelected();
+        }
+    }
+}
+onmousemove = function(evt) {
+    if (mouseDownInfo.x != null) {
+        // console.log(evt);
+        reCalc(mouseDownInfo.x, mouseDownInfo.y, evt.clientX, evt.clientY);
+        // if (mouseDownInfo.x > evt.clientX) {
+        //     document.getElementById("selectzone").style.top = evt.clientX + "px";
+        //     document.getElementById("selectzone").style.width = mouseDownInfo.x - evt.clientX + "px";
+        // } else {
+        //     document.getElementById("selectzone").style.top = mouseDownInfo.x + "px";
+        //     document.getElementById("selectzone").style.width = evt.clientX - mouseDownInfo.x + "px";
+        // }
+        // if (mouseDownInfo.y > evt.clientY) {
+        //     document.getElementById("selectzone").style.left = evt.clientY + "px";
+        //     document.getElementById("selectzone").style.height = mouseDownInfo.y - evt.clientY + "px";
+        // } else {
+        //     document.getElementById("selectzone").style.left = mouseDownInfo.y + "px";
+        //     document.getElementById("selectzone").style.height = evt.clientY - mouseDownInfo.y + "px";
+        // }
     }
 }
 fileList.onmouseup = function(evt) {
@@ -346,9 +402,10 @@ fileList.onmouseup = function(evt) {
             evt.preventDefault();
         }
     } else if (evt.button == 0) { // 滑鼠右鍵
+        document.getElementById("selectzone").style.display = "";
         if (evt.target.classList.contains("file") || evt.target.classList.contains("folder")) {
             evt.target.draggable = false;
-            if (mouseDownElement == evt.target) {
+            if (mouseDownInfo.element == evt.target) {
                 if (evt.ctrlKey) {
                     if (selectedElements.includes(evt.target)) {
                         selectedElements.removeSelected(evt.target);
@@ -364,9 +421,19 @@ fileList.onmouseup = function(evt) {
                     }
                 }
             }
+        } else if (evt.target.classList.contains("back")) {
+            if (mouseDownInfo.element == evt.target) {
+                if (!evt.ctrlKey) {
+                    listPath(evt.target.path_id);
+                }
+            }
         }
     }
-    mouseDownElement = null;
+    mouseDownInfo = {
+        element: null,
+        x: null,
+        y: null
+    };
 }
 fileList.ondblclick = function(evt) {
     if (evt.target.classList.contains("file")) {
@@ -394,7 +461,7 @@ fileList.onmouseover = function(evt) {
     }
 }
 fileList.onmouseout = function(evt) {
-    mouseDownElement = null;
+    mouseDownInfo.element = null;
     if (!selectedElements.includes(evt.target)) {
         evt.target.draggable = false;
     }

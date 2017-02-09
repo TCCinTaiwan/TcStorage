@@ -9,6 +9,19 @@ main {
     display: block;
     height: 100%;
     overflow: hidden;
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}
+#selectzone {
+    display: none;
+    position: absolute;
+    pointer-events:none;
+    background: rgba(0, 0, 255, 0.3);
+    border: 1px solid #0000FF;
 }
 #dropzone {
     display: none;
@@ -53,13 +66,11 @@ menu li {
 #floatWindow > iframe {
     background-color: white;
 }
-#floatWindow > video,
-#floatWindow > audio {
+#floatWindow > video {
     background-color: black;
 }
 #floatWindow > iframe,
 #floatWindow > video,
-#floatWindow > audio,
 #floatWindow > img,
 #floatWindow > div {
     font-size: 16px;
@@ -69,10 +80,15 @@ menu li {
     margin: 30px 50px 10px;
     display: none;
 }
+/*#floatWindow > img {
+    width: auto;
+    height: auto;
+    max-width: calc(100% - 100px);
+    max-height: calc(100% - 40px);
+}*/
 #floatWindow.show,
 #floatWindow > iframe.show,
 #floatWindow > video.show,
-#floatWindow > audio.show,
 #floatWindow > img.show,
 #floatWindow > div.show {
     display: block;
@@ -104,6 +120,9 @@ main > menu li[onclick]:hover {
 }
 #context > li {
     display: none; /* 預設隱藏 */
+}
+#context > li:not([onclick]) {
+    background-color: #FFAAAA;
 }
 #context > li[for~=any] {
     display: block;

@@ -29,14 +29,14 @@
         <li for="file">下載</li>
         <li for="folder folders file files multiple">刪除</li>
         <li for="folder folders file files">重新命名</li>
-        <li for="any">建立新資料夾</li>
-        <li for="any">建立空白檔案</li>
-        <li for="any">重新整理</li>
+        <li for="any" onclick="createNew('folder');">建立新資料夾</li>
+        <li for="any" onclick="createNew('file');">建立空白檔案</li>
+        <li for="any" onclick="listPath();">重新整理</li>
     </menu>
     <div id="floatWindow">
         <iframe></iframe>
         <video autoplay autobuffer controls poster="images/loading.gif"></video>
-        <img></img>
+        <div><img></img><div>
     </div>
     <script src="js/main.js" charset="utf-8" async></script>
 </body>
