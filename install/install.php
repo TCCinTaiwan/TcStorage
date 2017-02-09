@@ -100,6 +100,19 @@ CREATE TABLE `folders` (
             } else {
                 echo "資料庫連線設定已存在！\n";
             }
+            if (!file_exists(".htaccess")) {
+                $file = fopen(".htaccess", "w");
+                $txt = "deny from all";
+                fwrite($file, $txt);
+                fclose($file);
+                if (file_exists(".htaccess")) {
+                    echo "限制安裝目錄權限成功！\n";
+                } else {
+                    echo "限制安裝目錄權限失敗！\n";
+                }
+            } else {
+                echo "安裝目錄權限檔案已存在！\n";
+            }
         } else {
             echo "MySQL連線失敗！\n";
         }
