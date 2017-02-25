@@ -70,6 +70,9 @@ function listPath(path) {
                 var full_path_div = document.createElement("div");
                 full_path_div.className = "fullPath";
                 fileList.appendChild(full_path_div);
+                // var breadcrumbs_ul = document.createElement("ul");
+                // breadcrumbs_ul.className = "breadcrumbs";
+                // fileList.appendChild(breadcrumbs_ul);
                 if (info.path_info.root_id != null) {
                     var back_div = document.createElement("div");
                     back_div.className = "back";
@@ -116,6 +119,13 @@ function listPath(path) {
                 for (var index = 0; index < elements.length; index++) {
                     elements[index].innerText = info.path_info.full_path;
                 }
+                // <ul id="breadcrumbs">
+                //     <li><a href="">Lorem ipsum</a></li>
+                //     <li><a href="">Vivamus nisi eros</a></li>
+                //     <li><a href="">Nulla sed lorem risus</a></li>
+                //     <li><a href="">Nam iaculis commodo</a></li>
+                //     <li><a href="" class="current">Current crumb</a></li>
+                // </ul>
                 elements = document.getElementsByClassName("path");
                 for (var index = 0; index < elements.length; index++) {
                     elements[index].innerText = info.path_info.name;
