@@ -76,3 +76,4 @@
     - 上一層資料夾改為雙擊
     - 修正修改檔案失敗
     - 加入breadcrumbs
+    - breadcrumbs點擊

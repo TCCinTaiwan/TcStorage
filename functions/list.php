@@ -28,11 +28,21 @@
         }
         $sql = 'SELECT * FROM `folders` WHERE `id` = ' . $row['path_id'] . ';';
         $data['path_info']['full_path'] = $row['name'] . "/" . $data['path_info']['full_path'];
-        array_push($data['path_info']['breadcrumbs'], $row['name']);
+        array_push($data['path_info']['breadcrumbs'],
+            [
+                "id" => $row['id'],
+                "name" => $row['name']
+            ]
+        );
         $result = mysqli_query($conn, $sql);
     }
     $data['path_info']['full_path'] = "/" . $data['path_info']['full_path'];
-    array_push($data['path_info']['breadcrumbs'], "/");
+    array_push($data['path_info']['breadcrumbs'],
+        [
+            "id" => 0,
+            "name" => "/"
+        ]
+    );
     $data['path_info']['breadcrumbs'] = array_reverse($data['path_info']['breadcrumbs']);
 
     // $sql = 'SELECT (SELECT COUNT(*) FROM `folders`) + (SELECT COUNT(*) FROM `files`) AS COUNT;';

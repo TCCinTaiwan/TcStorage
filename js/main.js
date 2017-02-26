@@ -121,7 +121,7 @@ function listPath(path) {
                 }
                 var elements = document.getElementsByClassName("breadcrumbs");
                 for (var index = 0; index < elements.length; index++) {
-                    elements[index].innerHTML = "<li><a>" + info.path_info.breadcrumbs.join("</a></li><li><a>") + "</a></li>";
+                    elements[index].innerHTML = info.path_info.breadcrumbs.map(function(elem){return "<li path_id='" + elem.id + "'>" + elem.name + "</li>";}).join("");
                 }
                 // <ul id="breadcrumbs">
                 //     <li><a href="">Lorem ipsum</a></li>
@@ -427,13 +427,17 @@ fileList.onmouseup = function(evt) {
                         selectedElements.addSelect(evt.target);
                     }
                 } else {
-                    if (selectedElements.includes(evt.target)) {
+                    if (selectedElements.includes(evt.target)) { // 單擊已選擇
                         console.log("rename");
                     } else {
                         selectedElements.clearSelected();
-                        selectedElements.addSelect(evt.target);
+                        selectedElements.addSelect(evt.target); // 單擊未選擇
                     }
                 }
+            }
+        } else if (evt.target.nodeName == "LI") {
+            if (!evt.ctrlKey) {
+                listPath(evt.target.attributes["path_id"].value);
             }
         }
         // else if (evt.target.classList.contains("back")) {
