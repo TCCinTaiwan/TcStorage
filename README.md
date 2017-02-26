@@ -77,3 +77,4 @@
     - 修正修改檔案失敗
     - 加入breadcrumbs
     - breadcrumbs點擊
+    - 修正圖片預覽

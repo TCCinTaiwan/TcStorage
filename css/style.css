@@ -159,12 +159,17 @@ menu li {
     margin: 30px 50px 10px;
     display: none;
 }
-/*#floatWindow > img {
-    width: auto;
+#floatWindow > div {
+    /*background: url(files/raw/7/DJSona-Wallpaper-Ethereal.jpg);*/
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: 50%;
+    background-color: black;
+    /*width: auto;
     height: auto;
     max-width: calc(100% - 100px);
-    max-height: calc(100% - 40px);
-}*/
+    max-height: calc(100% - 40px);*/
+}
 #floatWindow.show,
 #floatWindow > iframe.show,
 #floatWindow > video.show,

@@ -212,7 +212,9 @@ function raw(file_id, file_name, mime) {
     if (mime.match(/^(video|audio)/g)) {
         floatWindow.getElementsByTagName("video")[0].src = 'files/raw/' + file_id + '/' + file_name;
     } else if (mime.match(/^image/g)) {
-        floatWindow.getElementsByTagName("img")[0].src = 'files/raw/' + file_id + '/' + file_name;
+        floatWindow.getElementsByTagName("div")[0].style.backgroundImage = 'url("files/raw/' + file_id + '/' + file_name + '"';
+        floatWindow.getElementsByTagName("div")[0].classList.add("show");
+        floatWindow.classList.add("show");
     } else {
         floatWindow.getElementsByTagName("iframe")[0].src = 'files/raw/' + file_id + '/' + file_name;
 
@@ -275,6 +277,7 @@ fileList.ondragstart = function(evt) { // 開始拖曳
         //     }
         //     selectedElements.addSelect(evt.target);
         // }
+        document.getElementById("selectzone").style.display = "";
         for (var i = 0; i < selectedElements.length; i++) {
             selectedElements[i].classList.add("drag");
         }
@@ -511,7 +514,7 @@ floatWindow.getElementsByTagName("iframe")[0].onload = function() {
             floatWindow.getElementsByTagName("video")[0].src = this.src;
             this.src = "about:blank";
         } else if (this.contentDocument.contentType.match(/^image/g)) {
-            floatWindow.getElementsByTagName("img")[0].src = this.src;
+            floatWindow.getElementsByTagName("div")[0].style.backgroundImage = 'url("' + this.src + '"';
             this.src = "about:blank";
         } else {
             floatWindow.classList.add("show");
@@ -526,16 +529,16 @@ floatWindow.getElementsByTagName("video")[0].onloadeddata = function() {
         this.play();
     }
 };
-floatWindow.getElementsByTagName("img")[0].onload = function() {
-    if (this.src != window.location && this.src != "about:blank") {
-        floatWindow.classList.add("show");
-        this.classList.add("show");
-    }
-};
+// floatWindow.getElementsByTagName("img")[0].onload = function() {
+//     if (this.src != window.location && this.src != "about:blank") {
+//         floatWindow.classList.add("show");
+//         this.classList.add("show");
+//     }
+// };
 floatWindow.getElementsByTagName("video")[0].onclick = function(evt) {
     evt.stopPropagation();
 }
-floatWindow.getElementsByTagName("img")[0].onclick = function(evt) {
+floatWindow.getElementsByTagName("div")[0].onclick = function(evt) {
     evt.stopPropagation();
 }
 floatWindow.onclick = function(evt) {
@@ -546,9 +549,9 @@ floatWindow.onclick = function(evt) {
     } else if (floatWindow.getElementsByTagName("video")[0].classList.contains("show")) {
         floatWindow.getElementsByTagName("video")[0].classList.remove("show");
         floatWindow.getElementsByTagName("video")[0].src = "about:blank";
-    } else if (floatWindow.getElementsByTagName("img")[0].classList.contains("show")) {
-        floatWindow.getElementsByTagName("img")[0].classList.remove("show");
-        floatWindow.getElementsByTagName("img")[0].src = "about:blank";
+    } else if (floatWindow.getElementsByTagName("div")[0].classList.contains("show")) {
+        floatWindow.getElementsByTagName("div")[0].classList.remove("show");
+        floatWindow.getElementsByTagName("div")[0].src = "about:blank";
     }
     evt.stopPropagation();
 };

@@ -42,7 +42,8 @@
     <div id="floatWindow">
         <iframe></iframe>
         <video autoplay autobuffer controls poster="images/loading.gif"></video>
-        <div><img></img><div>
+        <!-- <div><img></img><div> -->
+        <div></div>
     </div>
     <script src="js/main.js" charset="utf-8" async></script>
 </body>
