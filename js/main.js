@@ -67,12 +67,12 @@ function listPath(path) {
                 var info = typeof xhr.response == "string" ?　JSON.parse(xhr.response) : xhr.response;
                 fileList.innerHTML = "";
                 path_id = info.path_info.id;
-                var full_path_div = document.createElement("div");
-                full_path_div.className = "fullPath";
-                fileList.appendChild(full_path_div);
-                // var breadcrumbs_ul = document.createElement("ul");
-                // breadcrumbs_ul.className = "breadcrumbs";
-                // fileList.appendChild(breadcrumbs_ul);
+                // var full_path_div = document.createElement("div");
+                // full_path_div.className = "fullPath";
+                // fileList.appendChild(full_path_div);
+                var breadcrumbs_ul = document.createElement("ul");
+                breadcrumbs_ul.className = "breadcrumbs";
+                fileList.appendChild(breadcrumbs_ul);
                 if (info.path_info.root_id != null) {
                     var back_div = document.createElement("div");
                     back_div.className = "back";
@@ -118,6 +118,10 @@ function listPath(path) {
                 var elements = document.getElementsByClassName("fullPath");
                 for (var index = 0; index < elements.length; index++) {
                     elements[index].innerText = info.path_info.full_path;
+                }
+                var elements = document.getElementsByClassName("breadcrumbs");
+                for (var index = 0; index < elements.length; index++) {
+                    elements[index].innerHTML = "<li><a>" + info.path_info.breadcrumbs.join("</a></li><li><a>") + "</a></li>";
                 }
                 // <ul id="breadcrumbs">
                 //     <li><a href="">Lorem ipsum</a></li>
@@ -431,13 +435,14 @@ fileList.onmouseup = function(evt) {
                     }
                 }
             }
-        } else if (evt.target.classList.contains("back")) {
-            if (mouseDownInfo.element == evt.target) {
-                if (!evt.ctrlKey) {
-                    listPath(evt.target.path_id);
-                }
-            }
         }
+        // else if (evt.target.classList.contains("back")) {
+        //     if (mouseDownInfo.element == evt.target) {
+        //         if (!evt.ctrlKey) {
+        //             listPath(evt.target.path_id);
+        //         }
+        //     }
+        // }
     }
     mouseDownInfo = {
         element: null,

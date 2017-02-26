@@ -1,4 +1,4 @@
-#breadcrumbs {
+.breadcrumbs {
     background: #eee;
     border-width: 1px;
     border-style: solid;
@@ -14,12 +14,13 @@
     width: 100%;
 }
 
-#breadcrumbs li {
+.breadcrumbs li {
     float: left;
 }
 
-#breadcrumbs a {
-    padding: .7em 1em .7em 2em;
+.breadcrumbs a {
+    /*padding: .7em 1em .7em 2em;*/
+    padding: 2px 5px 2px 30px;
     float: left;
     text-decoration: none;
     color: #444;
@@ -34,19 +35,19 @@
     background-image: linear-gradient(to right, #f5f5f5, #ddd);
 }
 
-#breadcrumbs li:first-child a {
+.breadcrumbs li:first-child a {
     padding-left: 1em;
     -moz-border-radius: 5px 0 0 5px;
     -webkit-border-radius: 5px 0 0 5px;
     border-radius: 5px 0 0 5px;
 }
 
-#breadcrumbs a:hover {
+.breadcrumbs a:hover {
     background: #fff;
 }
 
-#breadcrumbs a::after,
-#breadcrumbs a::before {
+.breadcrumbs a::after,
+.breadcrumbs a::before {
     content: "";
     position: absolute;
     top: 50%;
@@ -57,29 +58,29 @@
     right: -1em;
 }
 
-#breadcrumbs a::after {
+.breadcrumbs a::after {
     z-index: 2;
     border-left-color: #ddd;
 }
 
-#breadcrumbs a::before {
+.breadcrumbs a::before {
     border-left-color: #ccc;
     right: -1.1em;
     z-index: 1;
 }
 
-#breadcrumbs a:hover::after {
+.breadcrumbs a:hover::after {
     border-left-color: #fff;
 }
 
-#breadcrumbs .current,
-#breadcrumbs .current:hover {
+.breadcrumbs .current,
+.breadcrumbs .current:hover {
     font-weight: bold;
     background: none;
 }
 
-#breadcrumbs .current::after,
-#breadcrumbs .current::before {
+.breadcrumbs .current::after,
+.breadcrumbs .current::before {
     content: normal;
 }
 body {
@@ -234,7 +235,14 @@ main > menu li[onclick]:hover {
     margin-left: 200px;
     height: 100%;
     overflow-y: scroll;
+    overflow-x: hidden;
     width: calc(100% - 200px);
+}
+#fileList > ul {
+    border-style: solid;
+    border-bottom-width: 1px;
+    font-size: 20px;
+    position: relative;
 }
 #fileList > div {
     /*border-width: 1px;*/

@@ -5,6 +5,6 @@
         $content = (isset($_POST['content']) ? $_POST['content'] : "");
         $file = fopen("../files/" . $id, "w");
         fwrite($file, $content);
-        fclose($file)
+        fclose($file);
     }
 ?>
