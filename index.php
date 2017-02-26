@@ -30,9 +30,9 @@
     </main>
     <menu id="context" type="context">
         <li for="folder">開啟</li>
-        <li for="file">預覽</li>
+        <li for="file" onclick="preview();">預覽</li>
         <li for="file">編輯</li>
-        <li for="file">下載</li>
+        <li for="file" onclick="download();">下載</li>
         <li for="folder folders file files multiple">刪除</li>
         <li for="folder folders file files">重新命名</li>
         <li for="any" onclick="createNew('folder');">建立新資料夾</li>

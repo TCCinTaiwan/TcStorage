@@ -233,6 +233,24 @@ function reCalc(x1, y1, x2, y2) {
     document.getElementById("selectzone").style.width = maxX - minX + 'px';
     document.getElementById("selectzone").style.height = maxY - minY + 'px';
 }
+function preview(element) {
+    element = typeof element == "undefined" ? (selectedElements.length > 0 ? selectedElements[0] : null) : element;
+    if (element.mime.match(/^(image|audio|video)/g)) {
+        raw(element.file_id, element.file_name, element.mime);
+    } else if (element.mime.match(/^application\/octet-stream/g)) {
+        raw(element.file_id, element.file_name, 'video/mpeg');
+    } else if (element.mime.match(/^(text|inode\/x-empty)/g)) {
+        ace(element.file_id);
+    } else {
+        raw(element.file_id, element.file_name, element.mime);
+        // ace(evt.target.file_id);
+    }
+}
+function download(element) {
+    element = typeof element == "undefined" ? (selectedElements.length > 0 ? selectedElements[0] : null) : element;
+    window.open('files/raw/' + element.file_id + '/' + element.file_name);
+
+}
 document.ondragover = function(evt) { // 拖曳經過
     if (evt.dataTransfer.types.includes("application/json")) { // Firfox: includes->contains
         if (evt.target.classList.contains("folder")) {
@@ -460,16 +478,16 @@ fileList.onmouseup = function(evt) {
 fileList.ondblclick = function(evt) {
     if (evt.target.classList.contains("file")) {
         if (evt.button == 0) { // 滑鼠右鍵
-            if (evt.target.mime.match(/^(image|audio|video)/g)) {
-                raw(evt.target.file_id, evt.target.file_name, evt.target.mime);
-            } else if (evt.target.mime.match(/^application\/octet-stream/g)) {
-                raw(evt.target.file_id, evt.target.file_name, 'video/mpeg');
-            } else if (evt.target.mime.match(/^(text|inode\/x-empty)/g)) {
-                ace(evt.target.file_id);
-            } else {
-                raw(evt.target.file_id, evt.target.file_name, evt.target.mime);
-                // ace(evt.target.file_id);
-            }
+            preview(evt.target);
+            // if (evt.target.mime.match(/^(image|audio|video)/g)) {
+            //     raw(evt.target.file_id, evt.target.file_name, evt.target.mime);
+            // } else if (evt.target.mime.match(/^application\/octet-stream/g)) {
+            //     raw(evt.target.file_id, evt.target.file_name, 'video/mpeg');
+            // } else if (evt.target.mime.match(/^(text|inode\/x-empty)/g)) {
+            //     ace(evt.target.file_id);
+            // } else {
+            //     raw(evt.target.file_id, evt.target.file_name, evt.target.mime);
+            // }
         }
     } else if (evt.target.classList.contains("folder") || evt.target.classList.contains("back")) {
         if (evt.button == 0) { // 滑鼠右鍵
