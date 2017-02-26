@@ -440,3 +440,7 @@ main > menu li[onclick]:hover {
 .psd:before {
     background-image: url("../images/file types/svg/psd.svg")
 }
+/* else */
+.flv:before {
+    background-image: url("../images/file types/svg/flv.svg")
+}

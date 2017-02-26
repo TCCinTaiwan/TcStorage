@@ -78,3 +78,4 @@
     - 加入breadcrumbs
     - breadcrumbs點擊
     - 修正圖片預覽
+    - flv圖示
