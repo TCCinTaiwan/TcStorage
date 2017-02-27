@@ -251,6 +251,39 @@ function download(element) {
     window.open('files/raw/' + element.file_id + '/' + element.file_name);
 
 }
+function finishSelect(evt) {
+    if (document.getElementById("selectzone").style.display != "") {
+        var zone = {
+            top: parseInt(document.getElementById("selectzone").style.top.replace("px", "")),
+            left: parseInt(document.getElementById("selectzone").style.left.replace("px", "")),
+            height: parseInt(document.getElementById("selectzone").style.height.replace("px", "")),
+            width: parseInt(document.getElementById("selectzone").style.width.replace("px", ""))
+        };
+        document.getElementById("selectzone").style.display = "";
+        if (evt.button == 0) { // 滑鼠右鍵
+            if (!evt.ctrlKey) {
+                selectedElements.clearSelected();
+            }
+            elements = fileList.getElementsByTagName("div");
+            for (var index = 0; index < elements.length; index++) {
+                if (zone.top < elements[index].offsetTop + elements[index].offsetHeight) {
+                    if (zone.top + zone.height > elements[index].offsetTop) {
+                        // console.log(index, zone.top + zone.height , elements[index].offsetTop);
+                        if (evt.ctrlKey) {
+                            if (selectedElements.includes(elements[index])) {
+                                selectedElements.removeSelected(elements[index]);
+                            } else {
+                                selectedElements.addSelect(elements[index]);
+                            }
+                        } else {
+                            selectedElements.addSelect(elements[index]);
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
 document.ondragover = function(evt) { // 拖曳經過
     if (evt.dataTransfer.types.includes("application/json")) { // Firfox: includes->contains
         if (evt.target.classList.contains("folder")) {
@@ -364,39 +397,7 @@ fileList.ondrop = function(evt) { // 放下拖曳
 document.onselectstart = function(evt) { //開始選擇
     evt.preventDefault();
 };
-document.onmouseup = function(evt) {
-    if (document.getElementById("selectzone").style.display != "") {
-        var zone = {
-            top: parseInt(document.getElementById("selectzone").style.top.replace("px", "")),
-            left: parseInt(document.getElementById("selectzone").style.left.replace("px", "")),
-            height: parseInt(document.getElementById("selectzone").style.height.replace("px", "")),
-            width: parseInt(document.getElementById("selectzone").style.width.replace("px", ""))
-        };
-        document.getElementById("selectzone").style.display = "";
-        if (evt.button == 0) { // 滑鼠右鍵
-            if (!evt.ctrlKey) {
-                selectedElements.clearSelected();
-            }
-            elements = fileList.getElementsByTagName("div");
-            for (var index = 0; index < elements.length; index++) {
-                if (zone.top < elements[index].offsetTop + elements[index].offsetHeight) {
-                    if (zone.top + zone.height > elements[index].offsetTop) {
-                        // console.log(index, zone.top + zone.height , elements[index].offsetTop);
-                        if (evt.ctrlKey) {
-                            if (selectedElements.includes(elements[index])) {
-                                selectedElements.removeSelected(elements[index]);
-                            } else {
-                                selectedElements.addSelect(elements[index]);
-                            }
-                        } else {
-                            selectedElements.addSelect(elements[index]);
-                        }
-                    }
-                }
-            }
-        }
-    }
-}
+document.onmouseup = finishSelect;
 fileList.onmousedown = function(evt) {
     if (document.getElementById("context").classList.contains("show")) {
         document.getElementById("context").classList.remove(selectedElements.type());
@@ -429,7 +430,7 @@ fileList.onmousedown = function(evt) {
             // document.getElementById("selectzone").style.height = "0px";
         }
     }
-}
+};
 document.getElementById("context").onclick = function(evt) {
     if (document.getElementById("context").classList.contains("show")) {
         document.getElementById("context").classList.remove(selectedElements.type());
@@ -439,12 +440,16 @@ document.getElementById("context").onclick = function(evt) {
             selectedElements.clearSelected();
         }
     }
-}
+};
 onmousemove = function(evt) {
     if (mouseDownInfo.x != null) {
-        reCalc(mouseDownInfo.x, mouseDownInfo.y, evt.clientX, evt.clientY);
+        if (evt.buttons == 0) {
+            finishSelect(evt);
+        } else {
+            reCalc(mouseDownInfo.x, mouseDownInfo.y, evt.clientX, evt.clientY);
+        }
     }
-}
+};
 fileList.onmouseup = function(evt) {
     if (evt.button == 1) { // 滑鼠中鍵
         if (evt.target.classList.contains("file")) {
@@ -491,7 +496,7 @@ fileList.onmouseup = function(evt) {
         x: null,
         y: null
     };
-}
+};
 fileList.ondblclick = function(evt) {
     if (evt.target.classList.contains("file")) {
         if (evt.button == 0) { // 滑鼠右鍵
@@ -511,18 +516,18 @@ fileList.ondblclick = function(evt) {
             listPath(evt.target.path_id);
         }
     }
-}
+};
 fileList.onmouseover = function(evt) {
     if (fileList.classList.contains("context")) { // 當已經有右鍵就不顯示Hover
         evt.preventDefault();
     }
-}
+};
 fileList.onmouseout = function(evt) {
     mouseDownInfo.element = null;
     if (!selectedElements.includes(evt.target)) {
         evt.target.draggable = false;
     }
-}
+};
 fileList.oncontextmenu = function(evt) {
     if (!selectedElements.includes(evt.target)) {
         selectedElements.addSelect(evt.target);
