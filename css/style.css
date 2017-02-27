@@ -101,6 +101,7 @@ main {
     pointer-events:none;
     background: rgba(0, 0, 255, 0.3);
     border: 1px solid #0000FF;
+    z-index: 100;
 }
 #dropzone {
     display: none;
@@ -111,6 +112,7 @@ main {
     left: 0;
     pointer-events:none;
     background: rgba(0, 0, 255, 0.1);
+    z-index: 200;
 }
 #dropzone.show {
     display: block;

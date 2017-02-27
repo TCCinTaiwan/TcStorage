@@ -226,7 +226,7 @@ function ace(file_id) {
 function reCalc(x1, y1, x2, y2) {
     var minX = Math.max(Math.min(x1, x2), fileList.offsetLeft);
     var maxX = Math.min(Math.max(x1, x2), fileList.offsetLeft + fileList.clientWidth - 2);
-    var minY = Math.max(Math.min(y1, y2), fileList.offsetTop);
+    var minY = Math.max(Math.min(y1, y2), fileList.offsetTop + document.getElementsByClassName("breadcrumbs")[0].offsetHeight);
     var maxY = Math.min(Math.max(y1, y2), fileList.offsetTop + fileList.clientHeight - 2);
     document.getElementById("selectzone").style.left = minX + 'px';
     document.getElementById("selectzone").style.top = minY + 'px';
@@ -364,6 +364,39 @@ fileList.ondrop = function(evt) { // 放下拖曳
 document.onselectstart = function(evt) { //開始選擇
     evt.preventDefault();
 };
+document.onmouseup = function(evt) {
+    if (document.getElementById("selectzone").style.display != "") {
+        var zone = {
+            top: parseInt(document.getElementById("selectzone").style.top.replace("px", "")),
+            left: parseInt(document.getElementById("selectzone").style.left.replace("px", "")),
+            height: parseInt(document.getElementById("selectzone").style.height.replace("px", "")),
+            width: parseInt(document.getElementById("selectzone").style.width.replace("px", ""))
+        };
+        document.getElementById("selectzone").style.display = "";
+        if (evt.button == 0) { // 滑鼠右鍵
+            if (!evt.ctrlKey) {
+                selectedElements.clearSelected();
+            }
+            elements = fileList.getElementsByTagName("div");
+            for (var index = 0; index < elements.length; index++) {
+                if (zone.top < elements[index].offsetTop + elements[index].offsetHeight) {
+                    if (zone.top + zone.height > elements[index].offsetTop) {
+                        // console.log(index, zone.top + zone.height , elements[index].offsetTop);
+                        if (evt.ctrlKey) {
+                            if (selectedElements.includes(elements[index])) {
+                                selectedElements.removeSelected(elements[index]);
+                            } else {
+                                selectedElements.addSelect(elements[index]);
+                            }
+                        } else {
+                            selectedElements.addSelect(elements[index]);
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
 fileList.onmousedown = function(evt) {
     if (document.getElementById("context").classList.contains("show")) {
         document.getElementById("context").classList.remove(selectedElements.type());
@@ -409,22 +442,7 @@ document.getElementById("context").onclick = function(evt) {
 }
 onmousemove = function(evt) {
     if (mouseDownInfo.x != null) {
-        // console.log(evt);
         reCalc(mouseDownInfo.x, mouseDownInfo.y, evt.clientX, evt.clientY);
-        // if (mouseDownInfo.x > evt.clientX) {
-        //     document.getElementById("selectzone").style.top = evt.clientX + "px";
-        //     document.getElementById("selectzone").style.width = mouseDownInfo.x - evt.clientX + "px";
-        // } else {
-        //     document.getElementById("selectzone").style.top = mouseDownInfo.x + "px";
-        //     document.getElementById("selectzone").style.width = evt.clientX - mouseDownInfo.x + "px";
-        // }
-        // if (mouseDownInfo.y > evt.clientY) {
-        //     document.getElementById("selectzone").style.left = evt.clientY + "px";
-        //     document.getElementById("selectzone").style.height = mouseDownInfo.y - evt.clientY + "px";
-        // } else {
-        //     document.getElementById("selectzone").style.left = mouseDownInfo.y + "px";
-        //     document.getElementById("selectzone").style.height = evt.clientY - mouseDownInfo.y + "px";
-        // }
     }
 }
 fileList.onmouseup = function(evt) {
@@ -437,7 +455,6 @@ fileList.onmouseup = function(evt) {
             evt.preventDefault();
         }
     } else if (evt.button == 0) { // 滑鼠右鍵
-        document.getElementById("selectzone").style.display = "";
         if (evt.target.classList.contains("file") || evt.target.classList.contains("folder")) {
             evt.target.draggable = false;
             if (mouseDownInfo.element == evt.target) {
