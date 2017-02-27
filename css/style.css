@@ -433,7 +433,7 @@ main > menu li[onclick]:hover {
 .pdf:before {
     background-image: url("../images/file types/svg/pdf.svg")
 }
-.photoshop:before {
+.ps:before {
     background-image: url("../images/file types/svg/photoshop.svg")
 }
 .png:before {
@@ -476,14 +476,44 @@ main > menu li[onclick]:hover {
 .wav:before {
     background-image: url("../images/file types/svg/wav.svg")
 }
+.vb:before {
+    background-image: url("../images/file types/svg/vb.svg")
+}
+.sql:before {
+    background-image: url("../images/file types/svg/sql.svg")
+}
 .rar:before {
     background-image: url("../images/file types/svg/rar.svg")
 }
-.js:before {
-    background-image: url("../images/file types/svg/js.svg")
+.pps:before {
+    background-image: url("../images/file types/svg/pps.svg")
+}
+.py:before {
+    background-image: url("../images/file types/svg/py.svg")
+}
+.odt:before {
+    background-image: url("../images/file types/svg/odt.svg")
+}
+.msi:before {
+    background-image: url("../images/file types/svg/msi.svg")
+}
+.mpg:before {
+    background-image: url("../images/file types/svg/mpg.svg")
+}
+.mid:before {
+    background-image: url("../images/file types/svg/mid.svg")
+}
+.log:before {
+    background-image: url("../images/file types/svg/log.svg")
+}
+.jar:before {
+    background-image: url("../images/file types/svg/jar.svg")
 }
 .ico:before {
     background-image: url("../images/file types/svg/ico.svg")
+}
+.gzip:before {
+    background-image: url("../images/file types/svg/gzip.svg")
 }
 .gz:before {
     background-image: url("../images/file types/svg/gz.svg")
@@ -515,12 +545,30 @@ main > menu li[onclick]:hover {
 .bin:before {
     background-image: url("../images/file types/svg/bin.svg")
 }
+.bat:before {
+    background-image: url("../images/file types/svg/bat.svg")
+}
+.bak:before {
+    background-image: url("../images/file types/svg/bak.svg")
+}
+.aspx:before {
+    background-image: url("../images/file types/svg/aspx.svg")
+}
 .asp:before {
     background-image: url("../images/file types/svg/asp.svg")
+}
+.apk:before {
+    background-image: url("../images/file types/svg/apk.svg")
+}
+.aac:before {
+    background-image: url("../images/file types/svg/aac.svg")
 }
 .\37 z:before {
     background-image: url("../images/file types/svg/7z.svg")
 }
 .\33 gp:before {
     background-image: url("../images/file types/svg/3gp.svg")
+}
+.\33 ds:before {
+    background-image: url("../images/file types/svg/3ds.svg")
 }
