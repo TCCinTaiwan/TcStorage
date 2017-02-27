@@ -209,8 +209,10 @@ function raw(file_id, file_name, mime) {
     // window.open('files/raw/' + file_id + '/' + file_name);
 
     // application/octet-stream
-    if (mime.match(/^(video|audio)/g)) {
+    if (mime.match(/^video/g)) {
         floatWindow.getElementsByTagName("video")[0].src = 'files/raw/' + file_id + '/' + file_name;
+    } else if (mime.match(/^audio/g)) {
+        floatWindow.getElementsByTagName("audio")[0].src = 'files/raw/' + file_id + '/' + file_name;
     } else if (mime.match(/^image/g)) {
         floatWindow.getElementsByTagName("div")[0].style.backgroundImage = 'url("files/raw/' + file_id + '/' + file_name + '"';
         floatWindow.getElementsByTagName("div")[0].classList.add("show");
@@ -238,7 +240,9 @@ function preview(element) {
     if (element.mime.match(/^(image|audio|video)/g)) {
         raw(element.file_id, element.file_name, element.mime);
     } else if (element.mime.match(/^application\/octet-stream/g)) {
-        raw(element.file_id, element.file_name, 'video/mpeg');
+        // raw(element.file_id, element.file_name, 'audio/mpeg');
+        raw(element.file_id, element.file_name, 'video/mpeg'); // 由於可能會有畫面，就先導向Video
+        // raw(element.file_id, element.file_name, element.mime);
     } else if (element.mime.match(/^(text|inode\/x-empty)/g)) {
         ace(element.file_id);
     } else {
@@ -501,15 +505,6 @@ fileList.ondblclick = function(evt) {
     if (evt.target.classList.contains("file")) {
         if (evt.button == 0) { // 滑鼠右鍵
             preview(evt.target);
-            // if (evt.target.mime.match(/^(image|audio|video)/g)) {
-            //     raw(evt.target.file_id, evt.target.file_name, evt.target.mime);
-            // } else if (evt.target.mime.match(/^application\/octet-stream/g)) {
-            //     raw(evt.target.file_id, evt.target.file_name, 'video/mpeg');
-            // } else if (evt.target.mime.match(/^(text|inode\/x-empty)/g)) {
-            //     ace(evt.target.file_id);
-            // } else {
-            //     raw(evt.target.file_id, evt.target.file_name, evt.target.mime);
-            // }
         }
     } else if (evt.target.classList.contains("folder") || evt.target.classList.contains("back")) {
         if (evt.button == 0) { // 滑鼠右鍵
@@ -547,11 +542,15 @@ fileList.oncontextmenu = function(evt) {
 };
 document.oncontextmenu = function(evt) {
     evt.preventDefault();
-}
+};
 floatWindow.getElementsByTagName("iframe")[0].onload = function() {
     if (this.src != window.location && this.src != "about:blank") {
-        if (this.contentDocument.contentType.match(/^(video|audio)/g)) {
+        console.log(this.contentDocument.contentType);
+        if (this.contentDocument.contentType.match(/^video/g)) {
             floatWindow.getElementsByTagName("video")[0].src = this.src;
+            this.src = "about:blank";
+        } else if (this.contentDocument.contentType.match(/^audio/g)) {
+            floatWindow.getElementsByTagName("audio")[0].src = this.src;
             this.src = "about:blank";
         } else if (this.contentDocument.contentType.match(/^image/g)) {
             floatWindow.getElementsByTagName("div")[0].style.backgroundImage = 'url("' + this.src + '"';
@@ -564,7 +563,20 @@ floatWindow.getElementsByTagName("iframe")[0].onload = function() {
 };
 floatWindow.getElementsByTagName("video")[0].onloadeddata = function() {
     if (this.src != window.location && this.src != "about:blank") {
+        if (this.videoHeight + this.videoWidth == 0) { // 假如無法抓到畫面，就改用音源播放
+            floatWindow.getElementsByTagName("audio")[0].src = this.src;
+            this.src = "about:blank";
+        } else {
+            floatWindow.classList.add("show");
+            this.classList.add("show");
+            this.play();
+        }
+    }
+};
+floatWindow.getElementsByTagName("audio")[0].onloadeddata = function() {
+    if (this.src != window.location && this.src != "about:blank") {
         floatWindow.classList.add("show");
+        floatWindow.getElementsByTagName("canvas")[0].classList.add("show");
         this.classList.add("show");
         this.play();
     }
@@ -577,17 +589,25 @@ floatWindow.getElementsByTagName("video")[0].onloadeddata = function() {
 // };
 floatWindow.getElementsByTagName("video")[0].onclick = function(evt) {
     evt.stopPropagation();
-}
+};
+floatWindow.getElementsByTagName("audio")[0].onclick = function(evt) {
+    evt.stopPropagation();
+};
 floatWindow.getElementsByTagName("div")[0].onclick = function(evt) {
     evt.stopPropagation();
-}
+};
 floatWindow.onclick = function(evt) {
     floatWindow.classList.remove("show");
     if (floatWindow.getElementsByTagName("iframe")[0].classList.contains("show")) {
         floatWindow.getElementsByTagName("iframe")[0].classList.remove("show");
         floatWindow.getElementsByTagName("iframe")[0].src = "about:blank";
+    } else if (floatWindow.getElementsByTagName("audio")[0].classList.contains("show")) {
+        floatWindow.getElementsByTagName("audio")[0].classList.remove("show");
+        floatWindow.getElementsByTagName("canvas")[0].classList.remove("show");
+        floatWindow.getElementsByTagName("audio")[0].src = "about:blank";
     } else if (floatWindow.getElementsByTagName("video")[0].classList.contains("show")) {
         floatWindow.getElementsByTagName("video")[0].classList.remove("show");
+        floatWindow.getElementsByTagName("canvas")[0].classList.remove("show");
         floatWindow.getElementsByTagName("video")[0].src = "about:blank";
     } else if (floatWindow.getElementsByTagName("div")[0].classList.contains("show")) {
         floatWindow.getElementsByTagName("div")[0].classList.remove("show");
@@ -595,6 +615,79 @@ floatWindow.onclick = function(evt) {
     }
     evt.stopPropagation();
 };
+window.AudioContext = window.AudioContext || window.webkitAudioContext || window.mozAudioContext;
+
+// audio visualizer with controls  https://github.com/wayou/audio-visualizer-with-controls
+window.onload = function() {
+    var audio = document.getElementsByTagName('audio')[0];
+    var ctx = new AudioContext();
+    var analyser = ctx.createAnalyser();
+    var audioSrc = ctx.createMediaElementSource(audio);
+    // we have to connect the MediaElementSource with the analyser 
+    audioSrc.connect(analyser);
+    analyser.connect(ctx.destination);
+    // we could configure the analyser: e.g. analyser.fftSize (for further infos read the spec)
+    // analyser.fftSize = 64;
+    // frequencyBinCount tells you how many values you'll receive from the analyser
+    var frequencyData = new Uint8Array(analyser.frequencyBinCount);
+
+    // we're ready to receive some data!
+    var canvas = document.getElementsByTagName('canvas')[0],
+        cwidth = canvas.width,
+        cheight = canvas.height - 2,
+        meterWidth = 10, //width of the meters in the spectrum
+        gap = 2, //gap between meters
+        capHeight = 2,
+        capStyle = '#fff',
+        meterNum = 800 / (10 + 2), //count of the meters
+        capYPositionArray = []; ////store the vertical position of hte caps for the preivous frame
+    ctx = canvas.getContext('2d'),
+    gradient = ctx.createLinearGradient(0, 0, 0, 300);
+    gradient.addColorStop(1, '#0f0');
+    gradient.addColorStop(0.5, '#ff0');
+    gradient.addColorStop(0, '#f00');
+    // loop
+    function renderFrame() {
+        var array = new Uint8Array(analyser.frequencyBinCount);
+        analyser.getByteFrequencyData(array);
+        var step = Math.round(array.length / meterNum); //sample limited data from the total array
+        ctx.clearRect(0, 0, cwidth, cheight);
+        for (var i = 0; i < meterNum; i++) {
+            var value = array[i * step];
+            if (capYPositionArray.length < Math.round(meterNum)) {
+                capYPositionArray.push(value);
+            };
+            ctx.fillStyle = capStyle;
+            //draw the cap, with transition effect
+            if (value < capYPositionArray[i]) {
+                ctx.fillRect(i * 12, cheight - (--capYPositionArray[i]), meterWidth, capHeight);
+            } else {
+                ctx.fillRect(i * 12, cheight - value, meterWidth, capHeight);
+                capYPositionArray[i] = value;
+            };
+            ctx.fillStyle = gradient; //set the filllStyle to gradient for a better look
+            ctx.fillRect(i * 12 /*meterWidth+gap*/ , cheight - value + capHeight, meterWidth, cheight); //the meter
+        }
+        requestAnimationFrame(renderFrame);
+    }
+    renderFrame();
+    audio.play();
+};
+(function(a, m) {
+    window.GoogleAnalyticsObject = 'ga';
+    window.ga = window.ga || function() {
+        (window.ga.q = window.ga.q || []).push(arguments)
+    },
+    window.ga.l = 1 * new Date();
+    a = document.createElement('script'),
+    m = document.getElementsByTagName('script')[0];
+    a.async = 1;
+    a.src = '//www.google-analytics.com/analytics.js';
+    m.parentNode.insertBefore(a, m)
+})();
+ga('create', 'UA-46794744-6', 'auto');
+ga('send', 'pageview');
+
 listPath(sessionStorage.getItem('path_id') || 0);
 // document.onselectstart = function() {
 //     window.getSelection().removeAllRanges();
