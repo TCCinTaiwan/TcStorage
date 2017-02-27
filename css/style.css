@@ -452,6 +452,75 @@ main > menu li[onclick]:hover {
     background-image: url("../images/file types/svg/psd.svg")
 }
 /* else */
+.yuv:before {
+    background-image: url("../images/file types/svg/yuv.svg")
+}
+.xlsx:before {
+    background-image: url("../images/file types/svg/xlsx.svg")
+}
+.xlr:before {
+    background-image: url("../images/file types/svg/xlr.svg")
+}
+.xhtml:before {
+    background-image: url("../images/file types/svg/xhtml.svg")
+}
+.wmv:before {
+    background-image: url("../images/file types/svg/wmv.svg")
+}
+.wsf:before {
+    background-image: url("../images/file types/svg/wsf.svg")
+}
+.webm:before {
+    background-image: url("../images/file types/svg/webm.svg")
+}
+.wav:before {
+    background-image: url("../images/file types/svg/wav.svg")
+}
+.rar:before {
+    background-image: url("../images/file types/svg/rar.svg")
+}
+.js:before {
+    background-image: url("../images/file types/svg/js.svg")
+}
+.ico:before {
+    background-image: url("../images/file types/svg/ico.svg")
+}
+.gz:before {
+    background-image: url("../images/file types/svg/gz.svg")
+}
+.gif:before {
+    background-image: url("../images/file types/svg/gif.svg")
+}
 .flv:before {
     background-image: url("../images/file types/svg/flv.svg")
+}
+.docx:before {
+    background-image: url("../images/file types/svg/docx.svg")
+}
+.dll:before {
+    background-image: url("../images/file types/svg/dll.svg")
+}
+.db:before {
+    background-image: url("../images/file types/svg/db.svg")
+}
+.cpp:before {
+    background-image: url("../images/file types/svg/cpp.svg")
+}
+.class:before {
+    background-image: url("../images/file types/svg/class.svg")
+}
+.bmp:before {
+    background-image: url("../images/file types/svg/bmp.svg")
+}
+.bin:before {
+    background-image: url("../images/file types/svg/bin.svg")
+}
+.asp:before {
+    background-image: url("../images/file types/svg/asp.svg")
+}
+.\37 z:before {
+    background-image: url("../images/file types/svg/7z.svg")
+}
+.\33 gp:before {
+    background-image: url("../images/file types/svg/3gp.svg")
 }
