@@ -210,20 +210,20 @@ function raw(file_id, file_name, mime) {
 
     // application/octet-stream
     if (mime.match(/^video/g)) {
-        floatWindow.getElementsByTagName("video")[0].src = 'files/raw/' + file_id + '/' + file_name;
+        video.src = 'files/raw/' + file_id + '/' + file_name;
     } else if (mime.match(/^audio/g)) {
-        floatWindow.getElementsByTagName("audio")[0].src = 'files/raw/' + file_id + '/' + file_name;
+        audio.src = 'files/raw/' + file_id + '/' + file_name;
     } else if (mime.match(/^image/g)) {
-        floatWindow.getElementsByTagName("div")[0].style.backgroundImage = 'url("files/raw/' + file_id + '/' + file_name + '"';
-        floatWindow.getElementsByTagName("div")[0].classList.add("show");
+        img.style.backgroundImage = 'url("files/raw/' + file_id + '/' + file_name + '"';
+        img.classList.add("show");
         floatWindow.classList.add("show");
     } else {
-        floatWindow.getElementsByTagName("iframe")[0].src = 'files/raw/' + file_id + '/' + file_name;
+        iframe.src = 'files/raw/' + file_id + '/' + file_name;
 
     }
 }
 function ace(file_id) {
-    floatWindow.getElementsByTagName("iframe")[0].src = 'functions/ace.php?id=' + file_id;
+    iframe.src = 'functions/ace.php?id=' + file_id;
 }
 function reCalc(x1, y1, x2, y2) {
     var minX = Math.max(Math.min(x1, x2), fileList.offsetLeft);
@@ -543,28 +543,32 @@ fileList.oncontextmenu = function(evt) {
 document.oncontextmenu = function(evt) {
     evt.preventDefault();
 };
-floatWindow.getElementsByTagName("iframe")[0].onload = function() {
+iframe.onload = function() {
     if (this.src != window.location && this.src != "about:blank") {
-        console.log(this.contentDocument.contentType);
-        if (this.contentDocument.contentType.match(/^video/g)) {
-            floatWindow.getElementsByTagName("video")[0].src = this.src;
-            this.src = "about:blank";
-        } else if (this.contentDocument.contentType.match(/^audio/g)) {
-            floatWindow.getElementsByTagName("audio")[0].src = this.src;
-            this.src = "about:blank";
-        } else if (this.contentDocument.contentType.match(/^image/g)) {
-            floatWindow.getElementsByTagName("div")[0].style.backgroundImage = 'url("' + this.src + '"';
-            this.src = "about:blank";
-        } else {
-            floatWindow.classList.add("show");
-            this.classList.add("show");
+        if (this.contentDocument) {
+            console.log(this.contentDocument.contentType);
+            if (this.contentDocument.contentType.match(/^video/g)) {
+                video.src = this.src;
+                this.src = "about:blank";
+                return;
+            } else if (this.contentDocument.contentType.match(/^audio/g)) {
+                audio.src = this.src;
+                this.src = "about:blank";
+                return;
+            } else if (this.contentDocument.contentType.match(/^image/g)) {
+                img.style.backgroundImage = 'url("' + this.src + '"';
+                this.src = "about:blank";
+                return;
+            }
         }
+        floatWindow.classList.add("show");
+        this.classList.add("show");
     }
 };
-floatWindow.getElementsByTagName("video")[0].onloadeddata = function() {
+video.onloadeddata = function() {
     if (this.src != window.location && this.src != "about:blank") {
         if (this.videoHeight + this.videoWidth == 0) { // 假如無法抓到畫面，就改用音源播放
-            floatWindow.getElementsByTagName("audio")[0].src = this.src;
+            audio.src = this.src;
             this.src = "about:blank";
         } else {
             floatWindow.classList.add("show");
@@ -573,45 +577,39 @@ floatWindow.getElementsByTagName("video")[0].onloadeddata = function() {
         }
     }
 };
-floatWindow.getElementsByTagName("audio")[0].onloadeddata = function() {
+audio.onloadeddata = function() {
     if (this.src != window.location && this.src != "about:blank") {
         floatWindow.classList.add("show");
-        floatWindow.getElementsByTagName("canvas")[0].classList.add("show");
+        canvas.classList.add("show");
         this.classList.add("show");
         this.play();
     }
 };
-// floatWindow.getElementsByTagName("img")[0].onload = function() {
-//     if (this.src != window.location && this.src != "about:blank") {
-//         floatWindow.classList.add("show");
-//         this.classList.add("show");
-//     }
-// };
-floatWindow.getElementsByTagName("video")[0].onclick = function(evt) {
+video.onclick = function(evt) {
     evt.stopPropagation();
 };
-floatWindow.getElementsByTagName("audio")[0].onclick = function(evt) {
+audio.onclick = function(evt) {
     evt.stopPropagation();
 };
-floatWindow.getElementsByTagName("div")[0].onclick = function(evt) {
+img.onclick = function(evt) {
     evt.stopPropagation();
 };
 floatWindow.onclick = function(evt) {
     floatWindow.classList.remove("show");
-    if (floatWindow.getElementsByTagName("iframe")[0].classList.contains("show")) {
-        floatWindow.getElementsByTagName("iframe")[0].classList.remove("show");
-        floatWindow.getElementsByTagName("iframe")[0].src = "about:blank";
-    } else if (floatWindow.getElementsByTagName("audio")[0].classList.contains("show")) {
-        floatWindow.getElementsByTagName("audio")[0].classList.remove("show");
-        floatWindow.getElementsByTagName("canvas")[0].classList.remove("show");
-        floatWindow.getElementsByTagName("audio")[0].src = "about:blank";
-    } else if (floatWindow.getElementsByTagName("video")[0].classList.contains("show")) {
-        floatWindow.getElementsByTagName("video")[0].classList.remove("show");
-        floatWindow.getElementsByTagName("canvas")[0].classList.remove("show");
-        floatWindow.getElementsByTagName("video")[0].src = "about:blank";
-    } else if (floatWindow.getElementsByTagName("div")[0].classList.contains("show")) {
-        floatWindow.getElementsByTagName("div")[0].classList.remove("show");
-        floatWindow.getElementsByTagName("div")[0].src = "about:blank";
+    if (iframe.classList.contains("show")) {
+        iframe.classList.remove("show");
+        iframe.src = "about:blank";
+    } else if (audio.classList.contains("show")) {
+        audio.classList.remove("show");
+        canvas.classList.remove("show");
+        audio.src = "about:blank";
+    } else if (video.classList.contains("show")) {
+        video.classList.remove("show");
+        canvas.classList.remove("show");
+        video.src = "about:blank";
+    } else if (img.classList.contains("show")) {
+        img.classList.remove("show");
+        img.src = "about:blank";
     }
     evt.stopPropagation();
 };
@@ -623,7 +621,7 @@ window.onload = function() {
     var ctx = new AudioContext();
     var analyser = ctx.createAnalyser();
     var audioSrc = ctx.createMediaElementSource(audio);
-    // we have to connect the MediaElementSource with the analyser 
+    // we have to connect the MediaElementSource with the analyser
     audioSrc.connect(analyser);
     analyser.connect(ctx.destination);
     // we could configure the analyser: e.g. analyser.fftSize (for further infos read the spec)

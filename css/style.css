@@ -145,47 +145,41 @@ menu li {
     background: rgba(0, 0, 0, 0.4);
     display: none;
 }
-#floatWindow > iframe {
+#floatWindow > #iframe {
     background-color: white;
 }
-#floatWindow > canvas,
-#floatWindow > video {
+#floatWindow > #canvas,
+#floatWindow > #video {
     background-color: black;
 }
-#floatWindow > iframe,
-#floatWindow > video,
-#floatWindow > audio,
-#floatWindow > canvas,
-#floatWindow > img,
-#floatWindow > div {
+#floatWindow > #iframe,
+#floatWindow > #video,
+#floatWindow > #audio,
+#floatWindow > #canvas,
+#floatWindow > #img {
     font-size: 16px;
     position: absolute;
     width: calc(100% - 100px);
     height: calc(100% - 40px);
     margin: 30px 50px 10px;
     display: none;
+    top: 0;
 }
-#floatWindow > canvas {
+#floatWindow > #canvas {
     height: calc(100% - 72px);
 }
-#floatWindow > div {
-    /*background: url(files/raw/7/DJSona-Wallpaper-Ethereal.jpg);*/
+#floatWindow > #img {
     background-size: contain;
     background-repeat: no-repeat;
     background-position: 50%;
     background-color: black;
-    /*width: auto;
-    height: auto;
-    max-width: calc(100% - 100px);
-    max-height: calc(100% - 40px);*/
 }
 #floatWindow.show,
-#floatWindow > iframe.show,
-#floatWindow > video.show,
-#floatWindow > audio.show,
-#floatWindow > canvas.show,
-#floatWindow > img.show,
-#floatWindow > div.show {
+#floatWindow > #iframe.show,
+#floatWindow > #video.show,
+#floatWindow > #audio.show,
+#floatWindow > #canvas.show,
+#floatWindow > #img.show {
     display: block;
 }
 main > menu {

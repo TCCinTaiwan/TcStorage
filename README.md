@@ -88,3 +88,7 @@
     - 加入音頻預覽視覺化效果
     - 音頻視覺化微調
     - 擴充附檔名圖示
+* 2017-09-24
+    - 整理.htaccess
+    - 正名floatWindow底下物件(減少擴充功能衝突)
+    - 解決iframe.contentDocument為null錯誤(像是PDF Viewer擴充功能會噴錯)
