@@ -1,3 +1,82 @@
+.breadcrumbs {
+    background: #eee;
+    border-width: 1px;
+    border-style: solid;
+    border-color: #f5f5f5 #e5e5e5 #ccc;
+    -moz-border-radius: 5px;
+    -webkit-border-radius: 5px;
+    border-radius: 5px;
+    -moz-box-shadow: 0 0 2px rgba(0,0,0,.2);
+    -webkit-box-shadow: 0 0 2px rgba(0,0,0,.2);
+    box-shadow: 0 0 2px rgba(0,0,0,.2);
+    /* Clear floats */
+    overflow: hidden;
+    width: 100%;
+}
+
+.breadcrumbs li {
+    float: left;
+    /*padding: .7em 1em .7em 2em;*/
+    padding: 2px 0px 2px 30px;
+    float: left;
+    text-decoration: none;
+    color: #444;
+    position: relative;
+    text-shadow: 0 1px 0 rgba(255,255,255,.5);
+    background-color: #ddd;
+    background-image: -webkit-gradient(linear, left top, right bottom, from(#f5f5f5), to(#ddd));
+    background-image: -webkit-linear-gradient(left, #f5f5f5, #ddd);
+    background-image: -moz-linear-gradient(left, #f5f5f5, #ddd);
+    background-image: -ms-linear-gradient(left, #f5f5f5, #ddd);
+    background-image: -o-linear-gradient(left, #f5f5f5, #ddd);
+    background-image: linear-gradient(to right, #f5f5f5, #ddd);
+}
+.breadcrumbs li:first-child{
+    padding-left: 1em;
+    -moz-border-radius: 5px 0 0 5px;
+    -webkit-border-radius: 5px 0 0 5px;
+    border-radius: 5px 0 0 5px;
+}
+.breadcrumbs li:hover {
+    background: #fff;
+}
+
+.breadcrumbs li::after,
+.breadcrumbs li::before {
+    content: "";
+    position: absolute;
+    top: 50%;
+    margin-top: -1.5em;
+    border-top: 1.5em solid transparent;
+    border-bottom: 1.5em solid transparent;
+    border-left: 1em solid;
+    right: -1em;
+}
+
+.breadcrumbs li::after {
+    z-index: 2;
+    border-left-color: #ddd;
+}
+
+.breadcrumbs li::before {
+    border-left-color: #ccc;
+    right: -1.1em;
+    z-index: 1;
+}
+
+.breadcrumbs li:hover::after {
+    border-left-color: #fff;
+}
+/*.breadcrumbs li:last-child a,
+.breadcrumbs li:last-child a:hover {
+    font-weight: bold;
+    background: none;
+}
+.breadcrumbs li:last-child a::after,
+.breadcrumbs li:last-child a::before {
+    content: normal;
+}*/
+
 body {
     margin: 0;
     height: 100%;
@@ -22,6 +101,7 @@ main {
     pointer-events:none;
     background: rgba(0, 0, 255, 0.3);
     border: 1px solid #0000FF;
+    z-index: 100;
 }
 #dropzone {
     display: none;
@@ -32,6 +112,7 @@ main {
     left: 0;
     pointer-events:none;
     background: rgba(0, 0, 255, 0.1);
+    z-index: 200;
 }
 #dropzone.show {
     display: block;
@@ -55,6 +136,7 @@ menu li {
     padding: 2px 10px;
 }
 #floatWindow {
+    z-index: 100;
     position: absolute;
     width: 100%;
     height: 100%;
@@ -66,11 +148,14 @@ menu li {
 #floatWindow > iframe {
     background-color: white;
 }
+#floatWindow > canvas,
 #floatWindow > video {
     background-color: black;
 }
 #floatWindow > iframe,
 #floatWindow > video,
+#floatWindow > audio,
+#floatWindow > canvas,
 #floatWindow > img,
 #floatWindow > div {
     font-size: 16px;
@@ -80,15 +165,25 @@ menu li {
     margin: 30px 50px 10px;
     display: none;
 }
-/*#floatWindow > img {
-    width: auto;
+#floatWindow > canvas {
+    height: calc(100% - 72px);
+}
+#floatWindow > div {
+    /*background: url(files/raw/7/DJSona-Wallpaper-Ethereal.jpg);*/
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: 50%;
+    background-color: black;
+    /*width: auto;
     height: auto;
     max-width: calc(100% - 100px);
-    max-height: calc(100% - 40px);
-}*/
+    max-height: calc(100% - 40px);*/
+}
 #floatWindow.show,
 #floatWindow > iframe.show,
 #floatWindow > video.show,
+#floatWindow > audio.show,
+#floatWindow > canvas.show,
 #floatWindow > img.show,
 #floatWindow > div.show {
     display: block;
@@ -150,7 +245,15 @@ main > menu li[onclick]:hover {
     margin-left: 200px;
     height: 100%;
     overflow-y: scroll;
+    overflow-x: hidden;
     width: calc(100% - 200px);
+}
+#fileList > ul {
+    cursor: pointer;
+    border-style: solid;
+    border-bottom-width: 1px;
+    font-size: 20px;
+    position: relative;
 }
 #fileList > div {
     /*border-width: 1px;*/
@@ -176,12 +279,14 @@ main > menu li[onclick]:hover {
 }
 #fileList > .back.select,
 #fileList > .folder.select,
-#fileList > .file.select,
-#fileList:not(.context) > .back:hover,
-#fileList:not(.context) > .folder:hover,
-#fileList:not(.context) > .file:hover {
+#fileList > .file.select {
     background-color: #AAAAFF;
 }
+/*#fileList:not(.context) > .back:hover,
+#fileList:not(.context) > .folder:hover,
+#fileList:not(.context) > .file:hover {
+    background-color: #CCCCFF;
+}*/
 #fileList > .back.drop,
 #fileList > .folder.drop,
 #fileList > .file.drop {
@@ -328,7 +433,7 @@ main > menu li[onclick]:hover {
 .pdf:before {
     background-image: url("../images/file types/svg/pdf.svg")
 }
-.photoshop:before {
+.ps:before {
     background-image: url("../images/file types/svg/photoshop.svg")
 }
 .png:before {
@@ -345,4 +450,125 @@ main > menu li[onclick]:hover {
 }
 .psd:before {
     background-image: url("../images/file types/svg/psd.svg")
+}
+/* else */
+.yuv:before {
+    background-image: url("../images/file types/svg/yuv.svg")
+}
+.xlsx:before {
+    background-image: url("../images/file types/svg/xlsx.svg")
+}
+.xlr:before {
+    background-image: url("../images/file types/svg/xlr.svg")
+}
+.xhtml:before {
+    background-image: url("../images/file types/svg/xhtml.svg")
+}
+.wmv:before {
+    background-image: url("../images/file types/svg/wmv.svg")
+}
+.wsf:before {
+    background-image: url("../images/file types/svg/wsf.svg")
+}
+.webm:before {
+    background-image: url("../images/file types/svg/webm.svg")
+}
+.wav:before {
+    background-image: url("../images/file types/svg/wav.svg")
+}
+.vb:before {
+    background-image: url("../images/file types/svg/vb.svg")
+}
+.sql:before {
+    background-image: url("../images/file types/svg/sql.svg")
+}
+.rar:before {
+    background-image: url("../images/file types/svg/rar.svg")
+}
+.pps:before {
+    background-image: url("../images/file types/svg/pps.svg")
+}
+.py:before {
+    background-image: url("../images/file types/svg/py.svg")
+}
+.odt:before {
+    background-image: url("../images/file types/svg/odt.svg")
+}
+.msi:before {
+    background-image: url("../images/file types/svg/msi.svg")
+}
+.mpg:before {
+    background-image: url("../images/file types/svg/mpg.svg")
+}
+.mid:before {
+    background-image: url("../images/file types/svg/mid.svg")
+}
+.log:before {
+    background-image: url("../images/file types/svg/log.svg")
+}
+.jar:before {
+    background-image: url("../images/file types/svg/jar.svg")
+}
+.ico:before {
+    background-image: url("../images/file types/svg/ico.svg")
+}
+.gzip:before {
+    background-image: url("../images/file types/svg/gzip.svg")
+}
+.gz:before {
+    background-image: url("../images/file types/svg/gz.svg")
+}
+.gif:before {
+    background-image: url("../images/file types/svg/gif.svg")
+}
+.flv:before {
+    background-image: url("../images/file types/svg/flv.svg")
+}
+.docx:before {
+    background-image: url("../images/file types/svg/docx.svg")
+}
+.dll:before {
+    background-image: url("../images/file types/svg/dll.svg")
+}
+.db:before {
+    background-image: url("../images/file types/svg/db.svg")
+}
+.cpp:before {
+    background-image: url("../images/file types/svg/cpp.svg")
+}
+.class:before {
+    background-image: url("../images/file types/svg/class.svg")
+}
+.bmp:before {
+    background-image: url("../images/file types/svg/bmp.svg")
+}
+.bin:before {
+    background-image: url("../images/file types/svg/bin.svg")
+}
+.bat:before {
+    background-image: url("../images/file types/svg/bat.svg")
+}
+.bak:before {
+    background-image: url("../images/file types/svg/bak.svg")
+}
+.aspx:before {
+    background-image: url("../images/file types/svg/aspx.svg")
+}
+.asp:before {
+    background-image: url("../images/file types/svg/asp.svg")
+}
+.apk:before {
+    background-image: url("../images/file types/svg/apk.svg")
+}
+.aac:before {
+    background-image: url("../images/file types/svg/aac.svg")
+}
+.\37 z:before {
+    background-image: url("../images/file types/svg/7z.svg")
+}
+.\33 gp:before {
+    background-image: url("../images/file types/svg/3gp.svg")
+}
+.\33 ds:before {
+    background-image: url("../images/file types/svg/3ds.svg")
 }

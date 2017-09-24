@@ -67,9 +67,12 @@ function listPath(path) {
                 var info = typeof xhr.response == "string" ?　JSON.parse(xhr.response) : xhr.response;
                 fileList.innerHTML = "";
                 path_id = info.path_info.id;
-                var full_path_div = document.createElement("div");
-                full_path_div.className = "fullPath";
-                fileList.appendChild(full_path_div);
+                // var full_path_div = document.createElement("div");
+                // full_path_div.className = "fullPath";
+                // fileList.appendChild(full_path_div);
+                var breadcrumbs_ul = document.createElement("ul");
+                breadcrumbs_ul.className = "breadcrumbs";
+                fileList.appendChild(breadcrumbs_ul);
                 if (info.path_info.root_id != null) {
                     var back_div = document.createElement("div");
                     back_div.className = "back";
@@ -116,6 +119,17 @@ function listPath(path) {
                 for (var index = 0; index < elements.length; index++) {
                     elements[index].innerText = info.path_info.full_path;
                 }
+                var elements = document.getElementsByClassName("breadcrumbs");
+                for (var index = 0; index < elements.length; index++) {
+                    elements[index].innerHTML = info.path_info.breadcrumbs.map(function(elem){return "<li path_id='" + elem.id + "'>" + elem.name + "</li>";}).join("");
+                }
+                // <ul id="breadcrumbs">
+                //     <li><a href="">Lorem ipsum</a></li>
+                //     <li><a href="">Vivamus nisi eros</a></li>
+                //     <li><a href="">Nulla sed lorem risus</a></li>
+                //     <li><a href="">Nam iaculis commodo</a></li>
+                //     <li><a href="" class="current">Current crumb</a></li>
+                // </ul>
                 elements = document.getElementsByClassName("path");
                 for (var index = 0; index < elements.length; index++) {
                     elements[index].innerText = info.path_info.name;
@@ -195,10 +209,14 @@ function raw(file_id, file_name, mime) {
     // window.open('files/raw/' + file_id + '/' + file_name);
 
     // application/octet-stream
-    if (mime.match(/^(video|audio)/g)) {
+    if (mime.match(/^video/g)) {
         floatWindow.getElementsByTagName("video")[0].src = 'files/raw/' + file_id + '/' + file_name;
+    } else if (mime.match(/^audio/g)) {
+        floatWindow.getElementsByTagName("audio")[0].src = 'files/raw/' + file_id + '/' + file_name;
     } else if (mime.match(/^image/g)) {
-        floatWindow.getElementsByTagName("img")[0].src = 'files/raw/' + file_id + '/' + file_name;
+        floatWindow.getElementsByTagName("div")[0].style.backgroundImage = 'url("files/raw/' + file_id + '/' + file_name + '"';
+        floatWindow.getElementsByTagName("div")[0].classList.add("show");
+        floatWindow.classList.add("show");
     } else {
         floatWindow.getElementsByTagName("iframe")[0].src = 'files/raw/' + file_id + '/' + file_name;
 
@@ -210,12 +228,65 @@ function ace(file_id) {
 function reCalc(x1, y1, x2, y2) {
     var minX = Math.max(Math.min(x1, x2), fileList.offsetLeft);
     var maxX = Math.min(Math.max(x1, x2), fileList.offsetLeft + fileList.clientWidth - 2);
-    var minY = Math.max(Math.min(y1, y2), fileList.offsetTop);
+    var minY = Math.max(Math.min(y1, y2), fileList.offsetTop + document.getElementsByClassName("breadcrumbs")[0].offsetHeight);
     var maxY = Math.min(Math.max(y1, y2), fileList.offsetTop + fileList.clientHeight - 2);
     document.getElementById("selectzone").style.left = minX + 'px';
     document.getElementById("selectzone").style.top = minY + 'px';
     document.getElementById("selectzone").style.width = maxX - minX + 'px';
     document.getElementById("selectzone").style.height = maxY - minY + 'px';
+}
+function preview(element) {
+    element = typeof element == "undefined" ? (selectedElements.length > 0 ? selectedElements[0] : null) : element;
+    if (element.mime.match(/^(image|audio|video)/g)) {
+        raw(element.file_id, element.file_name, element.mime);
+    } else if (element.mime.match(/^application\/octet-stream/g)) {
+        // raw(element.file_id, element.file_name, 'audio/mpeg');
+        raw(element.file_id, element.file_name, 'video/mpeg'); // 由於可能會有畫面，就先導向Video
+        // raw(element.file_id, element.file_name, element.mime);
+    } else if (element.mime.match(/^(text|inode\/x-empty)/g)) {
+        ace(element.file_id);
+    } else {
+        raw(element.file_id, element.file_name, element.mime);
+        // ace(evt.target.file_id);
+    }
+}
+function download(element) {
+    element = typeof element == "undefined" ? (selectedElements.length > 0 ? selectedElements[0] : null) : element;
+    window.open('files/raw/' + element.file_id + '/' + element.file_name);
+
+}
+function finishSelect(evt) {
+    if (document.getElementById("selectzone").style.display != "") {
+        var zone = {
+            top: parseInt(document.getElementById("selectzone").style.top.replace("px", "")),
+            left: parseInt(document.getElementById("selectzone").style.left.replace("px", "")),
+            height: parseInt(document.getElementById("selectzone").style.height.replace("px", "")),
+            width: parseInt(document.getElementById("selectzone").style.width.replace("px", ""))
+        };
+        document.getElementById("selectzone").style.display = "";
+        if (evt.button == 0) { // 滑鼠右鍵
+            if (!evt.ctrlKey) {
+                selectedElements.clearSelected();
+            }
+            elements = fileList.getElementsByTagName("div");
+            for (var index = 0; index < elements.length; index++) {
+                if (zone.top < elements[index].offsetTop + elements[index].offsetHeight) {
+                    if (zone.top + zone.height > elements[index].offsetTop) {
+                        // console.log(index, zone.top + zone.height , elements[index].offsetTop);
+                        if (evt.ctrlKey) {
+                            if (selectedElements.includes(elements[index])) {
+                                selectedElements.removeSelected(elements[index]);
+                            } else {
+                                selectedElements.addSelect(elements[index]);
+                            }
+                        } else {
+                            selectedElements.addSelect(elements[index]);
+                        }
+                    }
+                }
+            }
+        }
+    }
 }
 document.ondragover = function(evt) { // 拖曳經過
     if (evt.dataTransfer.types.includes("application/json")) { // Firfox: includes->contains
@@ -261,6 +332,7 @@ fileList.ondragstart = function(evt) { // 開始拖曳
         //     }
         //     selectedElements.addSelect(evt.target);
         // }
+        document.getElementById("selectzone").style.display = "";
         for (var i = 0; i < selectedElements.length; i++) {
             selectedElements[i].classList.add("drag");
         }
@@ -329,6 +401,7 @@ fileList.ondrop = function(evt) { // 放下拖曳
 document.onselectstart = function(evt) { //開始選擇
     evt.preventDefault();
 };
+document.onmouseup = finishSelect;
 fileList.onmousedown = function(evt) {
     if (document.getElementById("context").classList.contains("show")) {
         document.getElementById("context").classList.remove(selectedElements.type());
@@ -361,7 +434,7 @@ fileList.onmousedown = function(evt) {
             // document.getElementById("selectzone").style.height = "0px";
         }
     }
-}
+};
 document.getElementById("context").onclick = function(evt) {
     if (document.getElementById("context").classList.contains("show")) {
         document.getElementById("context").classList.remove(selectedElements.type());
@@ -371,27 +444,16 @@ document.getElementById("context").onclick = function(evt) {
             selectedElements.clearSelected();
         }
     }
-}
+};
 onmousemove = function(evt) {
     if (mouseDownInfo.x != null) {
-        // console.log(evt);
-        reCalc(mouseDownInfo.x, mouseDownInfo.y, evt.clientX, evt.clientY);
-        // if (mouseDownInfo.x > evt.clientX) {
-        //     document.getElementById("selectzone").style.top = evt.clientX + "px";
-        //     document.getElementById("selectzone").style.width = mouseDownInfo.x - evt.clientX + "px";
-        // } else {
-        //     document.getElementById("selectzone").style.top = mouseDownInfo.x + "px";
-        //     document.getElementById("selectzone").style.width = evt.clientX - mouseDownInfo.x + "px";
-        // }
-        // if (mouseDownInfo.y > evt.clientY) {
-        //     document.getElementById("selectzone").style.left = evt.clientY + "px";
-        //     document.getElementById("selectzone").style.height = mouseDownInfo.y - evt.clientY + "px";
-        // } else {
-        //     document.getElementById("selectzone").style.left = mouseDownInfo.y + "px";
-        //     document.getElementById("selectzone").style.height = evt.clientY - mouseDownInfo.y + "px";
-        // }
+        if (evt.buttons == 0) {
+            finishSelect(evt);
+        } else {
+            reCalc(mouseDownInfo.x, mouseDownInfo.y, evt.clientX, evt.clientY);
+        }
     }
-}
+};
 fileList.onmouseup = function(evt) {
     if (evt.button == 1) { // 滑鼠中鍵
         if (evt.target.classList.contains("file")) {
@@ -402,7 +464,6 @@ fileList.onmouseup = function(evt) {
             evt.preventDefault();
         }
     } else if (evt.button == 0) { // 滑鼠右鍵
-        document.getElementById("selectzone").style.display = "";
         if (evt.target.classList.contains("file") || evt.target.classList.contains("folder")) {
             evt.target.draggable = false;
             if (mouseDownInfo.element == evt.target) {
@@ -413,59 +474,55 @@ fileList.onmouseup = function(evt) {
                         selectedElements.addSelect(evt.target);
                     }
                 } else {
-                    if (selectedElements.includes(evt.target)) {
+                    if (selectedElements.includes(evt.target)) { // 單擊已選擇
                         console.log("rename");
                     } else {
                         selectedElements.clearSelected();
-                        selectedElements.addSelect(evt.target);
+                        selectedElements.addSelect(evt.target); // 單擊未選擇
                     }
                 }
             }
-        } else if (evt.target.classList.contains("back")) {
-            if (mouseDownInfo.element == evt.target) {
-                if (!evt.ctrlKey) {
-                    listPath(evt.target.path_id);
-                }
+        } else if (evt.target.nodeName == "LI") {
+            if (!evt.ctrlKey) {
+                listPath(evt.target.attributes["path_id"].value);
             }
         }
+        // else if (evt.target.classList.contains("back")) {
+        //     if (mouseDownInfo.element == evt.target) {
+        //         if (!evt.ctrlKey) {
+        //             listPath(evt.target.path_id);
+        //         }
+        //     }
+        // }
     }
     mouseDownInfo = {
         element: null,
         x: null,
         y: null
     };
-}
+};
 fileList.ondblclick = function(evt) {
     if (evt.target.classList.contains("file")) {
         if (evt.button == 0) { // 滑鼠右鍵
-            if (evt.target.mime.match(/^(image|audio|video)/g)) {
-                raw(evt.target.file_id, evt.target.file_name, evt.target.mime);
-            } else if (evt.target.mime.match(/^application\/octet-stream/g)) {
-                raw(evt.target.file_id, evt.target.file_name, 'video/mpeg');
-            } else if (evt.target.mime.match(/^(text|inode\/x-empty)/g)) {
-                ace(evt.target.file_id);
-            } else {
-                raw(evt.target.file_id, evt.target.file_name, evt.target.mime);
-                // ace(evt.target.file_id);
-            }
+            preview(evt.target);
         }
     } else if (evt.target.classList.contains("folder") || evt.target.classList.contains("back")) {
         if (evt.button == 0) { // 滑鼠右鍵
             listPath(evt.target.path_id);
         }
     }
-}
+};
 fileList.onmouseover = function(evt) {
     if (fileList.classList.contains("context")) { // 當已經有右鍵就不顯示Hover
         evt.preventDefault();
     }
-}
+};
 fileList.onmouseout = function(evt) {
     mouseDownInfo.element = null;
     if (!selectedElements.includes(evt.target)) {
         evt.target.draggable = false;
     }
-}
+};
 fileList.oncontextmenu = function(evt) {
     if (!selectedElements.includes(evt.target)) {
         selectedElements.addSelect(evt.target);
@@ -485,14 +542,18 @@ fileList.oncontextmenu = function(evt) {
 };
 document.oncontextmenu = function(evt) {
     evt.preventDefault();
-}
+};
 floatWindow.getElementsByTagName("iframe")[0].onload = function() {
     if (this.src != window.location && this.src != "about:blank") {
-        if (this.contentDocument.contentType.match(/^(video|audio)/g)) {
+        console.log(this.contentDocument.contentType);
+        if (this.contentDocument.contentType.match(/^video/g)) {
             floatWindow.getElementsByTagName("video")[0].src = this.src;
             this.src = "about:blank";
+        } else if (this.contentDocument.contentType.match(/^audio/g)) {
+            floatWindow.getElementsByTagName("audio")[0].src = this.src;
+            this.src = "about:blank";
         } else if (this.contentDocument.contentType.match(/^image/g)) {
-            floatWindow.getElementsByTagName("img")[0].src = this.src;
+            floatWindow.getElementsByTagName("div")[0].style.backgroundImage = 'url("' + this.src + '"';
             this.src = "about:blank";
         } else {
             floatWindow.classList.add("show");
@@ -502,37 +563,132 @@ floatWindow.getElementsByTagName("iframe")[0].onload = function() {
 };
 floatWindow.getElementsByTagName("video")[0].onloadeddata = function() {
     if (this.src != window.location && this.src != "about:blank") {
+        if (this.videoHeight + this.videoWidth == 0) { // 假如無法抓到畫面，就改用音源播放
+            floatWindow.getElementsByTagName("audio")[0].src = this.src;
+            this.src = "about:blank";
+        } else {
+            floatWindow.classList.add("show");
+            this.classList.add("show");
+            this.play();
+        }
+    }
+};
+floatWindow.getElementsByTagName("audio")[0].onloadeddata = function() {
+    if (this.src != window.location && this.src != "about:blank") {
         floatWindow.classList.add("show");
+        floatWindow.getElementsByTagName("canvas")[0].classList.add("show");
         this.classList.add("show");
         this.play();
     }
 };
-floatWindow.getElementsByTagName("img")[0].onload = function() {
-    if (this.src != window.location && this.src != "about:blank") {
-        floatWindow.classList.add("show");
-        this.classList.add("show");
-    }
-};
+// floatWindow.getElementsByTagName("img")[0].onload = function() {
+//     if (this.src != window.location && this.src != "about:blank") {
+//         floatWindow.classList.add("show");
+//         this.classList.add("show");
+//     }
+// };
 floatWindow.getElementsByTagName("video")[0].onclick = function(evt) {
     evt.stopPropagation();
-}
-floatWindow.getElementsByTagName("img")[0].onclick = function(evt) {
+};
+floatWindow.getElementsByTagName("audio")[0].onclick = function(evt) {
     evt.stopPropagation();
-}
+};
+floatWindow.getElementsByTagName("div")[0].onclick = function(evt) {
+    evt.stopPropagation();
+};
 floatWindow.onclick = function(evt) {
     floatWindow.classList.remove("show");
     if (floatWindow.getElementsByTagName("iframe")[0].classList.contains("show")) {
         floatWindow.getElementsByTagName("iframe")[0].classList.remove("show");
         floatWindow.getElementsByTagName("iframe")[0].src = "about:blank";
+    } else if (floatWindow.getElementsByTagName("audio")[0].classList.contains("show")) {
+        floatWindow.getElementsByTagName("audio")[0].classList.remove("show");
+        floatWindow.getElementsByTagName("canvas")[0].classList.remove("show");
+        floatWindow.getElementsByTagName("audio")[0].src = "about:blank";
     } else if (floatWindow.getElementsByTagName("video")[0].classList.contains("show")) {
         floatWindow.getElementsByTagName("video")[0].classList.remove("show");
+        floatWindow.getElementsByTagName("canvas")[0].classList.remove("show");
         floatWindow.getElementsByTagName("video")[0].src = "about:blank";
-    } else if (floatWindow.getElementsByTagName("img")[0].classList.contains("show")) {
-        floatWindow.getElementsByTagName("img")[0].classList.remove("show");
-        floatWindow.getElementsByTagName("img")[0].src = "about:blank";
+    } else if (floatWindow.getElementsByTagName("div")[0].classList.contains("show")) {
+        floatWindow.getElementsByTagName("div")[0].classList.remove("show");
+        floatWindow.getElementsByTagName("div")[0].src = "about:blank";
     }
     evt.stopPropagation();
 };
+window.AudioContext = window.AudioContext || window.webkitAudioContext || window.mozAudioContext;
+
+// audio visualizer with controls  https://github.com/wayou/audio-visualizer-with-controls
+window.onload = function() {
+    var audio = document.getElementsByTagName('audio')[0];
+    var ctx = new AudioContext();
+    var analyser = ctx.createAnalyser();
+    var audioSrc = ctx.createMediaElementSource(audio);
+    // we have to connect the MediaElementSource with the analyser 
+    audioSrc.connect(analyser);
+    analyser.connect(ctx.destination);
+    // we could configure the analyser: e.g. analyser.fftSize (for further infos read the spec)
+    // analyser.fftSize = 64;
+    // frequencyBinCount tells you how many values you'll receive from the analyser
+    var frequencyData = new Uint8Array(analyser.frequencyBinCount);
+
+    // we're ready to receive some data!
+    var canvas = document.getElementsByTagName('canvas')[0],
+        cwidth = canvas.width,
+        cheight = canvas.height - 2,
+        meterWidth = 6, //width of the meters in the spectrum
+        gap = 1, //gap between meters
+        capHeight = 2,
+        capStyle = '#fff',
+        meterNum = 150, //count of the meters
+        // meterNum = 800 / (10 + 2), //count of the meters
+        capYPositionArray = []; ////store the vertical position of hte caps for the preivous frame
+    ctx = canvas.getContext('2d'),
+    gradient = ctx.createLinearGradient(0, 0, 0, 300);
+    gradient.addColorStop(1, '#0f0');
+    gradient.addColorStop(0.5, '#ff0');
+    gradient.addColorStop(0, '#f00');
+    // loop
+    function renderFrame() {
+        var array = new Uint8Array(analyser.frequencyBinCount);
+        analyser.getByteFrequencyData(array);
+        var step = Math.round(array.length / meterNum); //sample limited data from the total array
+        ctx.clearRect(0, 0, cwidth, cheight);
+        for (var i = 0; i < meterNum; i++) {
+            var value = array[i * step];
+            if (capYPositionArray.length < Math.round(meterNum)) {
+                capYPositionArray.push(value);
+            };
+            ctx.fillStyle = capStyle;
+            //draw the cap, with transition effect
+            if (value < capYPositionArray[i]) {
+                ctx.fillRect(i * (meterWidth + gap), cheight - (--capYPositionArray[i]), meterWidth, capHeight);
+            } else {
+                ctx.fillRect(i * (meterWidth + gap), cheight - value, meterWidth, capHeight);
+                capYPositionArray[i] = value;
+            };
+            ctx.fillStyle = gradient; //set the filllStyle to gradient for a better look
+            ctx.fillRect(i * (meterWidth + gap) /*meterWidth+gap*/ , cheight - value + capHeight, meterWidth, cheight); //the meter
+        }
+        requestAnimationFrame(renderFrame);
+    }
+    renderFrame();
+    audio.play();
+};
+(function(a, m) {
+    window.GoogleAnalyticsObject = 'ga';
+    window.ga = window.ga || function() {
+        (window.ga.q = window.ga.q || []).push(arguments)
+    },
+    window.ga.l = 1 * new Date();
+    a = document.createElement('script'),
+    m = document.getElementsByTagName('script')[0];
+    a.async = 1;
+    a.src = '//www.google-analytics.com/analytics.js';
+    m.parentNode.insertBefore(a, m)
+})();
+ga('create', 'UA-46794744-6', 'auto');
+ga('send', 'pageview');
+
 listPath(sessionStorage.getItem('path_id') || 0);
 // document.onselectstart = function() {
 //     window.getSelection().removeAllRanges();

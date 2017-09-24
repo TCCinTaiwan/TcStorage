@@ -23,7 +23,7 @@
         $serial_number++;
     }
     $sql = "INSERT INTO `" . $type . "s` (`id`, `path_id`, `name`) VALUES (NULL, '" . $path_id . "', '" . $serial_number_name . "');";
-    echo $sql;
+    // echo $sql;
     mysqli_query($conn, $sql);
     if ($type == "file") {
         $tmp_name = (isset($_POST['tmp_name']) ? $_POST['tmp_name'] : null);

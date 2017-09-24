@@ -55,7 +55,7 @@
         }
     } else {
         http_response_code(404);
-        die("Error: File not found.");
+        die("Error: File not found." . $file_location);
     }
     // // header("Content-Type: " . mime_content_type($file_location));
     // // header('Content-Type: application/octet-stream');
