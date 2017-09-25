@@ -5,6 +5,7 @@
 * @date 2017-09-25
 * @since 2017-09-25 0.1.0 TCC: 排除資料夾移動到自己
 * @since 2017-09-25 0.1.0 TCC: 移除與finishSelect功能衝突部分程式
+* @since 2017-09-25 0.1.0 TCC: 右鍵非選擇項目要先移除所選
 */
 var mouseDownInfo = {
     element: null,
@@ -21,13 +22,13 @@ selectedElements.clearSelected = function() {
     }
 }
 selectedElements.addSelect = function(element) {
-    console.log("selectedElements add " + (element.path_id || element.file_id))
+    // console.log("selectedElements add " + (element.path_id || element.file_id))
     element.draggable = true;
     element.classList.add("select");
     this.push(element);
 }
 selectedElements.removeSelected = function(element) {
-    console.log("selectedElements remove " + (element.path_id || element.file_id))
+    // console.log("selectedElements remove " + (element.path_id || element.file_id))
     element.draggable = false;
     element.classList.remove("select");
     this.splice(selectedElements.indexOf(element), 1);
@@ -573,6 +574,7 @@ fileList.onmouseout = function(evt) {
 };
 fileList.oncontextmenu = function(evt) {
     if (!selectedElements.includes(evt.target)) {
+        selectedElements.clearSelected(); //右鍵非選擇項目要先移除所選
         selectedElements.addSelect(evt.target);
     }
     fileList.classList.add("context");
