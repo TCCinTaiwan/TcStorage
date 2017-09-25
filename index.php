@@ -20,7 +20,7 @@
             <li onclick="listPath();">重新整理</li>
             <li onclick="createNew('folder');">建立新資料夾</li>
             <li onclick="createNew('file');">建立空白檔案</li>
-            <li>批次命名</li>
+            <li onclick="rename();">批次命名</li>
             <li>設定</li>
             <li onclick="github();">Github</li>
         </menu>
@@ -34,16 +34,16 @@
         <li for="file">編輯</li>
         <li for="file" onclick="download();">下載</li>
         <li for="folder folders file files multiple">刪除</li>
-        <li for="folder folders file files">重新命名</li>
+        <li for="folder folders file files" onclick="rename();">重新命名</li>
         <li for="any" onclick="createNew('folder');">建立新資料夾</li>
         <li for="any" onclick="createNew('file');">建立空白檔案</li>
         <li for="any" onclick="listPath();">重新整理</li>
     </menu>
     <div id="floatWindow">
-        <iframe id="iframe"></iframe><!-- Ace Editer -->
-        <canvas id="canvas" width="800" height="300"></canvas>
-        <video id="video" autoplay autobuffer controls></video><!-- poster="images/loading.gif" -->
-        <audio id="audio" autoplay autobuffer controls></audio>
+        <iframe id="iframe">你的瀏覽器不支援&lt;iframe&gt;</iframe><!-- Ace Editer -->
+        <canvas id="canvas" width="800" height="300">你的瀏覽器不支援&lt;canvas&gt;</canvas>
+        <video id="video" autoplay autobuffer controls>你的瀏覽器不支援&lt;video&gt;</video><!-- poster="images/loading.gif" -->
+        <audio id="audio" autoplay autobuffer controls>你的瀏覽器不支援&lt;audio&gt;</audio>
         <div id="img"></div>
     </div>
     <script src="js/main.js" charset="utf-8" async></script>

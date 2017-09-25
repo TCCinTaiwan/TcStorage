@@ -4,6 +4,7 @@ var mouseDownInfo = {
     y: null
 };
 var selectedElements = [];
+var clickTimer = null;
 selectedElements.clearSelected = function() {
     var element = null;
     while (element = this.pop()) {
@@ -172,27 +173,25 @@ function createNew(type, name) {
     fd.append('type', type);
     xhr.send(fd);
 }
-function move(type, id, old_path, new_path) {
-    // alert("move " + type + "(" + id + ") to " + evt.target.path_id);
-    type = (type || "folder") == "folder" ? "folder" : "file";
-    id = id || null;
-    old_path = old_path || path_id;
+function move(element, old_path, new_path) {
+    type = getElementType(element);
+    id = element.path_id || element.file_id || null;
     new_path = new_path || null;
-    if (id && old_path && new_path) {
+    console.log("move " + type + "(" + id + ") to " + new_path);
+    if (id && new_path) {
         var xhr = new XMLHttpRequest();
         xhr.onreadystatechange = function() {
             if (xhr.readyState == 4) { // 確認 readyState
                 if (xhr.status == 200) { // 確認 status
-                    listPath();
+                    listPath();//有時沒跑到這http://127.0.0.1/TcStorage/functions/move.php?id=33&new_path=7&type=file
                 }
             }
         };
-        xhr.open('POST', 'functions/move.php'); // 傳資料給new.php
         var fd = new FormData();
         fd.append('id', id);
-        fd.append('from', old_path);
-        fd.append('to', new_path);
+        fd.append('new_path', new_path);
         fd.append('type', type);
+        xhr.open('POST', 'functions/move.php'); // 傳資料給move.php
         xhr.send(fd);
     }
 }
@@ -248,6 +247,42 @@ function preview(element) {
     } else {
         raw(element.file_id, element.file_name, element.mime);
         // ace(evt.target.file_id);
+    }
+}
+function getElementType(element) {
+    return element.classList.contains("folder") ? "folder" : (element.classList.contains("file") ? "file" : null);
+}
+function rename() {
+    var new_name = null;
+    if (selectedElements.length == 0) {
+        alert("沒有選擇檔案");
+    } else {
+        new_name = prompt("重新命名" + (typeof selectedElements[0].file_id == "undefined" ? "資料夾" : "檔案"), selectedElements[0].innerText);
+        if (new_name == selectedElements[0].innerText) {
+            new_name = null;
+        }
+    }
+    for (var i = 0; i < selectedElements.length; i++) {
+        var element = selectedElements[i];
+        var type = getElementType(element);
+        var id = element.path_id || element.file_id || null;
+        console.log("rename " + type + "(" + id + ")\"" + element.innerText + "\"");
+        if (id && new_name && type) {
+            var xhr = new XMLHttpRequest();
+            xhr.onreadystatechange = function() {
+                if (xhr.readyState == 4) { // 確認 readyState
+                    if (xhr.status == 200) { // 確認 status
+                        listPath();
+                    }
+                }
+            };
+            xhr.open('POST', 'functions/rename.php', false); // 傳資料給rename.php 非同步是因為會取到相同名字
+            var fd = new FormData();
+            fd.append('id', id);
+            fd.append('new_name', new_name);
+            fd.append('type', type);
+            xhr.send(fd);
+        }
     }
 }
 function download(element) {
@@ -367,32 +402,28 @@ fileList.ondrop = function(evt) { // 放下拖曳
             // 上傳完成
             listPath();
         };
+        xhr_upload.onprogress = function (evt) {
+            // 上傳進度
+            if (evt.lengthComputable) {
+                var complete = (evt.loaded / evt.total * 100 | 0);
+                if(100 == complete) {
+                    complete = 99.9;
+                }
+                console.log(complete);
+            }
+        }
         xhr_upload.open('POST', 'functions/upload.php'); // 傳資料給upload.php
-        // xhr_upload.upload.onprogress = function (evt) {
-        //     // 上傳進度
-        //     if (evt.lengthComputable) {
-        //         var complete = (evt.loaded / evt.total * 100 | 0);
-        //         if(100 == complete) {
-        //             complete = 99.9;
-        //         }
-        //     }
-        // }
         xhr_upload.send(upload_fd); // 開始上傳
     } else if (evt.dataTransfer.types.includes("application/json")) {
         if (evt.target.classList.contains("folder") || evt.target.classList.contains("back")) {
             evt.preventDefault();
             var data = JSON.parse(evt.dataTransfer.getData("application/json"));
             if (data == "select") {
-                for (var i = 0; i < selectedElements.length; i++) {
-                    var element = selectedElements[i], type, id;
-                    if (element.classList.contains("folder")) {
-                        type = "folder";
-                        id = element.path_id;
-                    } else if (element.classList.contains("file")) {
-                        type = "file";
-                        id = element.file_id;
+                if (!selectedElements.includes(evt.target)) { // 排除拖曳到自己
+                    for (var i = 0; i < selectedElements.length; i++) {
+                        var element = selectedElements[i]; // , type, id
+                        move(element, path_id, evt.target.path_id);
                     }
-                    move(type, id, path_id, evt.target.path_id)
                 }
             }
         }
@@ -475,7 +506,12 @@ fileList.onmouseup = function(evt) {
                     }
                 } else {
                     if (selectedElements.includes(evt.target)) { // 單擊已選擇
-                        console.log("rename");
+                        //需判斷單擊雙擊
+                        if (evt.detail == 1) {
+                            clickTimer = setTimeout(rename, 300); // .bind(null, evt.target)
+                        } else {
+                            clearTimeout(clickTimer);
+                        }
                     } else {
                         selectedElements.clearSelected();
                         selectedElements.addSelect(evt.target); // 單擊未選擇
@@ -586,9 +622,19 @@ audio.onloadeddata = function() {
     }
 };
 video.onclick = function(evt) {
+    if (this.paused) {
+        this.play();
+    } else {
+        this.pause();
+    }
     evt.stopPropagation();
 };
 audio.onclick = function(evt) {
+    if (this.paused) {
+        this.play();
+    } else {
+        this.pause();
+    }
     evt.stopPropagation();
 };
 img.onclick = function(evt) {
@@ -675,14 +721,14 @@ window.onload = function() {
 (function(a, m) {
     window.GoogleAnalyticsObject = 'ga';
     window.ga = window.ga || function() {
-        (window.ga.q = window.ga.q || []).push(arguments)
+        (window.ga.q = window.ga.q || []).push(arguments);
     },
     window.ga.l = 1 * new Date();
     a = document.createElement('script'),
     m = document.getElementsByTagName('script')[0];
     a.async = 1;
     a.src = '//www.google-analytics.com/analytics.js';
-    m.parentNode.insertBefore(a, m)
+    m.parentNode.insertBefore(a, m);
 })();
 ga('create', 'UA-46794744-6', 'auto');
 ga('send', 'pageview');

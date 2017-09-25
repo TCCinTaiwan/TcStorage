@@ -92,3 +92,11 @@
     - 整理.htaccess
     - 正名floatWindow底下物件(減少擴充功能衝突)
     - 解決iframe.contentDocument為null錯誤(像是PDF Viewer擴充功能會噴錯)
+* 2017-09-25
+    - 加入video/audio按一下播放暫停
+    - 修正move為直接傳element
+    - 重新命名檔案/資料夾功能簡單實現
+    - 修正移動檔案錯誤
+    - 流水號檔名判斷，假如已經是流水號檔名，則繼續編號
+    - 開始寫檔頭/函數註解
+    - 排除資料夾移動到自己
