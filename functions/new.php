@@ -1,6 +1,6 @@
 <?
     /**
-    *  創建檔案/資料夾
+    *  創建檔案/資料夾(與upload共用)
     *
     *  @version 0.1.1
     *  @author TCC <john987john987@gmail.com>
@@ -16,26 +16,6 @@
     $path_id = (isset($_POST['path_id']) ? $_POST['path_id'] : 0);
     $type = (isset($_POST['type']) ? $_POST['type'] : "folder");
     $file = isset($_POST['name']) ? $_POST['name'] : ($type == "folder" ? "新資料夾" : "空白檔案");
-    // 同名問題
-    // if ($type == "file") {
-    //     $file_info = pathinfo($file);
-    // }
-    // $serial_number = 0;
-    // while (true) {
-    //     if ($type == "file") {
-    //         $serial_number_name = $file_info['filename'] . ($serial_number > 0 ? "(" . $serial_number . ")" : "") . ($file_info['extension'] == "" ? "" : ".") . $file_info['extension'];
-    //     } else {
-    //         $serial_number_name = $file . ($serial_number > 0 ? "(" . $serial_number . ")" : "");
-    //     }
-    //     $sql = "SELECT COUNT(*) AS count FROM `" . $type . "s` WHERE `path_id` = '" . $path_id . "' and `name` = '" . $serial_number_name . "';";
-    //     $result = mysqli_query($conn, $sql);
-    //     if ($row = mysqli_fetch_assoc($result)) {
-    //         if ($row["count"] == 0) {
-    //             break;
-    //         }
-    //     }
-    //     $serial_number++;
-    // }
     $file = getNameWithSerial($file, $type, $path_id);
     $sql = "INSERT INTO `" . $type . "s` (`id`, `path_id`, `name`) VALUES (NULL, '" . $path_id . "', '" . $file . "');";
     // echo $sql;
@@ -49,7 +29,7 @@
             move_uploaded_file($tmp_name, "../files/" . mysqli_insert_id($conn));
         }
 
-        // 要將當前目錄標示為有檔案
+        // 要將當前目錄標示為有檔案 TODO: 函式化
         $id = $path_id;
         do {
             $sql = "UPDATE `folders` SET `descendant` = '1' WHERE `id` = '" . $id . "';";

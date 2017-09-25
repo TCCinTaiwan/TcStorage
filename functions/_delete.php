@@ -1,1 +1,4 @@
-<!-- DELETE FROM `files` WHERE `files`.`id` = 15; -->
+<?
+    // "DELETE FROM `files` WHERE `files`.`id` = 15;"
+
+?>

@@ -1,11 +1,14 @@
 /**
 * TcStorage
-* @version 0.1.0
+* @version 0.1.1
 * @author TCC <john987john987@gmail.com>
 * @date 2017-09-25
 * @since 2017-09-25 0.1.0 TCC: 排除資料夾移動到自己
 * @since 2017-09-25 0.1.0 TCC: 移除與finishSelect功能衝突部分程式
 * @since 2017-09-25 0.1.0 TCC: 右鍵非選擇項目要先移除所選
+* @since 2017-09-25 0.1.1 TCC: F2快捷鍵
+* @since 2017-09-25 0.1.1 TCC: 拖曳複製(僅圖示無實現功能)
+* @since 2017-09-25 0.1.1 TCC: 麵包屑不顯示右鍵選單
 */
 var mouseDownInfo = {
     element: null,
@@ -268,6 +271,7 @@ function rename() {
     if (selectedElements.length == 0) {
         alert("沒有選擇檔案");
     } else {
+        // TODO: 假如是多檔案，有可能要保持檔名，不同副檔名
         new_name = prompt("重新命名" + (typeof selectedElements[0].file_id == "undefined" ? "資料夾" : "檔案"), selectedElements[0].innerText);
         if (new_name == selectedElements[0].innerText) {
             new_name = null;
@@ -302,6 +306,7 @@ function download(element) {
 
 }
 function finishSelect(evt) {
+    // TODO: 返回上一層不可選 TODO: Shift鍵連續選取
     if (document.getElementById("selectzone").style.display != "") {
         var zone = {
             top: parseInt(document.getElementById("selectzone").style.top.replace("px", "")),
@@ -334,15 +339,22 @@ function finishSelect(evt) {
         }
     }
 }
+document.onkeydown = function(evt) {
+    console.log(evt.key);
+    if (evt.keyCode == 113) { // F2
+        rename();
+    }
+}
 document.ondragover = function(evt) { // 拖曳經過
     if (evt.dataTransfer.types.includes("application/json")) { // Firfox: includes->contains
         if (evt.target.classList.contains("folder")) {
             evt.preventDefault();
-            evt.dataTransfer.dropEffect = 'move';
-            // evt.dataTransfer.dropEffect = evt.ctrlKey ? 'copy' : 'move';
+            // evt.dataTransfer.dropEffect = 'move';
+            evt.dataTransfer.dropEffect = evt.ctrlKey ? 'copy' : 'move';
         } else if (evt.target.classList.contains("back")) {
             evt.preventDefault();
-            evt.dataTransfer.dropEffect = 'move';
+            // evt.dataTransfer.dropEffect = 'move';
+            evt.dataTransfer.dropEffect = evt.ctrlKey ? 'copy' : 'move';
         } else {
             // evt.preventDefault();
             // evt.dataTransfer.dropEffect = 'copy';
@@ -433,6 +445,7 @@ fileList.ondrop = function(evt) { // 放下拖曳
                 if (!selectedElements.includes(evt.target)) { // 排除拖曳到自己
                     for (var i = 0; i < selectedElements.length; i++) {
                         var element = selectedElements[i]; // , type, id
+                        // TODO: ctrlKey ? copy : move;
                         move(element, path_id, evt.target.path_id);
                     }
                 }
@@ -573,22 +586,24 @@ fileList.onmouseout = function(evt) {
     }
 };
 fileList.oncontextmenu = function(evt) {
-    if (!selectedElements.includes(evt.target)) {
-        selectedElements.clearSelected(); //右鍵非選擇項目要先移除所選
-        selectedElements.addSelect(evt.target);
+    if (!document.getElementsByClassName("breadcrumbs")[0].contains(evt.target)) { // 麵包屑不顯示選單
+        if (!selectedElements.includes(evt.target)) {
+            selectedElements.clearSelected(); //右鍵非選擇項目要先移除所選
+            selectedElements.addSelect(evt.target);
+        }
+        fileList.classList.add("context");
+        document.getElementById("context").classList.add("show");
+        document.getElementById("context").classList.add(selectedElements.type());
+        document.getElementById("context").style.top = evt.clientY + 'px';
+        // console.log(fileList.scrollLeft + fileList.clientWidth, evt.clientX + document.getElementById("context").clientWidth);
+        console.log(evt, fileList.offsetLeft, fileList.clientWidth, evt.clientX, document.getElementById("context").clientWidth);
+        if (fileList.offsetLeft + fileList.clientWidth < evt.clientX + document.getElementById("context").clientWidth) {
+            document.getElementById("context").style.left = fileList.offsetLeft + fileList.clientWidth - document.getElementById("context").clientWidth + 'px';
+        } else {
+            document.getElementById("context").style.left = evt.clientX + 'px';
+        }
+        evt.preventDefault();
     }
-    fileList.classList.add("context");
-    document.getElementById("context").classList.add("show");
-    document.getElementById("context").classList.add(selectedElements.type());
-    document.getElementById("context").style.top = evt.clientY + 'px';
-    // console.log(fileList.scrollLeft + fileList.clientWidth, evt.clientX + document.getElementById("context").clientWidth);
-    console.log(evt, fileList.offsetLeft, fileList.clientWidth, evt.clientX, document.getElementById("context").clientWidth);
-    if (fileList.offsetLeft + fileList.clientWidth < evt.clientX + document.getElementById("context").clientWidth) {
-        document.getElementById("context").style.left = fileList.offsetLeft + fileList.clientWidth - document.getElementById("context").clientWidth + 'px';
-    } else {
-        document.getElementById("context").style.left = evt.clientX + 'px';
-    }
-    evt.preventDefault();
 };
 document.oncontextmenu = function(evt) {
     evt.preventDefault();
