@@ -1,3 +1,11 @@
+/**
+* TcStorage
+* @version 0.1.0
+* @author TCC <john987john987@gmail.com>
+* @date 2017-09-25
+* @since 2017-09-25 0.1.0 TCC: 排除資料夾移動到自己
+* @since 2017-09-25 0.1.0 TCC: 移除與finishSelect功能衝突部分程式
+*/
 var mouseDownInfo = {
     element: null,
     x: null,
@@ -13,11 +21,13 @@ selectedElements.clearSelected = function() {
     }
 }
 selectedElements.addSelect = function(element) {
+    console.log("selectedElements add " + (element.path_id || element.file_id))
     element.draggable = true;
     element.classList.add("select");
     this.push(element);
 }
 selectedElements.removeSelected = function(element) {
+    console.log("selectedElements remove " + (element.path_id || element.file_id))
     element.draggable = false;
     element.classList.remove("select");
     this.splice(selectedElements.indexOf(element), 1);
@@ -498,13 +508,7 @@ fileList.onmouseup = function(evt) {
         if (evt.target.classList.contains("file") || evt.target.classList.contains("folder")) {
             evt.target.draggable = false;
             if (mouseDownInfo.element == evt.target) {
-                if (evt.ctrlKey) {
-                    if (selectedElements.includes(evt.target)) {
-                        selectedElements.removeSelected(evt.target);
-                    } else {
-                        selectedElements.addSelect(evt.target);
-                    }
-                } else {
+                if (!evt.ctrlKey) {
                     if (selectedElements.includes(evt.target)) { // 單擊已選擇
                         //需判斷單擊雙擊
                         if (evt.detail == 1) {
@@ -512,11 +516,19 @@ fileList.onmouseup = function(evt) {
                         } else {
                             clearTimeout(clickTimer);
                         }
-                    } else {
-                        selectedElements.clearSelected();
-                        selectedElements.addSelect(evt.target); // 單擊未選擇
                     }
+                    // else { // 與finishSelect功能衝突
+                    //     selectedElements.clearSelected();
+                    //     selectedElements.addSelect(evt.target); // 單擊未選擇
+                    // }
                 }
+                // else {
+                //     if (selectedElements.includes(evt.target)) { // 與finishSelect功能衝突
+                //         selectedElements.removeSelected(evt.target);
+                //     } else {
+                //         selectedElements.addSelect(evt.target);
+                //     }
+                // }
             }
         } else if (evt.target.nodeName == "LI") {
             if (!evt.ctrlKey) {
