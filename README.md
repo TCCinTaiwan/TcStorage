@@ -105,3 +105,8 @@
     - F2快捷鍵
     - 拖曳複製(僅圖示無實現功能)
     - 麵包屑不顯示右鍵選單
+* 2017-09-26
+    - 加入LRC歌詞
+    - 更新Google Analytics
+    - $blockScrolling = Infinity;
+    - 補上ACE漏掉的擴充功能引用(移到index.php)

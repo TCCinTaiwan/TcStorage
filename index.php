@@ -7,6 +7,15 @@
 <!DOCTYPE html>
 <html>
 <head>
+    <!-- Global Site Tag (gtag.js) - Google Analytics -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-107040564-1"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments)};
+        gtag('js', new Date());
+        gtag('config', 'UA-107040564-1');
+    </script>
+
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <title>檔案管家</title>
@@ -42,6 +51,7 @@
     <div id="floatWindow">
         <iframe id="iframe">你的瀏覽器不支援&lt;iframe&gt;</iframe><!-- Ace Editer -->
         <canvas id="canvas" width="800" height="300">你的瀏覽器不支援&lt;canvas&gt;</canvas>
+        <div id="lyric"><div></div></div>
         <video id="video" autoplay autobuffer controls>你的瀏覽器不支援&lt;video&gt;</video><!-- poster="images/loading.gif" -->
         <audio id="audio" autoplay autobuffer controls>你的瀏覽器不支援&lt;audio&gt;</audio>
         <div id="img"></div>

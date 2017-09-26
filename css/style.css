@@ -1,3 +1,11 @@
+/**
+* TcStorage Stylesheet
+* @version 0.1.0
+* @author TCC <john987john987@gmail.com>
+* @date 2017-09-26
+* @since 2017-09-26 0.1.0 TCC: 加入Lyric格式
+*/
+
 .breadcrumbs {
     background: #eee;
     border-width: 1px;
@@ -156,7 +164,8 @@ menu li {
 #floatWindow > #video,
 #floatWindow > #audio,
 #floatWindow > #canvas,
-#floatWindow > #img {
+#floatWindow > #img,
+#floatWindow > #lyric {
     font-size: 16px;
     position: absolute;
     width: calc(100% - 100px);
@@ -165,8 +174,17 @@ menu li {
     display: none;
     top: 0;
 }
-#floatWindow > #canvas {
+#floatWindow > #canvas,
+#floatWindow > #lyric {
     height: calc(100% - 72px);
+}
+#floatWindow > #lyric > div {
+    color: white;
+    text-align: center;
+    bottom: 50%;
+    font-size: 20px;
+    position: absolute;
+    width: 100%;
 }
 #floatWindow > #img {
     background-size: contain;
@@ -179,6 +197,7 @@ menu li {
 #floatWindow > #video.show,
 #floatWindow > #audio.show,
 #floatWindow > #canvas.show,
+#floatWindow > #lyric.show,
 #floatWindow > #img.show {
     display: block;
 }

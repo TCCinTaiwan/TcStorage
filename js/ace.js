@@ -1,3 +1,11 @@
+/**
+* Ace Editor Config
+* @version 0.1.0
+* @author TCC <john987john987@gmail.com>
+* @date 2017-09-26
+* @since 2017-09-26 0.1.0 TCC: $blockScrolling = Infinity;
+* @since 2017-09-26 0.1.0 TCC: 補上ACE漏掉的擴充功能引用
+*/
 var files = files || [{id: null, name: '', content: '', sessions: null}];
 var fileIndex = 0;
 var tabContainer = document.getElementsByClassName("tabs")[0];
@@ -123,6 +131,7 @@ function reloadMode() {
     e.session.setMode(e.getModeForPath(files[fileIndex].name).mode);
 }
 
+e.$blockScrolling = Infinity;
 e.on('changeSelection', updateCursorPosition);
 e.on('changeMode', updateMode);
 e.getModeForPath = ace.require("ace/ext/modelist").getModeForPath;
@@ -134,6 +143,8 @@ ace.require("ace/ext/language_tools");
 ace.require("ace/ext/emmet");
 ace.require("ace/ext/old_ie");
 ace.require("ace/ext/linking");
+ace.require("ace/ext/spellcheck");
+ace.require("ace/ext/elastic_tabstops_lite");
 e.setTheme("ace/theme/monokai");
 e.setOptions({
     // readOnly: true,

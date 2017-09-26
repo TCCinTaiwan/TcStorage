@@ -1,4 +1,11 @@
 <?
+    /**
+    * Ace Editor
+    * @version 0.1.0
+    * @author TCC <john987john987@gmail.com>
+    * @date 2017-09-26
+    * @since 2017-09-26 0.1.0 TCC: 補上ACE漏掉的擴充功能引用
+    */
     include_once 'connect.inc';
     $baseurl = str_replace(realpath($_SERVER['DOCUMENT_ROOT']), "", realpath(dirname(__FILE__))) . "\\"; // 確保引用時，相對路徑的url
     $fileIdList = array_keys(array_flip(explode(",", isset($_POST['id']) ? $_POST['id'] : (isset($_GET['id']) ? $_GET['id'] : ""))));
@@ -65,6 +72,8 @@
 <script src="<?=$baseurl;?>../lib/ace-builds/src/ext-keybinding_menu.js"></script><!-- 快捷鍵清單 -->
 <script src="<?=$baseurl;?>../lib/ace-builds/src/ext-old_ie.js"></script><!-- IE7 -->
 <script src="<?=$baseurl;?>../lib/ace-builds/src/ext-linking.js"></script>
+<script src="<?=$baseurl;?>../lib/ace-builds/src/ext-spellcheck.js"></script>
+<script src="<?=$baseurl;?>../lib/ace-builds/src/ext-elastic_tabstops_lite.js"></script>
 <script src="<?=$baseurl;?>../js/ext-hoverlink.js"></script>
 
 <!-- <script src="https://ace.c9.io/build/src/ace.js"></script>

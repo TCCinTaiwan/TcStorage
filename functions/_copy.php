@@ -1,6 +1,6 @@
 <?
     /**
-    *  刪除檔案/資料夾
+    *  複製檔案/資料夾
     *
     *  @version 0.1.0
     *  @author TCC <john987john987@gmail.com>
@@ -11,6 +11,5 @@
     *  @param Number $_POST['new_path'] 目標資料夾ID
     *  @param String $_POST['type'] 檔案/資料夾
     */
-    // "DELETE FROM `files` WHERE `files`.`id` = 15;"
-    // unlink();
+    // copy(, );
 ?>

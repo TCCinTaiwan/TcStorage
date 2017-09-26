@@ -2,13 +2,16 @@
 * TcStorage
 * @version 0.1.1
 * @author TCC <john987john987@gmail.com>
-* @date 2017-09-25
+* @date 2017-09-26
 * @since 2017-09-25 0.1.0 TCC: 排除資料夾移動到自己
 * @since 2017-09-25 0.1.0 TCC: 移除與finishSelect功能衝突部分程式
 * @since 2017-09-25 0.1.0 TCC: 右鍵非選擇項目要先移除所選
 * @since 2017-09-25 0.1.1 TCC: F2快捷鍵
 * @since 2017-09-25 0.1.1 TCC: 拖曳複製(僅圖示無實現功能)
 * @since 2017-09-25 0.1.1 TCC: 麵包屑不顯示右鍵選單
+* @since 2017-09-26 0.1.2 TCC: 更新Google Analytics(移到index.php)
+* @since 2017-09-26 0.1.2 TCC: 加入LRC歌詞
+* @since 2017-09-26 0.1.2 TCC: LRC歌詞支援多行(必須相同時間)
 */
 var mouseDownInfo = {
     element: null,
@@ -226,6 +229,7 @@ function raw(file_id, file_name, mime) {
         video.src = 'files/raw/' + file_id + '/' + file_name;
     } else if (mime.match(/^audio/g)) {
         audio.src = 'files/raw/' + file_id + '/' + file_name;
+        getLyric(file_id);
     } else if (mime.match(/^image/g)) {
         img.style.backgroundImage = 'url("files/raw/' + file_id + '/' + file_name + '"';
         img.classList.add("show");
@@ -302,11 +306,12 @@ function rename() {
 }
 function download(element) {
     element = typeof element == "undefined" ? (selectedElements.length > 0 ? selectedElements[0] : null) : element;
-    window.open('files/raw/' + element.file_id + '/' + element.file_name);
+    window.open('files/download/' + element.file_id + '/' + element.file_name);
 
 }
 function finishSelect(evt) {
-    // TODO: 返回上一層不可選 TODO: Shift鍵連續選取
+    // TODO: 滾輪偏移 TODO: 返回上一層不可選 TODO: Shift鍵連續選取
+    console.log("finishSelect");
     if (document.getElementById("selectzone").style.display != "") {
         var zone = {
             top: parseInt(document.getElementById("selectzone").style.top.replace("px", "")),
@@ -500,7 +505,7 @@ document.getElementById("context").onclick = function(evt) {
         }
     }
 };
-onmousemove = function(evt) {
+window.onmousemove = function(evt) {
     if (mouseDownInfo.x != null) {
         if (evt.buttons == 0) {
             finishSelect(evt);
@@ -618,6 +623,7 @@ iframe.onload = function() {
                 return;
             } else if (this.contentDocument.contentType.match(/^audio/g)) {
                 audio.src = this.src;
+                // getLyric(file_id);
                 this.src = "about:blank";
                 return;
             } else if (this.contentDocument.contentType.match(/^image/g)) {
@@ -634,9 +640,11 @@ video.onloadeddata = function() {
     if (this.src != window.location && this.src != "about:blank") {
         if (this.videoHeight + this.videoWidth == 0) { // 假如無法抓到畫面，就改用音源播放
             audio.src = this.src;
+            // getLyric(file_id);
             this.src = "about:blank";
         } else {
             floatWindow.classList.add("show");
+            lyric.classList.remove("show");
             this.classList.add("show");
             this.play();
         }
@@ -645,11 +653,71 @@ video.onloadeddata = function() {
 audio.onloadeddata = function() {
     if (this.src != window.location && this.src != "about:blank") {
         floatWindow.classList.add("show");
+        lyric.classList.add("show");
         canvas.classList.add("show");
         this.classList.add("show");
+        // extIndex = this.src.lastIndexOf('.');
+        // if (extIndex != -1) {
+        //     console.log(this.src.substr(0, extIndex) + ".lrc");
+        //     getLyric(this.src.substr(0, extIndex) + ".lrc");
+        // }
         this.play();
     }
 };
+audio.ontimeupdate = function(evt) {
+    if (lyric.lyric) {
+        var i = 0;
+        for (; i < lyric.lyric.length && this.currentTime >= lyric.lyric[i][0]; ++i) {}
+        if (--i >= 0 && i < lyric.lyric.length) {
+            lyric.children[0].innerText = lyric.lyric[i][1];
+        }
+    }
+}
+function getLyric(id) {
+    var xhr = new XMLHttpRequest();
+    xhr.onreadystatechange = function() {
+        if (xhr.readyState == 4) { // 確認 readyState
+            if (xhr.status == 200) { // 確認 status
+                lyric.lyric = parseLyric(xhr.response.split("\n"));
+                console.dir(lyric.lyric);
+            }
+        }
+    };
+    xhr.responseType = 'text';
+    xhr.open('POST', "functions/lyric.php"); // 傳資料給lyric.php
+    var fd = new FormData();
+    fd.append('id', id);
+    xhr.send(fd);
+}
+function parseLyric(lines) {
+    var pattern = /\[\d{2}:\d{2}.\d{2}\]/g, result = [];
+    while (!pattern.test(lines[0])) {
+        lines = lines.slice(1);
+    };
+    lines[lines.length - 1].length === 0 && lines.pop();
+    lines.forEach(function(value) {
+        // [mm:ss.ms]
+        var time = value.match(pattern), value = value.replace(pattern, '');
+        time.forEach(function(value2) {
+            var time = value2.slice(1, -1).split(':');
+            time = parseInt(time[0], 10) * 60 + parseFloat(time[1]);
+            var i = 0;
+            for (; i < result.length && result[i][0] <= time; ++i) { // 按照順序插入(升冪)
+                if (result[i][0] == time) {
+                    result[i][1] += value;
+                    return;
+                }
+            }
+            // console.log(i, value);
+            result.splice(i, 0, [time, value]);
+        });
+    });
+    console.dir(result);
+    // result.sort(function(a, b) {
+    //     return a[0] - b[0];
+    // });
+    return result;
+}
 video.onclick = function(evt) {
     if (this.paused) {
         this.play();
@@ -677,10 +745,12 @@ floatWindow.onclick = function(evt) {
     } else if (audio.classList.contains("show")) {
         audio.classList.remove("show");
         canvas.classList.remove("show");
+        lyric.classList.remove("show");
         audio.src = "about:blank";
     } else if (video.classList.contains("show")) {
         video.classList.remove("show");
         canvas.classList.remove("show");
+        lyric.classList.remove("show");
         video.src = "about:blank";
     } else if (img.classList.contains("show")) {
         img.classList.remove("show");
@@ -747,21 +817,6 @@ window.onload = function() {
     renderFrame();
     audio.play();
 };
-(function(a, m) {
-    window.GoogleAnalyticsObject = 'ga';
-    window.ga = window.ga || function() {
-        (window.ga.q = window.ga.q || []).push(arguments);
-    },
-    window.ga.l = 1 * new Date();
-    a = document.createElement('script'),
-    m = document.getElementsByTagName('script')[0];
-    a.async = 1;
-    a.src = '//www.google-analytics.com/analytics.js';
-    m.parentNode.insertBefore(a, m);
-})();
-ga('create', 'UA-46794744-6', 'auto');
-ga('send', 'pageview');
-
 listPath(sessionStorage.getItem('path_id') || 0);
 // document.onselectstart = function() {
 //     window.getSelection().removeAllRanges();
