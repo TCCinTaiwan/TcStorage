@@ -30,12 +30,12 @@
             <li onclick="createNew('folder');">建立新資料夾</li>
             <li onclick="createNew('file');">建立空白檔案</li>
             <li onclick="rename();">批次命名</li>
-            <li>設定</li>
+            <!-- <li>設定</li> -->
             <li onclick="github();">Github</li>
         </menu>
         <div id="fileList"></div>
         <div id="dropzone"></div>
-        <div id="selectzone"></div>
+        <!-- <div id="selectzone"></div> -->
     </main>
     <menu id="context" type="context">
         <li for="folder">開啟</li>

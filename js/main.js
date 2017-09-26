@@ -1,8 +1,8 @@
 /**
 * TcStorage
-* @version 0.1.4
+* @version 0.1.5
 * @author TCC <john987john987@gmail.com>
-* @date 2017-09-26
+* @date 2017-09-27
 * @since 2017-09-25 0.1.0 TCC: 排除資料夾移動到自己
 * @since 2017-09-25 0.1.0 TCC: 移除與finishSelect功能衝突部分程式
 * @since 2017-09-25 0.1.0 TCC: 右鍵非選擇項目要先移除所選
@@ -15,6 +15,10 @@
 * @since 2017-09-26 0.1.3 TCC: LRC歌詞播完清空
 * @since 2017-09-26 0.1.3 TCC: 刪除功能實現
 * @since 2017-09-26 0.1.4 TCC: Media播放完結束浮窗
+* @since 2017-09-27 0.1.5 TCC: 把selectzone移到fileList底下
+* @since 2017-09-27 0.1.5 TCC: 解決滾輪偏移
+* @since 2017-09-27 0.1.5 TCC: 處理拖曳到自己顯示BUG
+* @since 2017-09-27 0.1.5 TCC: 設定"回上一層"不可選
 */
 var mouseDownInfo = {
     element: null,
@@ -88,9 +92,6 @@ function listPath(path) {
                 var info = typeof xhr.response == "string" ?　JSON.parse(xhr.response) : xhr.response;
                 fileList.innerHTML = "";
                 path_id = info.path_info.id;
-                // var full_path_div = document.createElement("div");
-                // full_path_div.className = "fullPath";
-                // fileList.appendChild(full_path_div);
                 var breadcrumbs_ul = document.createElement("ul");
                 breadcrumbs_ul.className = "breadcrumbs";
                 fileList.appendChild(breadcrumbs_ul);
@@ -136,10 +137,14 @@ function listPath(path) {
                     // file_div.draggable = true;
                     fileList.appendChild(file_div);
                 }
-                var elements = document.getElementsByClassName("fullPath");
-                for (var index = 0; index < elements.length; index++) {
-                    elements[index].innerText = info.path_info.full_path;
-                }
+                var selectzone_div = document.createElement("div");
+                selectzone_div.className = "selectzone";
+                fileList.appendChild(selectzone_div);
+                // 填充資訊
+                // var elements = document.getElementsByClassName("fullPath");
+                // for (var index = 0; index < elements.length; index++) {
+                //     elements[index].innerText = info.path_info.full_path;
+                // }
                 var elements = document.getElementsByClassName("breadcrumbs");
                 for (var index = 0; index < elements.length; index++) {
                     elements[index].innerHTML = info.path_info.breadcrumbs.map(function(elem){return "<li path_id='" + elem.id + "'>" + elem.name + "</li>";}).join("");
@@ -239,14 +244,14 @@ function ace(file_id) {
     iframe.src = 'functions/ace.php?id=' + file_id;
 }
 function reCalc(x1, y1, x2, y2) {
-    var minX = Math.max(Math.min(x1, x2), fileList.offsetLeft);
-    var maxX = Math.min(Math.max(x1, x2), fileList.offsetLeft + fileList.clientWidth - 2);
-    var minY = Math.max(Math.min(y1, y2), fileList.offsetTop + document.getElementsByClassName("breadcrumbs")[0].offsetHeight);
-    var maxY = Math.min(Math.max(y1, y2), fileList.offsetTop + fileList.clientHeight - 2);
-    document.getElementById("selectzone").style.left = minX + 'px';
-    document.getElementById("selectzone").style.top = minY + 'px';
-    document.getElementById("selectzone").style.width = maxX - minX + 'px';
-    document.getElementById("selectzone").style.height = maxY - minY + 'px';
+    var minX = Math.max(Math.min(x1, x2), fileList.offsetLeft) - fileList.offsetLeft;
+    var maxX = Math.min(Math.max(x1, x2), fileList.offsetLeft + fileList.clientWidth - 2) - fileList.offsetLeft; //  +
+    var minY = Math.max(Math.min(y1, y2), fileList.offsetTop + document.getElementsByClassName("breadcrumbs")[0].offsetHeight + document.getElementsByClassName("back")[0].offsetHeight);
+    var maxY = Math.min(Math.max(y1, y2), fileList.offsetTop + fileList.scrollHeight - 2);
+    document.getElementsByClassName("selectzone")[0].style.left = minX + 'px';
+    document.getElementsByClassName("selectzone")[0].style.top = minY + 'px';
+    document.getElementsByClassName("selectzone")[0].style.width = maxX - minX + 'px';
+    document.getElementsByClassName("selectzone")[0].style.height = maxY - minY + 'px';
 }
 function preview(element) {
     element = typeof element == "undefined" ? (selectedElements.length > 0 ? selectedElements[0] : null) : element;
@@ -329,16 +334,17 @@ function download(element) {
 
 }
 function finishSelect(evt) {
-    // TODO: 滾輪偏移 TODO: 返回上一層不可選 TODO: Shift鍵連續選取
+    // TODO: Shift鍵連續選取
     console.log("finishSelect");
-    if (document.getElementById("selectzone").style.display != "") {
+    if (document.getElementsByClassName("selectzone")[0].style.display != "") {
+        document.getElementsByClassName("selectzone")[0].style.display = "";
         var zone = {
-            top: parseInt(document.getElementById("selectzone").style.top.replace("px", "")),
-            left: parseInt(document.getElementById("selectzone").style.left.replace("px", "")),
-            height: parseInt(document.getElementById("selectzone").style.height.replace("px", "")),
-            width: parseInt(document.getElementById("selectzone").style.width.replace("px", ""))
+            top: parseInt(document.getElementsByClassName("selectzone")[0].style.top.replace("px", "")),
+            left: parseInt(document.getElementsByClassName("selectzone")[0].style.left.replace("px", "")),
+            height: parseInt(document.getElementsByClassName("selectzone")[0].style.height.replace("px", "")),
+            width: parseInt(document.getElementsByClassName("selectzone")[0].style.width.replace("px", ""))
         };
-        document.getElementById("selectzone").style.display = "";
+        console.dir(evt);
         if (evt.button == 0) { // 滑鼠右鍵
             if (!evt.ctrlKey) {
                 selectedElements.clearSelected();
@@ -369,12 +375,11 @@ document.onkeydown = function(evt) {
         rename();
     }
 }
-document.ondragover = function(evt) { // 拖曳經過
+document.ondragover = function(evt) { // 拖曳經過 TODO: 旁邊顯示目的地資料夾名稱
     if (evt.dataTransfer.types.includes("application/json")) { // Firfox: includes->contains
         if (evt.target.classList.contains("folder")) {
             evt.preventDefault();
-            // evt.dataTransfer.dropEffect = 'move';
-            evt.dataTransfer.dropEffect = evt.ctrlKey ? 'copy' : 'move';
+            evt.dataTransfer.dropEffect = evt.ctrlKey ? 'copy' : selectedElements.includes(evt.target) ? 'none' : 'move'; // 排除拖曳到自己
         } else if (evt.target.classList.contains("back")) {
             evt.preventDefault();
             // evt.dataTransfer.dropEffect = 'move';
@@ -414,7 +419,7 @@ fileList.ondragstart = function(evt) { // 開始拖曳
         //     }
         //     selectedElements.addSelect(evt.target);
         // }
-        document.getElementById("selectzone").style.display = "";
+        document.getElementsByClassName("selectzone")[0].style.display = "";
         for (var i = 0; i < selectedElements.length; i++) {
             selectedElements[i].classList.add("drag");
         }
@@ -469,7 +474,20 @@ fileList.ondrop = function(evt) { // 放下拖曳
                 if (!selectedElements.includes(evt.target)) { // 排除拖曳到自己
                     for (var i = 0; i < selectedElements.length; i++) {
                         var element = selectedElements[i]; // , type, id
-                        // TODO: ctrlKey ? copy : move;
+                        /*
+                         TODO: ctrlKey ? copy : [self] ? none : move;
+                            if self {
+                                if ctrl {
+                                    copy to same path
+                                }
+                            } else {
+                                if ctrl {
+                                    copy to sub path
+                                } else {
+                                    move to sub path
+                                }
+                            }
+                        */
                         move(element, path_id, evt.target.path_id);
                     }
                 }
@@ -478,7 +496,7 @@ fileList.ondrop = function(evt) { // 放下拖曳
     }
 };
 document.onselectstart = function(evt) { //開始選擇
-    evt.preventDefault();
+    // evt.preventDefault();
 };
 document.onmouseup = finishSelect;
 fileList.onmousedown = function(evt) {
@@ -496,7 +514,7 @@ fileList.onmousedown = function(evt) {
             mouseDownInfo = {
                 element: evt.target,
                 x: evt.clientX,
-                y: evt.clientY
+                y: evt.clientY + fileList.scrollTop
             }
             if (evt.target.classList.contains("file") || evt.target.classList.contains("folder")) {
                 if (evt.offsetX <= 34) { // 點的位置是ICON
@@ -504,13 +522,11 @@ fileList.onmousedown = function(evt) {
                     return;
                 }
             }
-            document.getElementById("selectzone").style.display = "block";
-            // console.log(evt);
+
+            // TODO: 假如按下的點不再框框內，要重置selectzone大小，或者back、breadcrumbs不要觸發selectzone
             reCalc(mouseDownInfo.x, mouseDownInfo.y, mouseDownInfo.x, mouseDownInfo.y);
-            // document.getElementById("selectzone").style.top =  + "px";
-            // document.getElementById("selectzone").style.left =  + "px";
-            // document.getElementById("selectzone").style.width = "0px";
-            // document.getElementById("selectzone").style.height = "0px";
+            document.getElementsByClassName("selectzone")[0].style.display = "block";
+            // console.log(evt);
         }
     }
 };
@@ -529,7 +545,8 @@ window.onmousemove = function(evt) {
         if (evt.buttons == 0) {
             finishSelect(evt);
         } else {
-            reCalc(mouseDownInfo.x, mouseDownInfo.y, evt.clientX, evt.clientY);
+            // TODO: 選取框到邊邊滾動滾輪，可以試看看觸發選取事件
+            reCalc(mouseDownInfo.x, mouseDownInfo.y, evt.clientX, evt.clientY + fileList.scrollTop);
         }
     }
 };

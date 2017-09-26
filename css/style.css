@@ -1,9 +1,11 @@
 /**
 * TcStorage Stylesheet
-* @version 0.1.0
+* @version 0.1.2
 * @author TCC <john987john987@gmail.com>
-* @date 2017-09-26
+* @date 2017-09-27
 * @since 2017-09-26 0.1.0 TCC: 加入Lyric格式
+* @since 2017-09-27 0.1.1 TCC: 把selectzone移到fileList底下
+* @since 2017-09-27 0.1.2 TCC: 修改"回上一層"顏色
 */
 
 .breadcrumbs {
@@ -102,14 +104,6 @@ main {
     -moz-user-select: none;
     -ms-user-select: none;
     user-select: none;
-}
-#selectzone {
-    display: none;
-    position: absolute;
-    pointer-events:none;
-    background: rgba(0, 0, 255, 0.3);
-    border: 1px solid #0000FF;
-    z-index: 100;
 }
 #dropzone {
     display: none;
@@ -270,12 +264,15 @@ main > menu li[onclick]:hover {
 }
 #fileList > div {
     /*border-width: 1px;*/
-    border-style: solid;
+    border-style: dotted;
     border-bottom-width: 1px;
     font-size: 20px;
     background-color: #CCFFCC;
     width: 100%;
     position: relative;
+}
+#fileList > .back {
+    background-color: #EEEEEE;
 }
 #fileList > .back:before,
 #fileList > .folder:before,
@@ -316,6 +313,15 @@ main > menu li[onclick]:hover {
     position: absolute;
     z-index: 100;
 }*/
+
+#fileList > .selectzone {
+    display: none;
+    position: absolute;
+    pointer-events:none;
+    background: rgba(0, 0, 255, 0.3);
+    border: 1px solid #0000FF;
+    z-index: 100;
+}
 .fullPath {
     /*background-color: #CCFFFF;*/
 }
