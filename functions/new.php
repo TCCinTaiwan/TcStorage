@@ -22,9 +22,9 @@
     mysqli_query($conn, $sql);
     if ($type == "file") {
         $tmp_name = (isset($_POST['tmp_name']) ? $_POST['tmp_name'] : null);
-        if (is_null($tmp_name)) { // 是否是上傳檔案
+        if (is_null($tmp_name)) { // 不是上傳檔案
             touch("../files/" . mysqli_insert_id($conn));
-        } else {
+        } else { // 是上傳檔案
             echo $tmp_name;
             move_uploaded_file($tmp_name, "../files/" . mysqli_insert_id($conn));
         }

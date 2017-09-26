@@ -110,3 +110,9 @@
     - 更新Google Analytics
     - $blockScrolling = Infinity;
     - 補上ACE漏掉的擴充功能引用(移到index.php)
+    - LRC歌詞播完清空
+    - 同路徑才使用(Query的先不管)
+    - 刪除功能實現
+    - Lyric搜尋文字先轉小寫
+    - 複製功能草稿
+    - Media播放完結束浮窗

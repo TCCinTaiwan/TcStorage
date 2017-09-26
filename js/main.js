@@ -1,6 +1,6 @@
 /**
 * TcStorage
-* @version 0.1.1
+* @version 0.1.4
 * @author TCC <john987john987@gmail.com>
 * @date 2017-09-26
 * @since 2017-09-25 0.1.0 TCC: 排除資料夾移動到自己
@@ -12,6 +12,9 @@
 * @since 2017-09-26 0.1.2 TCC: 更新Google Analytics(移到index.php)
 * @since 2017-09-26 0.1.2 TCC: 加入LRC歌詞
 * @since 2017-09-26 0.1.2 TCC: LRC歌詞支援多行(必須相同時間)
+* @since 2017-09-26 0.1.3 TCC: LRC歌詞播完清空
+* @since 2017-09-26 0.1.3 TCC: 刪除功能實現
+* @since 2017-09-26 0.1.4 TCC: Media播放完結束浮窗
 */
 var mouseDownInfo = {
     element: null,
@@ -141,13 +144,6 @@ function listPath(path) {
                 for (var index = 0; index < elements.length; index++) {
                     elements[index].innerHTML = info.path_info.breadcrumbs.map(function(elem){return "<li path_id='" + elem.id + "'>" + elem.name + "</li>";}).join("");
                 }
-                // <ul id="breadcrumbs">
-                //     <li><a href="">Lorem ipsum</a></li>
-                //     <li><a href="">Vivamus nisi eros</a></li>
-                //     <li><a href="">Nulla sed lorem risus</a></li>
-                //     <li><a href="">Nam iaculis commodo</a></li>
-                //     <li><a href="" class="current">Current crumb</a></li>
-                // </ul>
                 elements = document.getElementsByClassName("path");
                 for (var index = 0; index < elements.length; index++) {
                     elements[index].innerText = info.path_info.name;
@@ -269,6 +265,29 @@ function preview(element) {
 }
 function getElementType(element) {
     return element.classList.contains("folder") ? "folder" : (element.classList.contains("file") ? "file" : null);
+}
+function remove() {
+    for (var i = 0; i < selectedElements.length; i++) {
+        var element = selectedElements[i];
+        var type = getElementType(element);
+        var id = element.path_id || element.file_id || null;
+        console.log("remove " + type + "(" + id + ")\"" + element.innerText + "\"");
+        if (id && type) {
+            var xhr = new XMLHttpRequest();
+            xhr.onreadystatechange = function() {
+                if (xhr.readyState == 4) { // 確認 readyState
+                    if (xhr.status == 200) { // 確認 status
+                        listPath();
+                    }
+                }
+            };
+            xhr.open('POST', 'functions/remove.php', false); // 傳資料給remove.php
+            var fd = new FormData();
+            fd.append('id', id);
+            fd.append('type', type);
+            xhr.send(fd);
+        }
+    }
 }
 function rename() {
     var new_name = null;
@@ -644,7 +663,7 @@ video.onloadeddata = function() {
             this.src = "about:blank";
         } else {
             floatWindow.classList.add("show");
-            lyric.classList.remove("show");
+            lyric.classList.add("show");
             this.classList.add("show");
             this.play();
         }
@@ -679,7 +698,6 @@ function getLyric(id) {
         if (xhr.readyState == 4) { // 確認 readyState
             if (xhr.status == 200) { // 確認 status
                 lyric.lyric = parseLyric(xhr.response.split("\n"));
-                console.dir(lyric.lyric);
             }
         }
     };
@@ -712,12 +730,31 @@ function parseLyric(lines) {
             result.splice(i, 0, [time, value]);
         });
     });
-    console.dir(result);
-    // result.sort(function(a, b) {
-    //     return a[0] - b[0];
-    // });
     return result;
 }
+function exitAudio() {
+    exitFloat();
+    audio.classList.remove("show");
+    canvas.classList.remove("show");
+    lyric.classList.remove("show");
+    lyric.children[0].innerText = "";
+    lyric.lyric = null;
+    audio.src = "about:blank";
+}
+function exitVideo() {
+    exitFloat();
+    video.classList.remove("show");
+    canvas.classList.remove("show");
+    lyric.classList.remove("show");
+    lyric.children[0].innerText = "";
+    lyric.lyric = null;
+    video.src = "about:blank";
+}
+function exitFloat() {
+    floatWindow.classList.remove("show");
+}
+audio.onended = exitAudio;
+video.onended = exitVideo;
 video.onclick = function(evt) {
     if (this.paused) {
         this.play();
@@ -738,21 +775,16 @@ img.onclick = function(evt) {
     evt.stopPropagation();
 };
 floatWindow.onclick = function(evt) {
-    floatWindow.classList.remove("show");
     if (iframe.classList.contains("show")) {
+        exitFloat();
         iframe.classList.remove("show");
         iframe.src = "about:blank";
     } else if (audio.classList.contains("show")) {
-        audio.classList.remove("show");
-        canvas.classList.remove("show");
-        lyric.classList.remove("show");
-        audio.src = "about:blank";
+        exitAudio();
     } else if (video.classList.contains("show")) {
-        video.classList.remove("show");
-        canvas.classList.remove("show");
-        lyric.classList.remove("show");
-        video.src = "about:blank";
+        exitVideo();
     } else if (img.classList.contains("show")) {
+        exitFloat();
         img.classList.remove("show");
         img.src = "about:blank";
     }
