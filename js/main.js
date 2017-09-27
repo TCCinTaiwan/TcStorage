@@ -1,12 +1,12 @@
 /**
 * TcStorage
-* @version 0.1.6
+* @version 0.1.7
 * @author TCC <john987john987@gmail.com>
 * @date 2017-09-27
 * @since 2017-09-25 0.1.0 TCC: 排除資料夾移動到自己
 * @since 2017-09-25 0.1.0 TCC: 移除與finishSelect功能衝突部分程式
 * @since 2017-09-25 0.1.0 TCC: 右鍵非選擇項目要先移除所選
-* @since 2017-09-25 0.1.1 TCC: F2快捷鍵
+* @since 2017-09-25 0.1.1 TCC: 快捷鍵：F2重新命名
 * @since 2017-09-25 0.1.1 TCC: 拖曳複製(僅圖示無實現功能)
 * @since 2017-09-25 0.1.1 TCC: 麵包屑不顯示右鍵選單
 * @since 2017-09-26 0.1.2 TCC: 更新Google Analytics(移到index.php)
@@ -24,6 +24,9 @@
 * @since 2017-09-27 0.1.6 TCC: 修復"回上一層"不一定存在BUG
 * @since 2017-09-27 0.1.6 TCC: 確保selectzone初始大小為一點
 * @since 2017-09-27 0.1.6 TCC: 加入全選跟反選
+* @since 2017-09-27 0.1.7 TCC: 快捷鍵：Ctrl+A全選
+* @since 2017-09-27 0.1.7 TCC: 準備幾個快捷鍵
+* @since 2017-09-27 0.1.7 TCC: 快捷鍵：Ctrl+I反選
 */
 var mouseInfo = {
     down: {
@@ -401,9 +404,33 @@ function finishSelect(evt) {
     }
 }
 document.onkeydown = function(evt) {
-    console.log(evt.key);
-    if (evt.keyCode == 113) { // F2
-        rename();
+    console.log(evt.key + "(" + evt.keyCode + ")");
+
+    if (evt.ctrlKey) { // Ctrl
+        if (evt.keyCode == 65) { // A
+            selectAll();
+        } else if (evt.keyCode == 73) { // I
+            inverseSelect();
+        }
+    } else {
+        if (evt.keyCode == 113) { // F2
+            rename();
+            evt.preventDefault();
+        } else if (evt.keyCode == 46) { // Delete
+        } else if (evt.keyCode == 33) { // PageUp
+        } else if (evt.keyCode == 34) { // PageDown
+        } else if (evt.keyCode == 36) { // Home
+        } else if (evt.keyCode == 35) { // End
+        } else if (evt.keyCode == 13) { // Enter
+        } else if (evt.keyCode == 27) { // Escape
+        } else if (evt.keyCode == 179) { // MediaPlayPause
+        } else if (evt.keyCode == 177) { // MediaTrackPrevious
+        } else if (evt.keyCode == 176) { // MediaTrackNext
+        } else if (evt.keyCode == 178) { // MediaStop
+        } else if (evt.keyCode == 175) { // AudioVolumeUp
+        } else if (evt.keyCode == 174) { // AudioVolumeDown
+        } else if (evt.keyCode == 173) { // AudioVolumeMute
+        }
     }
 }
 document.ondragover = function(evt) { // 拖曳經過 TODO: 旁邊顯示目的地資料夾名稱

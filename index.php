@@ -31,8 +31,8 @@
             <li onclick="createNew('file');">建立空白檔案</li>
             <li onclick="rename();">批次命名</li>
             <!-- <li>設定</li> -->
-            <li onclick="selectAll();">全部選取</li>
-            <li onclick="inverseSelect();">反向選取</li>
+            <li onclick="selectAll();">全部選取<span>Ctrl + A</span></li>
+            <li onclick="inverseSelect();">反向選取<span>Ctrl + I</span></li>
             <li onclick="github();">Github</li>
         </menu>
         <div id="fileList">

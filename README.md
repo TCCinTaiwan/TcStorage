@@ -10,9 +10,10 @@
 
 ## Introduction[↶](#)
 這是以寫[:octocat:舊版](https://github.com/TCCinTaiwan/file-manager)的經驗為基礎，重構的新版本，多媒體參考[:octocat:TcTube](https://github.com/TCCinTaiwan/TcTube)部分內容，目前主要是在Chrome環境中執行，其他瀏覽器不一定支援。
-![截圖](screenshot.png)
-![截圖2](screenshot-2.png)
-![截圖3](screenshot-3.png)
+![截圖-選取功能](screenshot/selection.png)
+![截圖-影片功能](screenshot/video.png)
+![截圖-音樂功能](screenshot/audio.png)
+![截圖-Ace Editor功能](screenshot/ace-editor.png)
 
 ## Installation[↶](#)
 1. Clone the repository to your web server's document root
@@ -35,6 +36,8 @@
 
 ## ShortKey[↶](#)
 * <kbd>F2</kbd> 重新命名
+* <kbd>Ctrl</kbd> + <kbd>A</kbd> 全選
+* <kbd>Ctrl</kbd> + <kbd>I</kbd> 反選
 
 ## Todo[↶](#)
 * 多選 - shift
@@ -161,6 +164,12 @@
     - README.md資訊增加
     - 補上[connect.example.inc](connect.example.inc)
     - 加入全選跟反選
+    - 快捷鍵：Ctrl+A全選
+    - 整理raw.php讀檔
+    - 啟用讀檔紀錄
+    - 準備幾個快捷鍵
+    - 快捷鍵：Ctrl+I反選
+    - 選單按鍵部分靠右對齊
 
 ## Contributing[↶](#)
 1. Create an issue and describe your idea
