@@ -1,6 +1,6 @@
 /**
 * TcStorage
-* @version 0.1.5
+* @version 0.1.6
 * @author TCC <john987john987@gmail.com>
 * @date 2017-09-27
 * @since 2017-09-25 0.1.0 TCC: 排除資料夾移動到自己
@@ -19,11 +19,21 @@
 * @since 2017-09-27 0.1.5 TCC: 解決滾輪偏移
 * @since 2017-09-27 0.1.5 TCC: 處理拖曳到自己顯示BUG
 * @since 2017-09-27 0.1.5 TCC: 設定"回上一層"不可選
+* @since 2017-09-27 0.1.6 TCC: mouseDownInfo轉變成mouseInfo(加了滑鼠位置)
+* @since 2017-09-27 0.1.6 TCC: 選取框到邊邊滾動滾輪
+* @since 2017-09-27 0.1.6 TCC: 修復"回上一層"不一定存在BUG
+* @since 2017-09-27 0.1.6 TCC: 確保selectzone初始大小為一點
+* @since 2017-09-27 0.1.6 TCC: 加入全選跟反選
 */
-var mouseDownInfo = {
-    element: null,
+var mouseInfo = {
+    down: {
+        element: null,
+        x: null,
+        y: null
+    },
     x: null,
     y: null
+
 };
 var selectedElements = [];
 var clickTimer = null;
@@ -246,8 +256,14 @@ function ace(file_id) {
 function reCalc(x1, y1, x2, y2) {
     var minX = Math.max(Math.min(x1, x2), fileList.offsetLeft) - fileList.offsetLeft;
     var maxX = Math.min(Math.max(x1, x2), fileList.offsetLeft + fileList.clientWidth - 2) - fileList.offsetLeft; //  +
-    var minY = Math.max(Math.min(y1, y2), fileList.offsetTop + document.getElementsByClassName("breadcrumbs")[0].offsetHeight + document.getElementsByClassName("back")[0].offsetHeight);
+    var minY = Math.max(Math.min(y1, y2), fileList.offsetTop + document.getElementsByClassName("breadcrumbs")[0].offsetHeight + (document.getElementsByClassName("back").length ? document.getElementsByClassName("back")[0].offsetHeight : 0));
     var maxY = Math.min(Math.max(y1, y2), fileList.offsetTop + fileList.scrollHeight - 2);
+    if (y1 == y2) { // 確保初始大小
+        maxY = minY;
+    }
+    if (x1 == x2) { // 確保初始大小
+        maxX = minX;
+    }
     document.getElementsByClassName("selectzone")[0].style.left = minX + 'px';
     document.getElementsByClassName("selectzone")[0].style.top = minY + 'px';
     document.getElementsByClassName("selectzone")[0].style.width = maxX - minX + 'px';
@@ -333,9 +349,23 @@ function download(element) {
     window.open('files/download/' + element.file_id + '/' + element.file_name);
 
 }
+function selectAll() {
+    selectedElements.clearSelected();
+    document.querySelectorAll(".folder,.file").forEach(function(element) {
+        selectedElements.addSelect(element);
+    })
+}
+function inverseSelect() {
+    document.querySelectorAll(".folder,.file").forEach(function(element) {
+        if (selectedElements.includes(element)) {
+            selectedElements.removeSelected(element);
+        } else {
+            selectedElements.addSelect(element);
+        }
+    })
+}
 function finishSelect(evt) {
     // TODO: Shift鍵連續選取
-    console.log("finishSelect");
     if (document.getElementsByClassName("selectzone")[0].style.display != "") {
         document.getElementsByClassName("selectzone")[0].style.display = "";
         var zone = {
@@ -344,7 +374,8 @@ function finishSelect(evt) {
             height: parseInt(document.getElementsByClassName("selectzone")[0].style.height.replace("px", "")),
             width: parseInt(document.getElementsByClassName("selectzone")[0].style.width.replace("px", ""))
         };
-        console.dir(evt);
+        // console.log("finishSelect");
+        // console.dir(evt);
         if (evt.button == 0) { // 滑鼠右鍵
             if (!evt.ctrlKey) {
                 selectedElements.clearSelected();
@@ -511,7 +542,7 @@ fileList.onmousedown = function(evt) {
         if (evt.button == 1) { // 滑鼠中鍵
             evt.preventDefault();
         } else if (evt.button == 0) { // 滑鼠右鍵
-            mouseDownInfo = {
+            mouseInfo.down = {
                 element: evt.target,
                 x: evt.clientX,
                 y: evt.clientY + fileList.scrollTop
@@ -524,7 +555,7 @@ fileList.onmousedown = function(evt) {
             }
 
             // TODO: 假如按下的點不再框框內，要重置selectzone大小，或者back、breadcrumbs不要觸發selectzone
-            reCalc(mouseDownInfo.x, mouseDownInfo.y, mouseDownInfo.x, mouseDownInfo.y);
+            reCalc(mouseInfo.down.x, mouseInfo.down.y, mouseInfo.down.x, mouseInfo.down.y);
             document.getElementsByClassName("selectzone")[0].style.display = "block";
             // console.log(evt);
         }
@@ -541,12 +572,36 @@ document.getElementById("context").onclick = function(evt) {
     }
 };
 window.onmousemove = function(evt) {
-    if (mouseDownInfo.x != null) {
-        if (evt.buttons == 0) {
+    mouseInfo.x = evt.x, mouseInfo.y = evt.y;
+    if (mouseInfo.down.x != null) {
+        if (evt.buttons == 0) { // 沒有按鍵
             finishSelect(evt);
+            mouseInfo.down = { // DEBUG:
+                element: null,
+                x: null,
+                y: null
+            };
         } else {
-            // TODO: 選取框到邊邊滾動滾輪，可以試看看觸發選取事件
-            reCalc(mouseDownInfo.x, mouseDownInfo.y, evt.clientX, evt.clientY + fileList.scrollTop);
+            function animate(element, propertie, value, step = 100, stop_condition = null) { // jQuery.animate模擬
+                if (value == element[propertie]) return;
+                var step = (value < element[propertie] ? -1 : 1) * Math.abs(step), id = null;
+                function frame() {
+                    console.log("animate " + element[propertie] + " " + step);
+                    element[propertie] += step;
+                    console.log(element[propertie]);
+                    if (stop_condition || element[propertie] == value) {
+                        clearInterval(id);
+                    }
+                }
+                id = setInterval(frame, 10);
+            }
+            // 選取框到邊邊滾動滾輪 TODO: 捲動更滑順
+            if (evt.y < fileList.clientTop + 50) {
+                animate(fileList, "scrollTop", 0, 35, function() {return mouseInfo.y >= fileList.clientTop + 50}); // 往上
+            } else if (evt.y > fileList.clientTop + fileList.clientHeight - 50) {
+                animate(fileList, "scrollTop", fileList.scrollHeight - fileList.offsetHeight, 35, function() {return mouseInfo.y <= fileList.clientTop + fileList.clientHeight - 50}); // 往下
+            }
+            reCalc(mouseInfo.down.x, mouseInfo.down.y, evt.clientX, evt.clientY + fileList.scrollTop);
         }
     }
 };
@@ -562,11 +617,10 @@ fileList.onmouseup = function(evt) {
     } else if (evt.button == 0) { // 滑鼠右鍵
         if (evt.target.classList.contains("file") || evt.target.classList.contains("folder")) {
             evt.target.draggable = false;
-            if (mouseDownInfo.element == evt.target) {
+            if (mouseInfo.down.element == evt.target) {
                 if (!evt.ctrlKey) {
-                    if (selectedElements.includes(evt.target)) { // 單擊已選擇
-                        //需判斷單擊雙擊
-                        if (evt.detail == 1) {
+                    if (selectedElements.length == 1 && selectedElements.includes(evt.target)) { // 單擊已選擇，且不是多選
+                        if (evt.detail == 1) { // 預留時間判斷單擊雙擊
                             clickTimer = setTimeout(rename, 300); // .bind(null, evt.target)
                         } else {
                             clearTimeout(clickTimer);
@@ -591,14 +645,14 @@ fileList.onmouseup = function(evt) {
             }
         }
         // else if (evt.target.classList.contains("back")) {
-        //     if (mouseDownInfo.element == evt.target) {
+        //     if (mouseInfo.down.element == evt.target) {
         //         if (!evt.ctrlKey) {
         //             listPath(evt.target.path_id);
         //         }
         //     }
         // }
     }
-    mouseDownInfo = {
+    mouseInfo.down = {
         element: null,
         x: null,
         y: null
@@ -621,7 +675,7 @@ fileList.onmouseover = function(evt) {
     }
 };
 fileList.onmouseout = function(evt) {
-    mouseDownInfo.element = null;
+    mouseInfo.down.element = null;
     if (!selectedElements.includes(evt.target)) {
         evt.target.draggable = false;
     }

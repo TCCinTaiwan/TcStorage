@@ -2,13 +2,45 @@
 
 ## Contents[↶](#)
 * **[Introduction](#introduction)**
+* **[Installation](#installation)**
+* **[ShortKey](#shortkey)**
+* **[Todo](#todo)**
 * **[History](#history)**
+* **[Contributing](#contributing)**
 
 ## Introduction[↶](#)
-這是以寫[:octocat:舊版](https://github.com/TCCinTaiwan/file-manager)的經驗為基礎，重構的新版本，目前主要是在Chrome環境中執行，其他瀏覽器不一定支援。
+這是以寫[:octocat:舊版](https://github.com/TCCinTaiwan/file-manager)的經驗為基礎，重構的新版本，多媒體參考[:octocat:TcTube](https://github.com/TCCinTaiwan/TcTube)部分內容，目前主要是在Chrome環境中執行，其他瀏覽器不一定支援。
 ![截圖](screenshot.png)
 ![截圖2](screenshot-2.png)
 ![截圖3](screenshot-3.png)
+
+## Installation[↶](#)
+1. Clone the repository to your web server's document root
+
+    Use command:
+
+    ```bash
+    cd C:/www/
+    git clone https://github.com/TCCinTaiwan/TcStorage
+    ```
+
+    Or:
+
+    [ ![Download from Github](setup/download-from-github.png)](https://github.com/TCCinTaiwan/TcStorage/archive/master.zip)
+2. Create mysql database and import [TcStorage.sql](TcStorage.sql)
+3. Modify [functions/connect.example.inc](functions/connect.example.inc) to set the correct database connection information
+>Make sure the user has permission to view and modify the database
+4. Ok, now you can open the browser using this system
+>The URL should like: http://127.0.0.1/TcStorage
+
+## ShortKey[↶](#)
+* <kbd>F2</kbd> 重新命名
+
+## Todo[↶](#)
+* 多選 - shift
+* 預覽
+* 帳戶
+* 使用提示
 
 ## History[↶](#)
 * 2017-01-25
@@ -122,3 +154,18 @@
     - 處理拖曳到自己顯示BUG
     - 設定"回上一層"不可選
     - 修改"回上一層"顏色
+    - mouseDownInfo轉變成mouseInfo(加了滑鼠位置)
+    - 選取框到邊邊滾動滾輪
+    - 修復"回上一層"不一定存在BUG
+    - 確保selectzone初始大小為一點
+    - README.md資訊增加
+    - 補上[connect.example.inc](connect.example.inc)
+    - 加入全選跟反選
+
+## Contributing[↶](#)
+1. Create an issue and describe your idea
+2. [![GitHub forks](https://img.shields.io/github/forks/TCCinTaiwan/TcTube.svg?style=social&label=Fork&maxAge=2592000)](https://github.com/TCCinTaiwan/TcTube/network) it!
+3. Create your feature branch: `git checkout -b my-new-feature`
+4. Commit your changes: `git commit -m 'Add some feature'`
+5. Push to the branch: `git push origin my-new-feature`
+6. Submit a Pull Request
