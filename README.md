@@ -198,6 +198,9 @@
     - 修正麵包屑調整後selectzone偏移
     - back、breadcrumbs不觸發selectzone
     - 建立多語言locale.inc
+    - 調整路徑
+    - 修改字體順位
+    - 首頁多語系完善
 
 ## Contributing[↶](#)
 1. Create an issue and describe your idea

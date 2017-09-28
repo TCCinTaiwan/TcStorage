@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: TcStorage\n"
-"POT-Creation-Date: 2017-09-28 21:39+0800\n"
-"PO-Revision-Date: 2017-09-28 21:40+0800\n"
+"POT-Creation-Date: 2017-09-28 22:44+0800\n"
+"PO-Revision-Date: 2017-09-28 22:44+0800\n"
 "Last-Translator: TCC <john987john987@gmail.com>\n"
 "Language-Team: TCC https://github.com/TCCinTaiwan\n"
 "Language: zh_TW\n"
@@ -15,17 +15,29 @@ msgstr ""
 "X-Poedit-SearchPath-0: functions\n"
 "X-Poedit-SearchPath-1: index.php\n"
 
-#: index.php:38
+#: index.php:30
+msgid "TcStorage File Manager"
+msgstr "TcStorage 檔案管家"
+
+#: index.php:37
+msgid "location:"
+msgstr "當前位置:"
+
+#: index.php:38 index.php:64
 msgid "Refresh"
 msgstr "重新整理"
 
-#: index.php:39
+#: index.php:39 index.php:62
 msgid "New Folder"
 msgstr "新資料夾"
 
-#: index.php:40
+#: index.php:40 index.php:63
 msgid "New File"
 msgstr "新建檔案"
+
+#: index.php:41 index.php:61
+msgid "Rename"
+msgstr "重新命名"
 
 #: index.php:42
 msgid "Select All"
@@ -34,3 +46,40 @@ msgstr "全部選取"
 #: index.php:43
 msgid "Select Invert"
 msgstr "反向選取"
+
+#: index.php:44
+msgid "View"
+msgstr "檢視"
+
+#: index.php:45
+msgid "Sort by"
+msgstr "排序方式"
+
+#: index.php:56
+msgid "Open"
+msgstr "開啟"
+
+#: index.php:57
+msgid "Preview"
+msgstr "預覽"
+
+#: index.php:58
+msgid "Edit"
+msgstr "編輯"
+
+#: index.php:59
+msgid "Download"
+msgstr "下載"
+
+#: index.php:60
+msgid "Delete"
+msgstr "刪除"
+
+#: index.php:65
+msgid "Info"
+msgstr "資訊"
+
+#: index.php:68 index.php:69 index.php:71 index.php:72
+#, php-format
+msgid "Your browser not supply %s."
+msgstr "你的瀏覽器不支援%s。"

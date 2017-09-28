@@ -281,12 +281,12 @@ function reCalc(x = null, y = null) {
     selectzone.style.height = selectzone.height + 'px';
     selectzone.style.left = selectzone.left + 'px';
     selectzone.style.width = selectzone.width + 'px';
-    console.log({x: x, y: y}, mouseInfo.down, mouseInfo, {
-        top: selectzone.top,
-        left: selectzone.left,
-        height: selectzone.height,
-        width: selectzone.width
-    })
+    // console.log({x: x, y: y}, mouseInfo.down, mouseInfo, {
+    //     top: selectzone.top,
+    //     left: selectzone.left,
+    //     height: selectzone.height,
+    //     width: selectzone.width
+    // });
 }
 function preview(element) {
     element = typeof element == "undefined" ? (selectedElements.length > 0 ? selectedElements[0] : null) : element;

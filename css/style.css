@@ -1,6 +1,6 @@
 /**
 * TcStorage Stylesheet
-* @version 0.1.4
+* @version 0.1.5
 * @author TCC <john987john987@gmail.com>
 * @date 2017-09-28
 * @since 2017-09-26 0.1.0 TCC: 加入Lyric格式
@@ -8,6 +8,7 @@
 * @since 2017-09-27 0.1.2 TCC: 修改"回上一層"顏色
 * @since 2017-09-27 0.1.3 TCC: 選單按鍵部分靠右對齊
 * @since 2017-09-28 0.1.4 TCC: 麵包屑保持在頂端
+* @since 2017-09-28 0.1.5 TCC: 修改字體順位
 */
 
 .breadcrumbs {
@@ -92,7 +93,7 @@
 body {
     margin: 0;
     height: 100%;
-    font-family: consolas;
+    font-family: Meiryo, "微軟正黑體", consolas, "Microsoft JhengHei";
 }
 html,
 body,
