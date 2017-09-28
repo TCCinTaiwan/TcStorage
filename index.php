@@ -62,7 +62,7 @@
         <li for="any" onclick="createNew('folder');"><?=_("New Folder");?></li>
         <li for="any" onclick="createNew('file');"><?=_("New File");?></li>
         <li for="any" onclick="listPath();"><?=_("Refresh");?></li>
-        <li for="any"><?=_("Info");?></li>
+        <li for="any"><?=_("Properties");?></li>
     </menu>
     <div id="floatWindow">
         <iframe id="iframe"><?=sprintf(_("Your browser not supply %s."), "&lt;iframe&gt;");?></iframe><!-- Ace Editer -->
