@@ -197,6 +197,7 @@
     - 麵包屑保持在頂端
     - 修正麵包屑調整後selectzone偏移
     - back、breadcrumbs不觸發selectzone
+    - 建立多語言locale.inc
 
 ## Contributing[↶](#)
 1. Create an issue and describe your idea

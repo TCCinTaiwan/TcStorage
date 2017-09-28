@@ -1,11 +1,17 @@
 <?
-    if (!file_exists("functions/connect.inc")) {
+    /**
+    * TcStorage 首頁
+    * @version 0.1.0
+    * @author TCC <john987john987@gmail.com>
+    * @date 2017-09-28
+    * @since 2017-09-28 0.1.0 TCC: 加入多國語言
+    */
+    if (!file_exists("functions/connect.inc")) { // DEBUG: 確認安裝
         header('Location: install/');
         exit;
     }
+    include_once 'functions/locale.inc'; // 載入語言
     error_log(date("Y-m-d H:i:s") . " $_SERVER[REMOTE_ADDR] $_SERVER[REQUEST_URI]" . PHP_EOL . "$_SERVER[HTTP_USER_AGENT]" . PHP_EOL, 3, "logs/index.access.log"); // DEBUG:
-
-
 ?>
 <!DOCTYPE html>
 <html>
@@ -29,12 +35,12 @@
     <main>
         <menu>
             <!-- <li>目前位置：<output class="path"></output></li> -->
-            <li onclick="listPath();">重新整理</li>
-            <li onclick="createNew('folder');">建立新資料夾</li>
-            <li onclick="createNew('file');">建立空白檔案</li>
-            <li onclick="rename();">批次命名<span>F2</span></li>
-            <li onclick="selectAll();">全部選取<span>Ctrl + A</span></li>
-            <li onclick="inverseSelect();">反向選取<span>Ctrl + I</span></li>
+            <li onclick="listPath();"><?=_("Refresh");?></li>
+            <li onclick="createNew('folder');"><?=_("New Folder");?></li>
+            <li onclick="createNew('file');"><?=_("New File");?></li>
+            <li onclick="rename();"><?=_("Rename");?><span>F2</span></li>
+            <li onclick="selectAll();"><?=_("Select All");?><span>Ctrl + A</span></li>
+            <li onclick="inverseSelect();"><?=_("Select Invert");?><span>Ctrl + I</span></li>
             <li>排列方式</li>
             <li onclick="github();">Github</li>
         </menu>
