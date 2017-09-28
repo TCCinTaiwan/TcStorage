@@ -3,6 +3,9 @@
         header('Location: install/');
         exit;
     }
+    error_log(date("Y-m-d H:i:s") . " $_SERVER[REMOTE_ADDR] $_SERVER[REQUEST_URI]" . PHP_EOL . "$_SERVER[HTTP_USER_AGENT]" . PHP_EOL, 3, "logs/index.access.log"); // DEBUG:
+
+
 ?>
 <!DOCTYPE html>
 <html>
@@ -25,14 +28,14 @@
 <body>
     <main>
         <menu>
-            <li>目前位置：<output class="path"></output></li>
+            <!-- <li>目前位置：<output class="path"></output></li> -->
             <li onclick="listPath();">重新整理</li>
             <li onclick="createNew('folder');">建立新資料夾</li>
             <li onclick="createNew('file');">建立空白檔案</li>
-            <li onclick="rename();">批次命名</li>
-            <!-- <li>設定</li> -->
+            <li onclick="rename();">批次命名<span>F2</span></li>
             <li onclick="selectAll();">全部選取<span>Ctrl + A</span></li>
             <li onclick="inverseSelect();">反向選取<span>Ctrl + I</span></li>
+            <li>排列方式</li>
             <li onclick="github();">Github</li>
         </menu>
         <div id="fileList">

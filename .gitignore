@@ -1,7 +1,9 @@
 files/*
-_source/*
+logs/*
 .vscode/*
+info.php
 functions/connect.inc
+_source/*
 
 # Windows image file caches
 Thumbs.db

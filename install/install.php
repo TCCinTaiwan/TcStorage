@@ -1,8 +1,28 @@
+<?
+    /**
+    *  安裝TcStorage，執行頁
+    *
+    *  @version 0.1.0
+    *  @author TCC <john987john987@gmail.com>
+    *  @date 2017-09-27
+    *  @since 0.1.0 2017-09-27 TCC: 稍微整理一下快速安裝
+    *  @todo 改成新版資料庫結構，如TcStorage.sql(2017-09-28)
+    */
+?>
 <pre>
 <?
     if (isset($_POST["server"]) && isset($_POST["database"]) && isset($_POST["account"]) && isset($_POST["password"])) {
         if (!is_dir("../files")) {
             if (mkdir("../files")) {
+                echo "資料夾建立成功！\n";
+            } else {
+                echo "資料夾建立失敗！\n";
+            }
+        } else {
+            echo "資料夾已存在！\n";
+        }
+        if (!is_dir("../logs")) {
+            if (mkdir("../logs")) {
                 echo "資料夾建立成功！\n";
             } else {
                 echo "資料夾建立失敗！\n";

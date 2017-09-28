@@ -16,33 +16,51 @@
 ![截圖-Ace Editor功能](screenshot/ace-editor.png)
 
 ## Installation[↶](#)
-1. Clone the repository to your web server's document root
+* 快速安裝
+    1. Open the browser and running install page.
+    >The URL should like: http://localhost/TcStorage/install/index.php
+* 手動
+    1. Clone the repository to your web server's document root.
 
-    Use command:
+        Use command:
 
-    ```bash
-    cd C:/www/
-    git clone https://github.com/TCCinTaiwan/TcStorage
-    ```
+        ```bash
+        cd C:/www/
+        git clone https://github.com/TCCinTaiwan/TcStorage
+        ```
 
-    Or:
+        Or:
 
-    [ ![Download from Github](setup/download-from-github.png)](https://github.com/TCCinTaiwan/TcStorage/archive/master.zip)
-2. Create mysql database and import [TcStorage.sql](TcStorage.sql)
-3. Modify [functions/connect.example.inc](functions/connect.example.inc) to set the correct database connection information
->Make sure the user has permission to view and modify the database
-4. Ok, now you can open the browser using this system
->The URL should like: http://127.0.0.1/TcStorage
+        [ ![Download from Github](setup/download-from-github.png)](https://github.com/TCCinTaiwan/TcStorage/archive/master.zip)
+    2. 建立 file/ 與 logs/ 資料夾
+    3. Import [TcStorage.sql](install/TcStorage.sql) at MySQL and change database name.
+    4. Modify [connect.example.inc](install/connect.example.inc) to set the correct database connection information
+    >Make sure the user has permission to view and modify the database
+    5. Ok, now you can open the browser using this system
+    >The URL should like: http://localhost/TcStorage/index.php
 
 ## ShortKey[↶](#)
 * <kbd>F2</kbd> 重新命名
 * <kbd>Ctrl</kbd> + <kbd>A</kbd> 全選
 * <kbd>Ctrl</kbd> + <kbd>I</kbd> 反選
+* Ace Editor
+    - <kbd>Ctrl</kbd> + <kbd>S</kbd> 儲存
+    - <kbd>Esc</kbd> 顯示設定選單
+    - <kbd>Ctrl</kbd> <kbd>Alt</kbd> <kbd>H</kbd> 列出快捷鍵
+* Video/Audio
 
 ## Todo[↶](#)
 * 多選 - shift
-* 預覽
+* 資料夾大小
+* 檔案資訊
+* 排列方式
 * 帳戶
+    - 分享網址
+    - 權限
+* 多語言
+* 預覽
+* 覆蓋選項
+    - MD5檢查
 * 使用提示
 
 ## History[↶](#)
@@ -162,7 +180,7 @@
     - 修復"回上一層"不一定存在BUG
     - 確保selectzone初始大小為一點
     - README.md資訊增加
-    - 補上[connect.example.inc](connect.example.inc)
+    - 補上connect.example.inc
     - 加入全選跟反選
     - 快捷鍵：Ctrl+A全選
     - 整理raw.php讀檔
@@ -170,6 +188,15 @@
     - 準備幾個快捷鍵
     - 快捷鍵：Ctrl+I反選
     - 選單按鍵部分靠右對齊
+    - 加入快速安裝指南，並移除重複的connect.example.inc
+* 2017-09-28
+    - raw.php讀檔微調，Log檔位置修正
+    - 整理安裝資料
+    - 資料庫結構擴充(使用者/資料夾大小)
+    - 更新資料庫匯入檔案
+    - 麵包屑保持在頂端
+    - 修正麵包屑調整後selectzone偏移
+    - back、breadcrumbs不觸發selectzone
 
 ## Contributing[↶](#)
 1. Create an issue and describe your idea

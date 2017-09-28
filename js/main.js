@@ -1,8 +1,8 @@
 /**
 * TcStorage
-* @version 0.1.7
+* @version 0.1.8
 * @author TCC <john987john987@gmail.com>
-* @date 2017-09-27
+* @date 2017-09-28
 * @since 2017-09-25 0.1.0 TCC: 排除資料夾移動到自己
 * @since 2017-09-25 0.1.0 TCC: 移除與finishSelect功能衝突部分程式
 * @since 2017-09-25 0.1.0 TCC: 右鍵非選擇項目要先移除所選
@@ -27,6 +27,9 @@
 * @since 2017-09-27 0.1.7 TCC: 快捷鍵：Ctrl+A全選
 * @since 2017-09-27 0.1.7 TCC: 準備幾個快捷鍵
 * @since 2017-09-27 0.1.7 TCC: 快捷鍵：Ctrl+I反選
+* @since 2017-09-28 0.1.8 TCC: 修正麵包屑調整後selectzone偏移
+* @since 2017-09-28 0.1.8 TCC: 調整載入歌詞位置
+* @since 2017-09-28 0.1.8 TCC: back、breadcrumbs不觸發selectzone
 */
 var mouseInfo = {
     down: {
@@ -36,7 +39,6 @@ var mouseInfo = {
     },
     x: null,
     y: null
-
 };
 var selectedElements = [];
 var clickTimer = null;
@@ -232,18 +234,11 @@ function raw(file_id, file_name, mime) {
     // image/
     // audio/
     // video/
-    // file_name = prompt("是否儲存檔案?", (file_name == "" ? "new.txt" : file_name));
-    // if (file_name == null) {
-    //     return;
-    // }
-    // window.open('files/raw/' + file_id + '/' + file_name);
-
     // application/octet-stream
     if (mime.match(/^video/g)) {
         video.src = 'files/raw/' + file_id + '/' + file_name;
     } else if (mime.match(/^audio/g)) {
         audio.src = 'files/raw/' + file_id + '/' + file_name;
-        getLyric(file_id);
     } else if (mime.match(/^image/g)) {
         img.style.backgroundImage = 'url("files/raw/' + file_id + '/' + file_name + '"';
         img.classList.add("show");
@@ -256,21 +251,42 @@ function raw(file_id, file_name, mime) {
 function ace(file_id) {
     iframe.src = 'functions/ace.php?id=' + file_id;
 }
-function reCalc(x1, y1, x2, y2) {
-    var minX = Math.max(Math.min(x1, x2), fileList.offsetLeft) - fileList.offsetLeft;
-    var maxX = Math.min(Math.max(x1, x2), fileList.offsetLeft + fileList.clientWidth - 2) - fileList.offsetLeft; //  +
-    var minY = Math.max(Math.min(y1, y2), fileList.offsetTop + document.getElementsByClassName("breadcrumbs")[0].offsetHeight + (document.getElementsByClassName("back").length ? document.getElementsByClassName("back")[0].offsetHeight : 0));
-    var maxY = Math.min(Math.max(y1, y2), fileList.offsetTop + fileList.scrollHeight - 2);
-    if (y1 == y2) { // 確保初始大小
-        maxY = minY;
+function reCalc(x = null, y = null) {
+    var selectzone = document.getElementsByClassName("selectzone")[0];
+    if (!selectzone.limit) {
+        selectzone.limit = {
+            top: fileList.offsetTop + (document.getElementsByClassName("back").length ? document.getElementsByClassName("back")[0].offsetHeight : 0),
+            bottom: fileList.offsetTop + fileList.scrollHeight - 2, // 頂部 + 高度 - 框線寬度
+            left: fileList.offsetLeft,
+            right: fileList.offsetLeft + fileList.clientWidth - 2
+        };
     }
-    if (x1 == x2) { // 確保初始大小
-        maxX = minX;
+    if (y && x) {
+        selectzone.top = Math.max(Math.min(mouseInfo.down.y, y), selectzone.limit.top) - fileList.offsetTop;
+        selectzone.height = Math.min(Math.max(mouseInfo.down.y, y), selectzone.limit.bottom) - fileList.offsetTop - selectzone.top;
+        selectzone.left = Math.max(Math.min(mouseInfo.down.x, x), selectzone.limit.left) - fileList.offsetLeft;
+        selectzone.width = Math.min(Math.max(mouseInfo.down.x, x), selectzone.limit.right) - fileList.offsetLeft - selectzone.left;
+    } else { // 開始選取
+        if (mouseInfo.down.y >= selectzone.limit.top && mouseInfo.down.y <= selectzone.limit.bottom) {
+            if (mouseInfo.down.x >= selectzone.limit.left && mouseInfo.down.x <= selectzone.limit.right) {
+                selectzone.top = mouseInfo.down.y - fileList.offsetTop;
+                selectzone.height = 2;
+                selectzone.left = mouseInfo.down.x - fileList.offsetLeft;
+                selectzone.width = 2;
+                selectzone.style.display = "block";
+            }
+        }
     }
-    document.getElementsByClassName("selectzone")[0].style.left = minX + 'px';
-    document.getElementsByClassName("selectzone")[0].style.top = minY + 'px';
-    document.getElementsByClassName("selectzone")[0].style.width = maxX - minX + 'px';
-    document.getElementsByClassName("selectzone")[0].style.height = maxY - minY + 'px';
+    selectzone.style.top = selectzone.top + 'px';
+    selectzone.style.height = selectzone.height + 'px';
+    selectzone.style.left = selectzone.left + 'px';
+    selectzone.style.width = selectzone.width + 'px';
+    console.log({x: x, y: y}, mouseInfo.down, mouseInfo, {
+        top: selectzone.top,
+        left: selectzone.left,
+        height: selectzone.height,
+        width: selectzone.width
+    })
 }
 function preview(element) {
     element = typeof element == "undefined" ? (selectedElements.length > 0 ? selectedElements[0] : null) : element;
@@ -338,7 +354,7 @@ function rename() {
                     }
                 }
             };
-            xhr.open('POST', 'functions/rename.php', false); // 傳資料給rename.php 非同步是因為會取到相同名字
+            xhr.open('POST', 'functions/rename.php', false); // 傳資料給rename.php 非同步是因為會取到相同名字 TODO: 之後非同步要淘汰
             var fd = new FormData();
             fd.append('id', id);
             fd.append('new_name', new_name);
@@ -409,6 +425,7 @@ document.onkeydown = function(evt) {
     if (evt.ctrlKey) { // Ctrl
         if (evt.keyCode == 65) { // A
             selectAll();
+            evt.preventDefault();
         } else if (evt.keyCode == 73) { // I
             inverseSelect();
         }
@@ -554,7 +571,7 @@ fileList.ondrop = function(evt) { // 放下拖曳
     }
 };
 document.onselectstart = function(evt) { //開始選擇
-    // evt.preventDefault();
+    evt.preventDefault();
 };
 document.onmouseup = finishSelect;
 fileList.onmousedown = function(evt) {
@@ -580,10 +597,7 @@ fileList.onmousedown = function(evt) {
                     return;
                 }
             }
-
-            // TODO: 假如按下的點不再框框內，要重置selectzone大小，或者back、breadcrumbs不要觸發selectzone
-            reCalc(mouseInfo.down.x, mouseInfo.down.y, mouseInfo.down.x, mouseInfo.down.y);
-            document.getElementsByClassName("selectzone")[0].style.display = "block";
+            reCalc();
             // console.log(evt);
         }
     }
@@ -599,11 +613,11 @@ document.getElementById("context").onclick = function(evt) {
     }
 };
 window.onmousemove = function(evt) {
-    mouseInfo.x = evt.x, mouseInfo.y = evt.y;
+    mouseInfo.x = evt.x, mouseInfo.y = evt.y + fileList.scrollTop;
     if (mouseInfo.down.x != null) {
         if (evt.buttons == 0) { // 沒有按鍵
             finishSelect(evt);
-            mouseInfo.down = { // DEBUG:
+            mouseInfo.down = {
                 element: null,
                 x: null,
                 y: null
@@ -613,22 +627,21 @@ window.onmousemove = function(evt) {
                 if (value == element[propertie]) return;
                 var step = (value < element[propertie] ? -1 : 1) * Math.abs(step), id = null;
                 function frame() {
-                    console.log("animate " + element[propertie] + " " + step);
+                    // console.log("animate " + element[propertie] + " " + step);
                     element[propertie] += step;
-                    console.log(element[propertie]);
                     if (stop_condition || element[propertie] == value) {
                         clearInterval(id);
                     }
                 }
                 id = setInterval(frame, 10);
             }
-            // 選取框到邊邊滾動滾輪 TODO: 捲動更滑順
+            // 選取框到邊邊滾動滾輪 TODO: 區分點擊跟選取 TODO: 捲動更滑順
             if (evt.y < fileList.clientTop + 50) {
                 animate(fileList, "scrollTop", 0, 35, function() {return mouseInfo.y >= fileList.clientTop + 50}); // 往上
             } else if (evt.y > fileList.clientTop + fileList.clientHeight - 50) {
                 animate(fileList, "scrollTop", fileList.scrollHeight - fileList.offsetHeight, 35, function() {return mouseInfo.y <= fileList.clientTop + fileList.clientHeight - 50}); // 往下
             }
-            reCalc(mouseInfo.down.x, mouseInfo.down.y, evt.clientX, evt.clientY + fileList.scrollTop);
+            reCalc(evt.clientX, evt.clientY + fileList.scrollTop);
         }
     }
 };
@@ -646,25 +659,14 @@ fileList.onmouseup = function(evt) {
             evt.target.draggable = false;
             if (mouseInfo.down.element == evt.target) {
                 if (!evt.ctrlKey) {
-                    if (selectedElements.length == 1 && selectedElements.includes(evt.target)) { // 單擊已選擇，且不是多選
+                    if (selectedElements.length == 1 && selectedElements.includes(evt.target)) { // 單擊已選擇，且不是多選 TODO: 移到mousedown效果應該比較好
                         if (evt.detail == 1) { // 預留時間判斷單擊雙擊
                             clickTimer = setTimeout(rename, 300); // .bind(null, evt.target)
                         } else {
                             clearTimeout(clickTimer);
                         }
                     }
-                    // else { // 與finishSelect功能衝突
-                    //     selectedElements.clearSelected();
-                    //     selectedElements.addSelect(evt.target); // 單擊未選擇
-                    // }
                 }
-                // else {
-                //     if (selectedElements.includes(evt.target)) { // 與finishSelect功能衝突
-                //         selectedElements.removeSelected(evt.target);
-                //     } else {
-                //         selectedElements.addSelect(evt.target);
-                //     }
-                // }
             }
         } else if (evt.target.nodeName == "LI") {
             if (!evt.ctrlKey) {
@@ -740,7 +742,6 @@ iframe.onload = function() {
                 return;
             } else if (this.contentDocument.contentType.match(/^audio/g)) {
                 audio.src = this.src;
-                // getLyric(file_id);
                 this.src = "about:blank";
                 return;
             } else if (this.contentDocument.contentType.match(/^image/g)) {
@@ -757,7 +758,6 @@ video.onloadeddata = function() {
     if (this.src != window.location && this.src != "about:blank") {
         if (this.videoHeight + this.videoWidth == 0) { // 假如無法抓到畫面，就改用音源播放
             audio.src = this.src;
-            // getLyric(file_id);
             this.src = "about:blank";
         } else {
             floatWindow.classList.add("show");
@@ -769,6 +769,7 @@ video.onloadeddata = function() {
 };
 audio.onloadeddata = function() {
     if (this.src != window.location && this.src != "about:blank") {
+        getLyric(file_id);
         floatWindow.classList.add("show");
         lyric.classList.add("show");
         canvas.classList.add("show");

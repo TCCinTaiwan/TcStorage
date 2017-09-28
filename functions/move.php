@@ -42,7 +42,7 @@
             }
         } while ($count == 0 && $id > 0);
 
-        // 要將當前目錄標示為有檔案 TODO: 函式化
+        // 要將當前目錄標示為有檔案 TODO: 底下資料夾有資料也要標示 TODO: 函式化
         $id = $path_id;
         echo $id;
         do {
