@@ -1,8 +1,8 @@
 /**
 * TcStorage
-* @version 0.1.8
+* @version 0.1.9
 * @author TCC <john987john987@gmail.com>
-* @date 2017-09-28
+* @date 2017-09-29
 * @since 2017-09-25 0.1.0 TCC: 排除資料夾移動到自己
 * @since 2017-09-25 0.1.0 TCC: 移除與finishSelect功能衝突部分程式
 * @since 2017-09-25 0.1.0 TCC: 右鍵非選擇項目要先移除所選
@@ -30,6 +30,9 @@
 * @since 2017-09-28 0.1.8 TCC: 修正麵包屑調整後selectzone偏移
 * @since 2017-09-28 0.1.8 TCC: 調整載入歌詞位置
 * @since 2017-09-28 0.1.8 TCC: back、breadcrumbs不觸發selectzone
+* @since 2017-09-29 0.1.9 TCC: 標示資訊
+* @since 2017-09-29 0.1.9 TCC: 增強ACE開啟模式(開新視窗)
+* @since 2017-09-29 0.1.9 TCC: 修正載入歌詞位置
 */
 var mouseInfo = {
     down: {
@@ -50,18 +53,18 @@ selectedElements.clearSelected = function() {
     }
 }
 selectedElements.addSelect = function(element) {
-    // console.log("selectedElements add " + (element.path_id || element.file_id))
+    // console.log("selectedElements add " + (element.path_id || element.file_id)) // INFO:
     element.draggable = true;
     element.classList.add("select");
     this.push(element);
 }
 selectedElements.removeSelected = function(element) {
-    // console.log("selectedElements remove " + (element.path_id || element.file_id))
+    // console.log("selectedElements remove " + (element.path_id || element.file_id)) // INFO:
     element.draggable = false;
     element.classList.remove("select");
     this.splice(selectedElements.indexOf(element), 1);
 }
-selectedElements.type = function(element) {
+selectedElements.type = function() {
     var type = "none";
     var element;
     for (var i = 0; i < selectedElements.length; i++) {
@@ -84,6 +87,7 @@ selectedElements.type = function(element) {
             }
         }
     }
+    // console.log("selectedElements type:" + type) // INFO:
     return type;
 }
 function formatBytes(bytes, decimals) {
@@ -107,6 +111,7 @@ function listPath(path) {
                 var info = typeof xhr.response == "string" ?　JSON.parse(xhr.response) : xhr.response;
                 fileList.innerHTML = "";
                 path_id = info.path_info.id;
+                console.log("list: " + info.path_info.id + "(" + info.path_info.name + ")"); // INFO:
                 var breadcrumbs_ul = document.createElement("ul");
                 breadcrumbs_ul.className = "breadcrumbs";
                 fileList.appendChild(breadcrumbs_ul);
@@ -145,10 +150,10 @@ function listPath(path) {
                         file_div.classList.add(extension);
                     }
                     file_div.innerText = file_div.file_name = fileName;
-                    file_div.extension = extension;
-                    file_div.file_id = info.files[fileIndex].id;
-                    file_div.mime = info.files[fileIndex].mime;
-                    file_div.title = formatBytes(info.files[fileIndex].size);
+                    file_div.extension = extension; // 副檔名
+                    file_div.file_id = info.files[fileIndex].id; // 檔案ID
+                    file_div.mime = info.files[fileIndex].mime; // MIME類型
+                    file_div.title = formatBytes(info.files[fileIndex].size); // 檔案大小 TODO: 檢視:清單
                     // file_div.draggable = true;
                     fileList.appendChild(file_div);
                 }
@@ -189,6 +194,7 @@ function listPath(path) {
 function createNew(type, name) {
     type = (type || "folder") == "folder" ? "folder" : "file";
     name = name || null;
+    console.log("create " + type + "(" + name + ") at " + path_id); // INFO:
     var xhr = new XMLHttpRequest();
     xhr.onreadystatechange = function() {
         if (xhr.readyState == 4) { // 確認 readyState
@@ -210,7 +216,7 @@ function move(element, old_path, new_path) {
     type = getElementType(element);
     id = element.path_id || element.file_id || null;
     new_path = new_path || null;
-    console.log("move " + type + "(" + id + ") to " + new_path);
+    console.log("move " + type + "(" + id + ") to " + new_path); // INFO:
     if (id && new_path) {
         var xhr = new XMLHttpRequest();
         xhr.onreadystatechange = function() {
@@ -237,8 +243,10 @@ function raw(file_id, file_name, mime) {
     // application/octet-stream
     if (mime.match(/^video/g)) {
         video.src = 'files/raw/' + file_id + '/' + file_name;
+        getLyric(file_id); // DEBUG:
     } else if (mime.match(/^audio/g)) {
         audio.src = 'files/raw/' + file_id + '/' + file_name;
+        getLyric(file_id); // DEBUG:
     } else if (mime.match(/^image/g)) {
         img.style.backgroundImage = 'url("files/raw/' + file_id + '/' + file_name + '"';
         img.classList.add("show");
@@ -248,8 +256,14 @@ function raw(file_id, file_name, mime) {
 
     }
 }
-function ace(file_id) {
-    iframe.src = 'functions/ace.php?id=' + file_id;
+function ace(file_id, another = false) {
+    console.log("Ace " + file_id); // INFO:
+    var url = 'functions/ace.php?id=' + file_id;
+    if (another) {
+        window.open(url);
+    } else {
+        iframe.src = url;
+    }
 }
 function reCalc(x = null, y = null) {
     var selectzone = document.getElementsByClassName("selectzone")[0];
@@ -281,7 +295,7 @@ function reCalc(x = null, y = null) {
     selectzone.style.height = selectzone.height + 'px';
     selectzone.style.left = selectzone.left + 'px';
     selectzone.style.width = selectzone.width + 'px';
-    // console.log({x: x, y: y}, mouseInfo.down, mouseInfo, {
+    // console.log({x: x, y: y}, mouseInfo.down, mouseInfo, { // INFO:
     //     top: selectzone.top,
     //     left: selectzone.left,
     //     height: selectzone.height,
@@ -290,6 +304,7 @@ function reCalc(x = null, y = null) {
 }
 function preview(element) {
     element = typeof element == "undefined" ? (selectedElements.length > 0 ? selectedElements[0] : null) : element;
+    console.log("preveiw " + element.file_id + " " + element.mime); // INFO:
     if (element.mime.match(/^(image|audio|video)/g)) {
         raw(element.file_id, element.file_name, element.mime);
     } else if (element.mime.match(/^application\/octet-stream/g)) {
@@ -311,7 +326,7 @@ function remove() {
         var element = selectedElements[i];
         var type = getElementType(element);
         var id = element.path_id || element.file_id || null;
-        console.log("remove " + type + "(" + id + ")\"" + element.innerText + "\"");
+        console.log("remove " + type + "(" + id + ")\"" + element.innerText + "\""); // INFO:
         if (id && type) {
             var xhr = new XMLHttpRequest();
             xhr.onreadystatechange = function() {
@@ -334,7 +349,7 @@ function rename() {
     if (selectedElements.length == 0) {
         alert("沒有選擇檔案");
     } else {
-        // TODO: 假如是多檔案，有可能要保持檔名，不同副檔名
+        // FIXME: 假如是多檔案，有可能要保持檔名，不同副檔名
         new_name = prompt("重新命名" + (typeof selectedElements[0].file_id == "undefined" ? "資料夾" : "檔案"), selectedElements[0].innerText);
         if (new_name == selectedElements[0].innerText) {
             new_name = null;
@@ -344,7 +359,7 @@ function rename() {
         var element = selectedElements[i];
         var type = getElementType(element);
         var id = element.path_id || element.file_id || null;
-        console.log("rename " + type + "(" + id + ")\"" + element.innerText + "\"");
+        console.log("rename " + type + "(" + id + ")\"" + element.innerText + "\""); // INFO:
         if (id && new_name && type) {
             var xhr = new XMLHttpRequest();
             xhr.onreadystatechange = function() {
@@ -354,7 +369,7 @@ function rename() {
                     }
                 }
             };
-            xhr.open('POST', 'functions/rename.php', false); // 傳資料給rename.php 非同步是因為會取到相同名字 TODO: 之後非同步要淘汰
+            xhr.open('POST', 'functions/rename.php', false); // 傳資料給rename.php 非同步是因為會取到相同名字 FIXME: 之後非同步要淘汰
             var fd = new FormData();
             fd.append('id', id);
             fd.append('new_name', new_name);
@@ -393,8 +408,8 @@ function finishSelect(evt) {
             height: parseInt(document.getElementsByClassName("selectzone")[0].style.height.replace("px", "")),
             width: parseInt(document.getElementsByClassName("selectzone")[0].style.width.replace("px", ""))
         };
-        // console.log("finishSelect");
-        // console.dir(evt);
+        // console.log("finishSelect"); // INFO:
+        // console.dir(evt); // INFO:
         if (evt.button == 0) { // 滑鼠右鍵
             if (!evt.ctrlKey) {
                 selectedElements.clearSelected();
@@ -403,7 +418,7 @@ function finishSelect(evt) {
             for (var index = 0; index < elements.length; index++) {
                 if (zone.top < elements[index].offsetTop + elements[index].offsetHeight) {
                     if (zone.top + zone.height > elements[index].offsetTop) {
-                        // console.log(index, zone.top + zone.height , elements[index].offsetTop);
+                        // console.log(index, zone.top + zone.height , elements[index].offsetTop); // INFO:
                         if (evt.ctrlKey) {
                             if (selectedElements.includes(elements[index])) {
                                 selectedElements.removeSelected(elements[index]);
@@ -420,7 +435,7 @@ function finishSelect(evt) {
     }
 }
 document.onkeydown = function(evt) {
-    console.log(evt.key + "(" + evt.keyCode + ")");
+    console.log(evt.key + "(" + evt.keyCode + ")"); // INFO:
 
     if (evt.ctrlKey) { // Ctrl
         if (evt.keyCode == 65) { // A
@@ -441,6 +456,7 @@ document.onkeydown = function(evt) {
         } else if (evt.keyCode == 13) { // Enter
         } else if (evt.keyCode == 27) { // Escape
         } else if (evt.keyCode == 179) { // MediaPlayPause
+            evt.preventDefault();
         } else if (evt.keyCode == 177) { // MediaTrackPrevious
         } else if (evt.keyCode == 176) { // MediaTrackNext
         } else if (evt.keyCode == 178) { // MediaStop
@@ -521,7 +537,7 @@ fileList.ondrop = function(evt) { // 放下拖曳
         upload_fd.append('path_id', evt.target.classList.contains("folder") || evt.target.classList.contains("back") ? evt.target.path_id : path_id);
         for (var file_index in upload_files) {
             if (typeof(upload_files[file_index].type) != "undefined") { // 判斷是檔案
-                console.log(upload_files[file_index]);
+                console.log(upload_files[file_index]); // INFO:
                 upload_fd.append('files[]', upload_files[file_index]);
             }
         }
@@ -536,7 +552,7 @@ fileList.ondrop = function(evt) { // 放下拖曳
                 if(100 == complete) {
                     complete = 99.9;
                 }
-                console.log(complete);
+                console.log(complete); // INFO:
             }
         }
         xhr_upload.open('POST', 'functions/upload.php'); // 傳資料給upload.php
@@ -572,6 +588,7 @@ fileList.ondrop = function(evt) { // 放下拖曳
 };
 document.onselectstart = function(evt) { //開始選擇
     evt.preventDefault();
+    // window.getSelection().removeAllRanges();
 };
 document.onmouseup = finishSelect;
 fileList.onmousedown = function(evt) {
@@ -598,7 +615,7 @@ fileList.onmousedown = function(evt) {
                 }
             }
             reCalc();
-            // console.log(evt);
+            // console.log(evt); // INFO:
         }
     }
 };
@@ -624,10 +641,10 @@ window.onmousemove = function(evt) {
             };
         } else {
             function animate(element, propertie, value, step = 100, stop_condition = null) { // jQuery.animate模擬
+                // console.log("animate"); // INFO:
                 if (value == element[propertie]) return;
                 var step = (value < element[propertie] ? -1 : 1) * Math.abs(step), id = null;
                 function frame() {
-                    // console.log("animate " + element[propertie] + " " + step);
                     element[propertie] += step;
                     if (stop_condition || element[propertie] == value) {
                         clearInterval(id);
@@ -719,8 +736,7 @@ fileList.oncontextmenu = function(evt) {
         document.getElementById("context").classList.add("show");
         document.getElementById("context").classList.add(selectedElements.type());
         document.getElementById("context").style.top = evt.clientY + 'px';
-        // console.log(fileList.scrollLeft + fileList.clientWidth, evt.clientX + document.getElementById("context").clientWidth);
-        console.log(evt, fileList.offsetLeft, fileList.clientWidth, evt.clientX, document.getElementById("context").clientWidth);
+        console.log(evt, fileList.offsetLeft, fileList.clientWidth, evt.clientX, document.getElementById("context").clientWidth); // INFO:
         if (fileList.offsetLeft + fileList.clientWidth < evt.clientX + document.getElementById("context").clientWidth) {
             document.getElementById("context").style.left = fileList.offsetLeft + fileList.clientWidth - document.getElementById("context").clientWidth + 'px';
         } else {
@@ -735,7 +751,7 @@ document.oncontextmenu = function(evt) {
 iframe.onload = function() {
     if (this.src != window.location && this.src != "about:blank") {
         if (this.contentDocument) {
-            console.log(this.contentDocument.contentType);
+            console.log("iframe " + this.contentDocument.contentType + " " + this.src); // INFO:
             if (this.contentDocument.contentType.match(/^video/g)) {
                 video.src = this.src;
                 this.src = "about:blank";
@@ -769,16 +785,10 @@ video.onloadeddata = function() {
 };
 audio.onloadeddata = function() {
     if (this.src != window.location && this.src != "about:blank") {
-        getLyric(file_id);
         floatWindow.classList.add("show");
         lyric.classList.add("show");
         canvas.classList.add("show");
         this.classList.add("show");
-        // extIndex = this.src.lastIndexOf('.');
-        // if (extIndex != -1) {
-        //     console.log(this.src.substr(0, extIndex) + ".lrc");
-        //     getLyric(this.src.substr(0, extIndex) + ".lrc");
-        // }
         this.play();
     }
 };
@@ -825,7 +835,7 @@ function parseLyric(lines) {
                     return;
                 }
             }
-            // console.log(i, value);
+            // console.log(i, value); // INFO:
             result.splice(i, 0, [time, value]);
         });
     });
@@ -948,7 +958,4 @@ window.onload = function() {
     renderFrame();
     audio.play();
 };
-listPath(sessionStorage.getItem('path_id') || 0);
-// document.onselectstart = function() {
-//     window.getSelection().removeAllRanges();
-// };
+listPath(sessionStorage.getItem('path_id') || 0); // 載入上次位置

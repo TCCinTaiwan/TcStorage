@@ -1,4 +1,10 @@
 <?
+    /**
+    *  壓縮檔讀取
+    *
+    *  @version 0.1.0
+    *  @author TCC <john987john987@gmail.com>
+    */
     include_once 'functions.inc';
     if (isset($_POST['id']) || isset($_GET['id'])) {
         $id = isset($_POST['id']) ? $_POST['id'] : $_GET['id'];

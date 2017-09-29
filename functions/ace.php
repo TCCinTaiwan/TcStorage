@@ -1,9 +1,11 @@
 <?
     /**
     * Ace Editor
+    *
     * @version 0.1.0
     * @author TCC <john987john987@gmail.com>
     * @date 2017-09-26
+    *
     * @since 2017-09-26 0.1.0 TCC: 補上ACE漏掉的擴充功能引用
     */
     include_once 'connect.inc';

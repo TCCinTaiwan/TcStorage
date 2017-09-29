@@ -1,4 +1,14 @@
 <?
+    /**
+    *  API: 列出檔案資訊 NEXT: 移到API
+    *
+    *  @version 0.1.0
+    *  @author TCC <john987john987@gmail.com>
+    *  @date 2017-09-29
+    *  @since 0.1.0 2017-09-29 TCC: 因應資料庫改動[path_id]
+    *
+    *  @param Number $_POST['id'] 檔案ID
+    */
     include_once 'connect.inc';
     include_once 'functions.inc';
     $info = [
@@ -15,7 +25,7 @@
     $result = mysqli_query($conn, $sql);
     if ($row = mysqli_fetch_assoc($result)) {
         $info['name'] = $row['name'];
-        $info['path_id'] = $row['path_id'];
+        $info['path_id'] = is_null($row['path_id']) ? "0" : $row['path_id'];
         $file_location = dirname(dirname(__FILE__)) . "\\files\\" . $info['id'];
         $info['size'] = filesize($file_location);
         $info['mime'] = getFileMimeType($file_location, $info['name']);
