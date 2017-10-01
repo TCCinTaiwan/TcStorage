@@ -33,12 +33,6 @@ php:
 services:
   - mysql
 
-mysql:
-  # adapter: mysql2
-  database: test_tcstorage
-  # username: travis
-  encoding: utf8
-
 env:
   - DB=mysql
 
