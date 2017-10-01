@@ -27,6 +27,9 @@ php:
   # aliased to a recent hhvm version
   - hhvm
 
+install:
+  - composer install --prefer-dist --optimize-autoloader --quiet
+
 services:
   - mysql
 
@@ -49,12 +52,14 @@ matrix:
     - php: hhvm
 
 before_script:
+  # 環境變數
+  cp travis-ci/.env.example .env
   # insall apache
   - sudo apt-get update
   - sudo apt-get install apache2 libapache2-mod-fastcgi
   # create database
   - if [["$DB" == "mysql"]]; then mysql -e "create database IF NOT EXISTS test_tcstorage;" -uroot; fi
-  # #enable php-fpm
+  # # enable php-fpm
   # - sudo cp ~/.phpenv/versions/$(phpenv version-name)/etc/php-fpm.conf.default ~/.phpenv/versions/$(phpenv version-name)/etc/php-fpm.conf
   # - sudo a2enmod rewrite actions fastcgi alias
   # - echo "cgi.fix_pathinfo = 1" >> ~/.phpenv/versions/$(phpenv version-name)/etc/php.ini
