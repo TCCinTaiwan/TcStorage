@@ -27,9 +27,6 @@ php:
   # aliased to a recent hhvm version
   - hhvm
 
-# install:
-#   - composer install --prefer-dist --optimize-autoloader --quiet
-
 services:
   - mysql
 
