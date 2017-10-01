@@ -1,4 +1,6 @@
 # [:octocat:TcStorage](https://github.com/TCCinTaiwan/TcStorage)
+
+[![Join the chat at https://gitter.im/TCCinTaiwan/TcStorage](https://badges.gitter.im/TCCinTaiwan/TcStorage.svg)](https://gitter.im/TCCinTaiwan/TcStorage?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 [![Version](https://img.shields.io/badge/lastest_version-0.1.2-blue.svg)](https://github.com/TCCinTaiwan/TcStorage/releases) [![Gitter](https://badges.gitter.im/TCCinTaiwan/TcStorage.svg)](https://gitter.im/TCCinTaiwan/TcStorage?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge) [![Build Status](https://travis-ci.org/TCCinTaiwan/TcStorage.svg)](https://travis-ci.org/TCCinTaiwan/TcStorage)
 
 ## Contents[↶](#)
