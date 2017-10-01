@@ -1,16 +1,17 @@
 <?
     /**
-    *  API: 列出檔案資訊 NEXT: 移到API
+    *  API: 列出檔案資訊
     *
-    *  @version 0.1.0
+    *  @version 0.1.1
     *  @author TCC <john987john987@gmail.com>
-    *  @date 2017-09-29
+    *  @date 2017-10-01
     *  @since 0.1.0 2017-09-29 TCC: 因應資料庫改動[path_id]
+    *  @since 0.1.1 2017-10-01 TCC: 移到API資料夾
     *
     *  @param Number $_POST['id'] 檔案ID
     */
-    include_once 'connect.inc';
-    include_once 'functions.inc';
+    include_once '../functions/connect.inc';
+    include_once '../functions/functions.inc';
     $info = [
         "id" => isset($_POST['id']) ? $_POST['id'] : (isset($_GET['id']) ? $_GET['id'] : 1),
         "name" => "",

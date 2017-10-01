@@ -4,8 +4,8 @@
     * @version 0.1.1
     * @author TCC <john987john987@gmail.com>
     * @date 2017-09-28
-    * @since 2017-09-28 0.1.0 TCC: 加入多國語言
-    * @since 2017-09-28 0.1.1 TCC: 首頁多語系完善
+    * @since 0.1.0 2017-09-28 TCC: 加入多國語言
+    * @since 0.1.1 2017-09-28 TCC: 首頁多語系完善
     */
     if (!file_exists("functions/connect.inc")) { // DEBUG: 確認安裝
         header('Location: install/');

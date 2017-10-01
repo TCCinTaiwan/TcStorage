@@ -6,7 +6,7 @@
     * @author TCC <john987john987@gmail.com>
     * @date 2017-09-26
     *
-    * @since 2017-09-26 0.1.0 TCC: 補上ACE漏掉的擴充功能引用
+    * @since 0.1.0 2017-09-26 TCC: 補上ACE漏掉的擴充功能引用
     */
     include_once 'connect.inc';
     $baseurl = str_replace(realpath($_SERVER['DOCUMENT_ROOT']), "", realpath(dirname(__FILE__))) . "\\"; // 確保引用時，相對路徑的url

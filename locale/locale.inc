@@ -4,8 +4,8 @@
     * @version 0.1.0
     * @author TCC <john987john987@gmail.com>
     * @date 2017-09-28
-    * @since 2017-09-28 0.1.0 TCC: 建立多語言locale.inc
-    * @since 2017-09-28 0.1.0 TCC: 調整路徑
+    * @since 0.1.0 2017-09-28 TCC: 建立多語言locale.inc
+    * @since 0.1.0 2017-09-28 TCC: 調整路徑
     */
     //設定多國語言
     if(!isset($locale)) {

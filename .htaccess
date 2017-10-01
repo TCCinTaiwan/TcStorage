@@ -1,3 +1,9 @@
+# TcStorage 存取權限/轉址(Apache HTTP Server)
+#
+# @version 0.1.0
+# @author TCC <john987john987@gmail.com>
+# @date 2017-10-01
+# @since 0.1.0 2017-10-01 TCC: 移動list與file功能到API資料夾
 php_value upload_max_filesize 100M
 php_value post_max_size 102M
 php_value max_execution_time 300
@@ -6,7 +12,7 @@ AddType video/webm .mkv
 
 RewriteEngine On
 RewriteRule ^index.htm$ index.php
-RewriteRule ^files/$ functions/list.php
+RewriteRule ^files/$ api/list.php
 
 RewriteCond %{REQUEST_FILENAME} !-f
 RewriteCond %{REQUEST_FILENAME} !-d

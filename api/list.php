@@ -1,12 +1,13 @@
 <?
     /**
-    *  API: 列出檔案/資料夾 NEXT: 移到API
+    *  API: 列出檔案/資料夾
     *
-    *  @version 0.1.0
+    *  @version 0.1.1
     *  @author TCC <john987john987@gmail.com>
-    *  @date 2017-09-29
+    *  @date 2017-10-01
     *  @since 0.1.0 2017-09-29 TCC: 因應資料庫改動[path_id]
     *  @since 0.1.0 2017-09-29 TCC: MIME換成使用函數
+    *  @since 0.1.1 2017-10-01 TCC: 移到API資料夾
     *
     *  @param Number $_POST['path_id'] 目標資料夾ID
     */
@@ -14,8 +15,8 @@
     //     http_response_code(405); // Method not allowed
     //     exit();
     // }
-    include_once 'connect.inc';
-    include_once 'functions.inc';
+    include_once '../functions/connect.inc';
+    include_once '../functions/functions.inc';
     header("Content-Type: application/json;charset=utf-8");
     $data = array(
         "path_info" => array(

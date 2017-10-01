@@ -3,8 +3,8 @@
 * @version 0.1.0
 * @author TCC <john987john987@gmail.com>
 * @date 2017-09-26
-* @since 2017-09-26 0.1.0 TCC: $blockScrolling = Infinity;
-* @since 2017-09-26 0.1.0 TCC: 補上ACE漏掉的擴充功能引用
+* @since 0.1.0 2017-09-26 TCC: $blockScrolling = Infinity;
+* @since 0.1.0 2017-09-26 TCC: 補上ACE漏掉的擴充功能引用
 */
 var files = files || [{id: null, name: '', content: '', sessions: null}];
 var fileIndex = 0;

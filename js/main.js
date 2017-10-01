@@ -3,36 +3,38 @@
 * @version 0.1.9
 * @author TCC <john987john987@gmail.com>
 * @date 2017-09-29
-* @since 2017-09-25 0.1.0 TCC: 排除資料夾移動到自己
-* @since 2017-09-25 0.1.0 TCC: 移除與finishSelect功能衝突部分程式
-* @since 2017-09-25 0.1.0 TCC: 右鍵非選擇項目要先移除所選
-* @since 2017-09-25 0.1.1 TCC: 快捷鍵：F2重新命名
-* @since 2017-09-25 0.1.1 TCC: 拖曳複製(僅圖示無實現功能)
-* @since 2017-09-25 0.1.1 TCC: 麵包屑不顯示右鍵選單
-* @since 2017-09-26 0.1.2 TCC: 更新Google Analytics(移到index.php)
-* @since 2017-09-26 0.1.2 TCC: 加入LRC歌詞
-* @since 2017-09-26 0.1.2 TCC: LRC歌詞支援多行(必須相同時間)
-* @since 2017-09-26 0.1.3 TCC: LRC歌詞播完清空
-* @since 2017-09-26 0.1.3 TCC: 刪除功能實現
-* @since 2017-09-26 0.1.4 TCC: Media播放完結束浮窗
-* @since 2017-09-27 0.1.5 TCC: 把selectzone移到fileList底下
-* @since 2017-09-27 0.1.5 TCC: 解決滾輪偏移
-* @since 2017-09-27 0.1.5 TCC: 處理拖曳到自己顯示BUG
-* @since 2017-09-27 0.1.5 TCC: 設定"回上一層"不可選
-* @since 2017-09-27 0.1.6 TCC: mouseDownInfo轉變成mouseInfo(加了滑鼠位置)
-* @since 2017-09-27 0.1.6 TCC: 選取框到邊邊滾動滾輪
-* @since 2017-09-27 0.1.6 TCC: 修復"回上一層"不一定存在BUG
-* @since 2017-09-27 0.1.6 TCC: 確保selectzone初始大小為一點
-* @since 2017-09-27 0.1.6 TCC: 加入全選跟反選
-* @since 2017-09-27 0.1.7 TCC: 快捷鍵：Ctrl+A全選
-* @since 2017-09-27 0.1.7 TCC: 準備幾個快捷鍵
-* @since 2017-09-27 0.1.7 TCC: 快捷鍵：Ctrl+I反選
-* @since 2017-09-28 0.1.8 TCC: 修正麵包屑調整後selectzone偏移
-* @since 2017-09-28 0.1.8 TCC: 調整載入歌詞位置
-* @since 2017-09-28 0.1.8 TCC: back、breadcrumbs不觸發selectzone
-* @since 2017-09-29 0.1.9 TCC: 標示資訊
-* @since 2017-09-29 0.1.9 TCC: 增強ACE開啟模式(開新視窗)
-* @since 2017-09-29 0.1.9 TCC: 修正載入歌詞位置
+*
+* @since 0.1.0 2017-09-25 TCC: 排除資料夾移動到自己
+* @since 0.1.0 2017-09-25 TCC: 移除與finishSelect功能衝突部分程式
+* @since 0.1.0 2017-09-25 TCC: 右鍵非選擇項目要先移除所選
+* @since 0.1.1 2017-09-25 TCC: 快捷鍵：F2重新命名
+* @since 0.1.1 2017-09-25 TCC: 拖曳複製(僅圖示無實現功能)
+* @since 0.1.1 2017-09-25 TCC: 麵包屑不顯示右鍵選單
+* @since 0.1.2 2017-09-26 TCC: 更新Google Analytics(移到index.php)
+* @since 0.1.2 2017-09-26 TCC: 加入LRC歌詞
+* @since 0.1.2 2017-09-26 TCC: LRC歌詞支援多行(必須相同時間)
+* @since 0.1.3 2017-09-26 TCC: LRC歌詞播完清空
+* @since 0.1.3 2017-09-26 TCC: 刪除功能實現
+* @since 0.1.4 2017-09-26 TCC: Media播放完結束浮窗
+* @since 0.1.5 2017-09-27 TCC: 把selectzone移到fileList底下
+* @since 0.1.5 2017-09-27 TCC: 解決滾輪偏移
+* @since 0.1.5 2017-09-27 TCC: 處理拖曳到自己顯示BUG
+* @since 0.1.5 2017-09-27 TCC: 設定"回上一層"不可選
+* @since 0.1.6 2017-09-27 TCC: mouseDownInfo轉變成mouseInfo(加了滑鼠位置)
+* @since 0.1.6 2017-09-27 TCC: 選取框到邊邊滾動滾輪
+* @since 0.1.6 2017-09-27 TCC: 修復"回上一層"不一定存在BUG
+* @since 0.1.6 2017-09-27 TCC: 確保selectzone初始大小為一點
+* @since 0.1.6 2017-09-27 TCC: 加入全選跟反選
+* @since 0.1.7 2017-09-27 TCC: 快捷鍵：Ctrl+A全選
+* @since 0.1.7 2017-09-27 TCC: 準備幾個快捷鍵
+* @since 0.1.7 2017-09-27 TCC: 快捷鍵：Ctrl+I反選
+* @since 0.1.8 2017-09-28 TCC: 修正麵包屑調整後selectzone偏移
+* @since 0.1.8 2017-09-28 TCC: 調整載入歌詞位置
+* @since 0.1.8 2017-09-28 TCC: back、breadcrumbs不觸發selectzone
+* @since 0.1.9 2017-09-29 TCC: 標示資訊
+* @since 0.1.9 2017-09-29 TCC: 增強ACE開啟模式(開新視窗)
+* @since 0.1.9 2017-09-29 TCC: 修正載入歌詞位置
+* @since 0.1.0 2017-10-01 TCC: 移動list與file功能到API資料夾
 */
 var mouseInfo = {
     down: {
@@ -176,7 +178,7 @@ function listPath(path) {
             }
         }
     };
-    xhr.open('POST', 'functions/list.php'); // 傳資料給list.php
+    xhr.open('POST', 'api/list.php'); // 傳資料給list.php
     xhr.responseType = 'json';
     var fd = new FormData();
     fd.append('path_id', path);
@@ -354,27 +356,27 @@ function rename() {
         if (new_name == selectedElements[0].innerText) {
             new_name = null;
         }
-    }
-    for (var i = 0; i < selectedElements.length; i++) {
-        var element = selectedElements[i];
-        var type = getElementType(element);
-        var id = element.path_id || element.file_id || null;
-        console.log("rename " + type + "(" + id + ")\"" + element.innerText + "\""); // INFO:
-        if (id && new_name && type) {
-            var xhr = new XMLHttpRequest();
-            xhr.onreadystatechange = function() {
-                if (xhr.readyState == 4) { // 確認 readyState
-                    if (xhr.status == 200) { // 確認 status
-                        listPath();
+        for (var i = 0; i < selectedElements.length; i++) {
+            var element = selectedElements[i];
+            var type = getElementType(element);
+            var id = element.path_id || element.file_id || null;
+            console.log("rename " + type + "(" + id + ")\"" + element.innerText + "\""); // INFO:
+            if (id && new_name && type) {
+                var xhr = new XMLHttpRequest();
+                xhr.onreadystatechange = function() {
+                    if (xhr.readyState == 4) { // 確認 readyState
+                        if (xhr.status == 200) { // 確認 status
+                            listPath();
+                        }
                     }
-                }
-            };
-            xhr.open('POST', 'functions/rename.php', false); // 傳資料給rename.php 非同步是因為會取到相同名字 FIXME: 之後非同步要淘汰
-            var fd = new FormData();
-            fd.append('id', id);
-            fd.append('new_name', new_name);
-            fd.append('type', type);
-            xhr.send(fd);
+                };
+                xhr.open('POST', 'functions/rename.php', false); // 傳資料給rename.php 非同步是因為會取到相同名字 FIXME: 之後非同步要淘汰
+                var fd = new FormData();
+                fd.append('id', id);
+                fd.append('new_name', new_name);
+                fd.append('type', type);
+                xhr.send(fd);
+            }
         }
     }
 }
