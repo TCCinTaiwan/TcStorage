@@ -27,8 +27,8 @@ php:
   # aliased to a recent hhvm version
   - hhvm
 
-install:
-  - composer install --prefer-dist --optimize-autoloader --quiet
+# install:
+#   - composer install --prefer-dist --optimize-autoloader --quiet
 
 services:
   - mysql
@@ -36,7 +36,7 @@ services:
 mysql:
   # adapter: mysql2
   database: test_tcstorage
-  username: travis
+  # username: travis
   encoding: utf8
 
 env:
