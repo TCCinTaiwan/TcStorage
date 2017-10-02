@@ -1,6 +1,6 @@
 <?
     /**
-    *  API: 列出檔案資訊
+    *  API: 列出檔案資訊 // FIXME: 合併到list.php
     *
     *  @version 0.1.1
     *  @author TCC <john987john987@gmail.com>

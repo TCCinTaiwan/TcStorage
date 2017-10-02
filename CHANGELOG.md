@@ -76,6 +76,12 @@
     - MIME換成使用函數
     - 移除upload除錯用JSON
     - 修正$path_id為'0'資料庫應該是NULL問題
+* 2017-10-01
+    - 移動list與file功能到API資料夾
+    - 測試 Travis Ci(尚未OK)
+    - ZIP 加註解
+    - ZIP 功能單一化，類似raw.php
+    - 預覽ZIP前置作業
 
 ## 0.1.1[↶](#)
 * 2017-02-25
