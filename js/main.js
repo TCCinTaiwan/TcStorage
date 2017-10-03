@@ -1,8 +1,8 @@
 /**
 * TcStorage
-* @version 0.1.9
+* @version 0.1.11
 * @author TCC <john987john987@gmail.com>
-* @date 2017-09-29
+* @date 2017-10-03
 *
 * @since 0.1.0 2017-09-25 TCC: 排除資料夾移動到自己
 * @since 0.1.0 2017-09-25 TCC: 移除與finishSelect功能衝突部分程式
@@ -34,8 +34,11 @@
 * @since 0.1.9 2017-09-29 TCC: 標示資訊
 * @since 0.1.9 2017-09-29 TCC: 增強ACE開啟模式(開新視窗)
 * @since 0.1.9 2017-09-29 TCC: 修正載入歌詞位置
-* @since 0.1.0 2017-10-01 TCC: 移動list與file功能到API資料夾
-* @since 0.1.0 2017-10-01 TCC: 預覽ZIP前置作業
+* @since 0.1.10 2017-10-01 TCC: 移動list與file功能到API資料夾
+* @since 0.1.10 2017-10-01 TCC: 預覽ZIP前置作業
+* @since 0.1.11 2017-10-03 TCC: 加入預覽ZIP
+* @since 0.1.11 2017-10-03 TCC: 加入dirname()
+* @todo ZIP檔案中，讀取內容
 */
 var mouseInfo = {
     down: {
@@ -93,6 +96,9 @@ selectedElements.type = function() {
     // console.log("selectedElements type:" + type) // INFO:
     return type;
 }
+function dirname(path) {
+    return path.replace(/\\/g,'/').replace(/([^\/]*\/|\/?[^\/]*)$/, '');;
+}
 function formatBytes(bytes, decimals) {
     if(bytes == 0) return '0 Byte';
     var k = 1024;
@@ -105,89 +111,118 @@ function github() {
     window.open('https://github.com/TCCinTaiwan/TcStorage');
 }
 function listPath(path = null, zip = null) {
-    if (!zip) {
-        path = path ? path : (typeof path_id == "undefined" ? 0 : path_id);
-        sessionStorage.setItem('path_id', path);
-        var xhr = new XMLHttpRequest();
-        xhr.onreadystatechange = function() {
-            if (xhr.readyState == 4) { // 確認 readyState
-                if (xhr.status == 200) { // 確認 status
-                    var info = typeof xhr.response == "string" ?　JSON.parse(xhr.response) : xhr.response;
-                    fileList.innerHTML = "";
-                    path_id = info.path_info.id;
-                    console.log("list: " + info.path_info.id + "(" + info.path_info.name + ")"); // INFO:
-                    var breadcrumbs_ul = document.createElement("ul");
-                    breadcrumbs_ul.className = "breadcrumbs";
-                    fileList.appendChild(breadcrumbs_ul);
-                    if (info.path_info.root_id != null) {
-                        var back_div = document.createElement("div");
-                        back_div.className = "back";
+    console.log("listPath: " + path + " " + zip);
+    path = path ? path : (typeof path_id == "undefined" ? 0 : path_id);
+    if (zip === null) {
+        sessionStorage.removeItem('zip');
+    } else {
+        sessionStorage.setItem('zip', zip);
+    }
+    sessionStorage.setItem('id', path);
+    var xhr = new XMLHttpRequest();
+    xhr.onreadystatechange = function() {
+        if (xhr.readyState == 4) { // 確認 readyState
+            if (xhr.status == 200) { // 確認 status
+                var info = typeof xhr.response == "string" ?　JSON.parse(xhr.response) : xhr.response;
+                fileList.innerHTML = "";
+                path_id = info.path_info.id;
+                // console.dir(info);
+                console.log("list: " + info.path_info.id + "(" + info.path_info.name + ") " + info.path_info.zip_path); // INFO:
+                var breadcrumbs_ul = document.createElement("ul");
+                breadcrumbs_ul.className = "breadcrumbs";
+                fileList.appendChild(breadcrumbs_ul);
+                if (info.path_info.root_id != null) {
+                    var back_div = document.createElement("div");
+                    back_div.className = "back";
+                    if (info.path_info.zip_path === null || info.path_info.zip_path == ".") {
                         back_div.path_id = info.path_info.root_id;
-                        back_div.innerText = "返回上層";
-                        fileList.appendChild(back_div);
+                        back_div.zip_path = null;
+                    } else {
+                        back_div.path_id = info.path_info.id;
+                        back_div.zip_path = dirname(info.path_info.zip_path);
                     }
-                    for (var folderIndex = 0; folderIndex < info.folders.length; folderIndex++) {
-                        var folder_div = document.createElement("div");
-                        folder_div.className = "folder";
-                        // folder_div.draggable = true;
-                        if (info.folders[folderIndex].descendant | info.folders[folderIndex].file_count > 0) {
-                            folder_div.className += " fullFolder";
-                        } else if (info.folders[folderIndex].folder_count > 0) {
-                            folder_div.className += " emptinessFolder";
-                        } else {
-                            folder_div.className += " emptyFolder";
-                        }
-                        // var img = new Image();
-                        // img.src = "images/file types/svg/file.svg";
-                        // folder_div.appendChild(img);
-                        folder_div.innerHTML += info.folders[folderIndex].name;
+                    back_div.innerText = "返回上層";
+                    fileList.appendChild(back_div);
+                }
+                for (var folderIndex = 0; folderIndex < info.folders.length; folderIndex++) {
+                    var folder_div = document.createElement("div");
+                    folder_div.className = "folder";
+                    // folder_div.draggable = true;
+                    if (info.folders[folderIndex].descendant | info.folders[folderIndex].file_count > 0) {
+                        folder_div.className += " fullFolder";
+                    } else if (info.folders[folderIndex].folder_count > 0) {
+                        folder_div.className += " emptinessFolder";
+                    } else {
+                        folder_div.className += " emptyFolder";
+                    }
+                    // var img = new Image();
+                    // img.src = "images/file types/svg/file.svg";
+                    // folder_div.appendChild(img);
+                    folder_div.innerHTML += info.folders[folderIndex].name;
+                    if (zip !== null) { // 假如是壓縮檔
+                        folder_div.zip_path = info.folders[folderIndex].path;
+                        folder_div.path_id = info.path_info.id;
+                    } else {
                         folder_div.path_id = info.folders[folderIndex].id;
-                        fileList.appendChild(folder_div);
                     }
-                    for (var fileIndex = 0; fileIndex < info.files.length; fileIndex++) {
-                        var file_div = document.createElement("div");
-                        file_div.className = "file";
-                        var fileName = info.files[fileIndex].name;
-                        var extension = "";
-                        if (fileName.split('.').length > 1) {
-                            extension = fileName.split('.').pop();
-                            file_div.classList.add(extension);
+                    fileList.appendChild(folder_div);
+                }
+                for (var fileIndex = 0; fileIndex < info.files.length; fileIndex++) {
+                    var file_div = document.createElement("div");
+                    file_div.className = "file";
+                    var fileName = info.files[fileIndex].name;
+                    var extension = "";
+                    if (fileName.split('.').length > 1) {
+                        extension = fileName.split('.').pop();
+                        file_div.classList.add(extension);
+                    }
+                    file_div.innerText = file_div.file_name = fileName;
+                    file_div.extension = extension; // 副檔名
+                    file_div.file_id = info.files[fileIndex].id; // 檔案ID
+                    file_div.mime = info.files[fileIndex].mime; // MIME類型
+                    file_div.title = formatBytes(info.files[fileIndex].size); // 檔案大小 TODO: 檢視:清單
+                    // file_div.draggable = true;
+                    fileList.appendChild(file_div);
+                }
+                var selectzone_div = document.createElement("div");
+                selectzone_div.className = "selectzone";
+                fileList.appendChild(selectzone_div);
+                // 填充資訊
+                // var elements = document.getElementsByClassName("fullPath");
+                // for (var index = 0; index < elements.length; index++) {
+                //     elements[index].innerText = info.path_info.full_path;
+                // }
+                var elements = document.getElementsByClassName("breadcrumbs");
+                for (var index = 0; index < elements.length; index++) { // 可以試看看對調兩層的for，說不定會加快效率
+                    for (var index2 = 0; index2 < info.path_info.breadcrumbs.length; index2++) {
+                        var breadcrumbs_li = document.createElement("li");
+                        breadcrumbs_li.innerText = info.path_info.breadcrumbs[index2].name;
+                        breadcrumbs_li.path_id = typeof info.path_info.breadcrumbs[index2].zip_path == "undefined" ? info.path_info.breadcrumbs[index2].id : info.path_info.id;
+                        if (zip !== null) {
+                            if (info.path_info.breadcrumbs[index2].zip_path === ".") {
+                                breadcrumbs_li.classList.add("zip");
+                            }
+                            breadcrumbs_li.zip_path = info.path_info.breadcrumbs[index2].zip_path;
                         }
-                        file_div.innerText = file_div.file_name = fileName;
-                        file_div.extension = extension; // 副檔名
-                        file_div.file_id = info.files[fileIndex].id; // 檔案ID
-                        file_div.mime = info.files[fileIndex].mime; // MIME類型
-                        file_div.title = formatBytes(info.files[fileIndex].size); // 檔案大小 TODO: 檢視:清單
-                        // file_div.draggable = true;
-                        fileList.appendChild(file_div);
+                        elements[index].appendChild(breadcrumbs_li);
                     }
-                    var selectzone_div = document.createElement("div");
-                    selectzone_div.className = "selectzone";
-                    fileList.appendChild(selectzone_div);
-                    // 填充資訊
-                    // var elements = document.getElementsByClassName("fullPath");
-                    // for (var index = 0; index < elements.length; index++) {
-                    //     elements[index].innerText = info.path_info.full_path;
-                    // }
-                    var elements = document.getElementsByClassName("breadcrumbs");
-                    for (var index = 0; index < elements.length; index++) {
-                        elements[index].innerHTML = info.path_info.breadcrumbs.map(function(elem){return "<li path_id='" + elem.id + "'>" + elem.name + "</li>";}).join("");
-                    }
-                    elements = document.getElementsByClassName("path");
-                    for (var index = 0; index < elements.length; index++) {
-                        elements[index].innerText = info.path_info.name;
-                    }
+                    // elements[index].innerHTML = info.path_info.breadcrumbs.map(function(elem){return "<li path_id='" + (zip === null ? elem.id : info.path_info.id) + "'" + (zip === null ? "" : (" zip='" + elem.zip_path + "'")) + ">" + elem.name + "</li>";}).join("");
+                }
+                elements = document.getElementsByClassName("path");
+                for (var index = 0; index < elements.length; index++) {
+                    elements[index].innerText = info.path_info.name;
                 }
             }
-        };
-        xhr.open('POST', 'api/list.php'); // 傳資料給list.php
-        xhr.responseType = 'json';
-        var fd = new FormData();
-        fd.append('path_id', path);
-        xhr.send(fd);
-    } else { // TODO: 加入zip，當zip為檔案id時
-        path = path ? path : "/";
+        }
+    };
+    xhr.open('POST', 'api/list.php'); // 傳資料給list.php
+    xhr.responseType = 'json';
+    var fd = new FormData();
+    fd.append('id', path);
+    if (zip !== null) {
+        fd.append('zip', zip);
     }
+    xhr.send(fd);
 }
 // function downloadFile(url, file_name, target) {
 //     file_name = file_name || "";
@@ -229,7 +264,7 @@ function move(element, old_path, new_path) {
         xhr.onreadystatechange = function() {
             if (xhr.readyState == 4) { // 確認 readyState
                 if (xhr.status == 200) { // 確認 status
-                    listPath();//有時沒跑到這http://127.0.0.1/TcStorage/functions/move.php?id=33&new_path=7&type=file
+                    listPath(); // 有時沒跑到這http://127.0.0.1/TcStorage/functions/move.php?id=33&new_path=7&type=file
                 }
             }
         };
@@ -309,7 +344,7 @@ function reCalc(x = null, y = null) {
     //     width: selectzone.width
     // });
 }
-function preview(element) { // TODO: ZIP
+function preview(element) { // TODO: ZIP檔內部 typeof element.mime == "undefined"
     element = typeof element == "undefined" ? (selectedElements.length > 0 ? selectedElements[0] : null) : element;
     console.log("preveiw " + element.file_id + " " + element.mime); // INFO:
     if (element.mime.match(/^(image|audio|video)/g)) {
@@ -321,7 +356,7 @@ function preview(element) { // TODO: ZIP
     } else if (element.mime.match(/^(text|inode\/x-empty)/g)) {
         ace(element.file_id);
     } else if (element.mime.match(/^(application\/zip)/g)) {
-        alert("zip");
+        listPath(element.file_id, "");
     } else {
         raw(element.file_id, element.file_name, element.mime);
         // ace(evt.target.file_id);
@@ -677,7 +712,11 @@ fileList.onmouseup = function(evt) {
             window.open('files/raw/' + evt.target.file_id + '/' + evt.target.file_name);
             evt.preventDefault();
         }  else if (evt.target.classList.contains("folder") || evt.target.classList.contains("back")) {
-            listPath(evt.target.path_id);
+            if (typeof evt.target.zip_path == "undefined") {
+                listPath(evt.target.path_id);
+            } else {
+                listPath(evt.target.path_id, evt.target.zip_path);
+            }
             evt.preventDefault();
         }
     } else if (evt.button == 0) { // 滑鼠右鍵
@@ -696,7 +735,12 @@ fileList.onmouseup = function(evt) {
             }
         } else if (evt.target.nodeName == "LI") {
             if (!evt.ctrlKey) {
-                listPath(evt.target.attributes["path_id"].value);
+                // DEBUG: attributes["path_id"].value
+                if (typeof evt.target.zip_path == "undefined") {
+                    listPath(evt.target.path_id);
+                } else {
+                    listPath(evt.target.path_id, evt.target.zip_path);
+                }
             }
         }
         // else if (evt.target.classList.contains("back")) {
@@ -720,7 +764,13 @@ fileList.ondblclick = function(evt) {
         }
     } else if (evt.target.classList.contains("folder") || evt.target.classList.contains("back")) {
         if (evt.button == 0) { // 滑鼠右鍵
-            listPath(evt.target.path_id);
+            // listPath(evt.target.path_id);
+
+            if (typeof evt.target.zip_path == "undefined") {
+                listPath(evt.target.path_id);
+            } else {
+                listPath(evt.target.path_id, evt.target.zip_path);
+            }
         }
     }
 };
@@ -967,4 +1017,4 @@ window.onload = function() {
     renderFrame();
     audio.play();
 };
-listPath(sessionStorage.getItem('path_id') || 0); // 載入上次位置
+listPath(sessionStorage.getItem('id') || 0, sessionStorage.getItem('zip') === null ? null : sessionStorage.getItem('zip')); // 載入上次位置

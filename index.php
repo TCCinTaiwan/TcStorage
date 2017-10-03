@@ -1,11 +1,12 @@
 <?
     /**
     * TcStorage 首頁
-    * @version 0.1.1
+    * @version 0.1.2
     * @author TCC <john987john987@gmail.com>
-    * @date 2017-09-28
+    * @date 2017-10-02
     * @since 0.1.0 2017-09-28 TCC: 加入多國語言
     * @since 0.1.1 2017-09-28 TCC: 首頁多語系完善
+    * @since 0.1.2 2017-10-02 TCC: 選單加入複製貼上
     */
     if (!file_exists("functions/connect.inc")) { // DEBUG: 確認安裝
         header('Location: install/');
@@ -59,6 +60,8 @@
         <li for="file" onclick="download();"><?=_("Download");?></li>
         <li for="folder folders file files multiple" onclick="remove();"><?=_("Delete");?></li>
         <li for="folder folders file files" onclick="rename();"><?=_("Rename");?></li>
+        <li for="any"><?=_("Cut");?></li>
+        <li for="any"><?=_("Copy");?></li>
         <li for="any" onclick="createNew('folder');"><?=_("New Folder");?></li>
         <li for="any" onclick="createNew('file');"><?=_("New File");?></li>
         <li for="any" onclick="listPath();"><?=_("Refresh");?></li>
