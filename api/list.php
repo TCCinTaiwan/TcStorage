@@ -12,7 +12,8 @@
     *  @since 0.1.2 2017-10-03 TCC: ZIP加到list
     *
     *  @param Number $_POST['id'] 目標資料夾ID或ZIP資料夾ID
-    *  @param Number $_POST['zip'] ZIP檔案子路徑
+    *  @param String $_POST['zip'] ZIP檔案子路徑
+    *  @todo zip路徑大小寫忽略
     */
     // if ($_SERVER['REQUEST_METHOD'] != "POST") { // DEBUG: 確保都是使用post
     //     http_response_code(405); // Method not allowed

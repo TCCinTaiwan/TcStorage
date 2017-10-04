@@ -9,7 +9,7 @@
     //     array("id" => 1)
     // ];
 
-    // $fp = fopen("zip://" . dirname(__FILE__) . "\\..\\files\\28#─C└Y.txt", 'r');
+    // $fp = fopen("zip://" . dirname(dirname(dirname(__FILE__))) . "\\files\\30#Lang.zip", 'r');
     // if (!$fp) {
     //     exit("cannot open\n");
     // }
@@ -19,4 +19,7 @@
     // }
     // echo $contents;
     // fclose($fp);
+
+    // header("Content-Type: " . getFileMimeType("", "test.py"));
+
 ?>

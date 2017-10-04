@@ -1,6 +1,6 @@
 <?
     /**
-    *  複製檔案/資料夾
+    *  讀取檔案
     *
     *  @version 0.1.1
     *  @author TCC <john987john987@gmail.com>
@@ -9,8 +9,9 @@
     *  @since 0.1.0 2017-09-27 TCC: 啟用讀檔紀錄
     *  @since 0.1.1 2017-09-28 TCC: raw.php讀檔微調，Log檔位置修正
     *
-    *  @param Number $_POST['id'] 檔案ID
-    *  @param String $_POST['name'] 檔案名稱
+    *  @param Number $_POST['id'] 檔案ID或ZIP檔案ID
+    *  @param String $_POST['name'] 檔案名稱 || ZIP檔案子路徑
+    *  @param Bool $_POST['zip'] FIXME: 是否為ZIP
     */
     include_once 'connect.inc';
     $id = (isset($_POST['id']) ? $_POST['id'] : (isset($_GET['id']) ? $_GET['id'] : 1));
@@ -86,7 +87,7 @@
     header('TcStorage-Debug:' . $mime_type . (isset($_SERVER['HTTP_RANGE']) ? " " . $_SERVER['HTTP_RANGE'] : "") . " " . ($end_offset - $start_offset + 1) . " " . $filesize); // DEBUG:
 
     header("Content-Type: " . $mime_type . ";charset=utf-8");
-    header("Content-Disposition: inline; filename=" .  $basename);
+    header("Content-Disposition: inline; filename=" . $basename);
     if (!$open_file = fopen($file_location, 'rb')) {
         http_response_code(500); // Internal Server Error
         error_log("$_SERVER[REQUEST_URI] 500 can't open '$file_location'\n", 3, "../logs/raw.error.log"); // DEBUG:
