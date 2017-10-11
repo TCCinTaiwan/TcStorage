@@ -71,7 +71,7 @@ Latest version is 0.1.2 , for detailed changelog, check [CHANGELOG.md](CHANGELOG
 
 ## Contributing[↶](#)
 1. Create an issue and describe your idea
-2. [![GitHub forks](https://img.shields.io/github/forks/TCCinTaiwan/TcTube.svg?style=social&label=Fork&maxAge=2592000)](https://github.com/TCCinTaiwan/TcStorage/network) it!
+2. [![GitHub forks](https://img.shields.io/github/forks/TCCinTaiwan/TcStorage.svg?style=social&label=Fork&maxAge=2592000)](https://github.com/TCCinTaiwan/TcStorage/network) it!
 3. Create your feature branch: `git checkout -b my-new-feature`
 4. Commit your changes: `git commit -m 'Add some feature'`
 5. Push to the branch: `git push origin my-new-feature`
@@ -81,7 +81,7 @@ Latest version is 0.1.2 , for detailed changelog, check [CHANGELOG.md](CHANGELOG
 1. Go to [PoEditor](https://poeditor.com/join/project/UQnirwwazV) join this project.
 2. Translate!
 3. Export your contributing language like main.po and main.mo file.
-4. [![GitHub forks](https://img.shields.io/github/forks/TCCinTaiwan/TcTube.svg?style=social&label=Fork&maxAge=2592000)](https://github.com/TCCinTaiwan/TcTube/network) it!
+4. [![GitHub forks](https://img.shields.io/github/forks/TCCinTaiwan/TcStorage.svg?style=social&label=Fork&maxAge=2592000)](https://github.com/TCCinTaiwan/TcStorage/network) it!
 5. Add files to locale/{en_US}/LC_MESSAGES depand on language.
 6. Commit your changes: `git commit -m 'Update en_US locale files'`
 7. Push to the branch: `git push origin my-new-feature`
