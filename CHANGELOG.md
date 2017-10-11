@@ -97,6 +97,12 @@
 * 2017-10-11
     - 加入tooltip
     - 移除Travis Ci
+    - 取消預覽ZIP
+    - 加入js用的多國語言
+    - 修改var成let(ES6)
+    - 檔案資訊(ctime、size)
+    - 影片LRC修正
+    - lyric邊框
 
 ## 0.1.1[↶](#)
 * 2017-02-25

@@ -2,12 +2,14 @@
     /**
     * Ace Editor
     *
-    * @version 0.1.0
+    * @version 0.1.1
     * @author TCC <john987john987@gmail.com>
-    * @date 2017-09-26
+    * @date 2017-10-11
     *
     * @since 0.1.0 2017-09-26 TCC: 補上ACE漏掉的擴充功能引用
+    * @since 0.1.1 2017-10-11 TCC: 加上語言支持
     */
+    include '../locale/locale.inc'; // 載入語言
     include_once 'connect.inc';
     $baseurl = str_replace(realpath($_SERVER['DOCUMENT_ROOT']), "", realpath(dirname(__FILE__))) . "\\"; // 確保引用時，相對路徑的url
     $fileIdList = array_keys(array_flip(explode(",", isset($_POST['id']) ? $_POST['id'] : (isset($_GET['id']) ? $_GET['id'] : ""))));
@@ -85,4 +87,10 @@
 <script src="https://ace.c9.io/build/src/ext-settings_menu.js"></script>
 <script src="https://ace.c9.io/build/src/ext-keybinding_menu.js"></script>
 <script src="https://ace.c9.io/build/src/ext-old_ie.js"></script> -->
-<script src="<?=$baseurl;?>../js/ace.js"></script>
+<script>
+    var locale = {
+        "Save!" : "<?=_('Save!');?>",
+    };
+</script>
+<script src="<?=$baseurl;?>../js/common.js" charset="utf-8" async></script>
+<script src="<?=$baseurl;?>../js/ace.js" charset="utf-8" async></script>

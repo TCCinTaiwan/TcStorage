@@ -1,6 +1,6 @@
 /**
 * TcStorage
-* @version 0.1.12
+* @version 0.1.13
 * @author TCC <john987john987@gmail.com>
 * @date 2017-10-11
 *
@@ -39,9 +39,13 @@
 * @since 0.1.11 2017-10-03 TCC: 加入預覽ZIP
 * @since 0.1.11 2017-10-03 TCC: 加入dirname()
 * @since 0.1.12 2017-10-11 TCC: 加入tooltip
+* @since 0.1.13 2017-10-11 TCC: 取消預覽ZIP
+* @since 0.1.13 2017-10-11 TCC: 修改var成let(ES6)
+* @since 0.1.13 2017-10-11 TCC: 增加檔案資訊
+* @since 0.1.13 2017-10-11 TCC: 影片LRC修正
 * @todo ZIP檔案中，讀取內容
 */
-var mouseInfo = {
+let mouseInfo = {
     down: {
         element: null,
         x: null,
@@ -50,10 +54,10 @@ var mouseInfo = {
     x: null,
     y: null
 };
-var selectedElements = [];
-var clickTimer = null;
+let selectedElements = [];
+let clickTimer = null;
 selectedElements.clearSelected = function() {
-    var element = null;
+    let element = null;
     while (element = this.pop()) {
         element.classList.remove("select");
         element.draggable = false;
@@ -72,9 +76,9 @@ selectedElements.removeSelected = function(element) {
     this.splice(selectedElements.indexOf(element), 1);
 }
 selectedElements.type = function() {
-    var type = "none";
-    var element;
-    for (var i = 0; i < selectedElements.length; i++) {
+    let type = "none";
+    let element;
+    for (let i = 0; i < selectedElements.length; i++) {
         element = selectedElements[i];
         if (element.classList.contains("folder")) {
             if (type == "none") {
@@ -102,10 +106,10 @@ function dirname(path) {
 }
 function formatBytes(bytes, decimals) {
     if(bytes == 0) return '0 Byte';
-    var k = 1024;
-    var dm = decimals + 1 || 3;
-    var sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB'];
-    var i = Math.floor(Math.log(bytes) / Math.log(k));
+    let k = 1024;
+    let dm = decimals + 1 || 3;
+    let sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB'];
+    let i = Math.floor(Math.log(bytes) / Math.log(k));
     return parseFloat((bytes / Math.pow(k, i)).toFixed(dm)) + ' ' + sizes[i];
 }
 function github() {
@@ -120,20 +124,20 @@ function listPath(path = null, zip = null) {
         sessionStorage.setItem('zip', zip);
     }
     sessionStorage.setItem('id', path);
-    var xhr = new XMLHttpRequest();
+    let xhr = new XMLHttpRequest();
     xhr.onreadystatechange = function() {
         if (xhr.readyState == 4) { // 確認 readyState
             if (xhr.status == 200) { // 確認 status
-                var info = typeof xhr.response == "string" ?　JSON.parse(xhr.response) : xhr.response;
+                let info = typeof xhr.response == "string" ?　JSON.parse(xhr.response) : xhr.response;
                 fileList.innerHTML = "";
                 path_id = info.path_info.id;
                 // console.dir(info);
                 console.log("list: " + info.path_info.id + "(" + info.path_info.name + ") " + info.path_info.zip_path); // INFO:
-                var breadcrumbs_ul = document.createElement("ul");
+                let breadcrumbs_ul = document.createElement("ul");
                 breadcrumbs_ul.className = "breadcrumbs";
                 fileList.appendChild(breadcrumbs_ul);
                 if (info.path_info.root_id != null) {
-                    var back_div = document.createElement("div");
+                    let back_div = document.createElement("div");
                     back_div.className = "back";
                     if (info.path_info.zip_path === null || info.path_info.zip_path == ".") {
                         back_div.path_id = info.path_info.root_id;
@@ -142,11 +146,12 @@ function listPath(path = null, zip = null) {
                         back_div.path_id = info.path_info.id;
                         back_div.zip_path = dirname(info.path_info.zip_path);
                     }
-                    back_div.innerText = "返回上層";
+                    back_div.innerText = locale["Go Back"];
+                    // back_div.innerText = "返回上層";
                     fileList.appendChild(back_div);
                 }
-                for (var folderIndex = 0; folderIndex < info.folders.length; folderIndex++) {
-                    var folder_div = document.createElement("div");
+                for (let folderIndex = 0; folderIndex < info.folders.length; folderIndex++) {
+                    let folder_div = document.createElement("div");
                     folder_div.className = "folder";
                     // folder_div.draggable = true;
                     if (info.folders[folderIndex].descendant | info.folders[folderIndex].file_count > 0) {
@@ -156,10 +161,24 @@ function listPath(path = null, zip = null) {
                     } else {
                         folder_div.className += " emptyFolder";
                     }
-                    // var img = new Image();
-                    // img.src = "images/file types/svg/file.svg";
-                    // folder_div.appendChild(img);
-                    folder_div.innerHTML += info.folders[folderIndex].name;
+                    // folder_div.innerHTML = folder_div.file_name = info.folders[folderIndex].name;
+
+                    let folder_name_span = document.createElement("span");
+                    folder_name_span.className = "name";
+                    folder_name_span.innerText = folder_div.file_name = info.folders[folderIndex].name;
+                    folder_div.appendChild(folder_name_span);
+
+                    let folder_size_div = document.createElement("div");
+                    folder_size_div.className = "size";
+                    folder_size_div.title = info.folders[folderIndex].size + " Byte" + (info.folders[folderIndex].size > 1 ? "s" : "");
+                    folder_size_div.innerText = formatBytes(info.folders[folderIndex].size); // 檔案大小 TODO: 檢視:清單
+                    folder_div.appendChild(folder_size_div);
+
+                    let folder_ctime_div = document.createElement("div");
+                    folder_ctime_div.className = "ctime";
+                    folder_ctime_div.innerText = folder_ctime_div.title = (new Date(info.folders[folderIndex].ctime * 1000)).toLocaleString()
+                    folder_div.appendChild(folder_ctime_div);
+
                     if (zip !== null) { // 假如是壓縮檔
                         folder_div.zip_path = info.folders[folderIndex].path;
                         folder_div.path_id = info.path_info.id;
@@ -168,35 +187,51 @@ function listPath(path = null, zip = null) {
                     }
                     fileList.appendChild(folder_div);
                 }
-                for (var fileIndex = 0; fileIndex < info.files.length; fileIndex++) {
-                    var file_div = document.createElement("div");
+                for (let fileIndex = 0; fileIndex < info.files.length; fileIndex++) {
+                    let file_div = document.createElement("div");
                     file_div.className = "file";
-                    var fileName = info.files[fileIndex].name;
-                    var extension = "";
+                    let fileName = info.files[fileIndex].name;
+                    file_div.extension = "";
                     if (fileName.split('.').length > 1) {
-                        extension = fileName.split('.').pop();
-                        file_div.classList.add(extension);
+                        file_div.extension = fileName.split('.').pop();
+                        file_div.classList.add(file_div.extension);
                     }
-                    file_div.innerText = file_div.file_name = fileName;
-                    file_div.extension = extension; // 副檔名
+                    // file_div.extension = extension; // 副檔名
                     file_div.file_id = info.files[fileIndex].id; // 檔案ID
                     file_div.mime = info.files[fileIndex].mime; // MIME類型
-                    file_div.title = formatBytes(info.files[fileIndex].size); // 檔案大小 TODO: 檢視:清單
+
+                    let file_name_span = document.createElement("span");
+                    file_name_span.className = "name";
+                    file_name_span.innerText = file_div.file_name = fileName; // file_div.innerText =
+                    file_div.appendChild(file_name_span);
+
+                    let file_size_div = document.createElement("div");
+                    file_size_div.className = "size";
+                    // file_div.title =
+                    file_size_div.title = info.files[fileIndex].size + " Byte" + (info.files[fileIndex].size > 1 ? "s" : "");
+                    file_size_div.innerText = formatBytes(info.files[fileIndex].size); // 檔案大小 TODO: 檢視:清單
+                    file_div.appendChild(file_size_div);
+
+                    let file_ctime_div = document.createElement("div");
+                    file_ctime_div.className = "ctime";
+                    file_ctime_div.innerText = file_ctime_div.title = (new Date(info.files[fileIndex].ctime * 1000)).toLocaleString()
+                    file_div.appendChild(file_ctime_div);
+
                     // file_div.draggable = true;
                     fileList.appendChild(file_div);
                 }
-                var selectzone_div = document.createElement("div");
+                let selectzone_div = document.createElement("div");
                 selectzone_div.className = "selectzone";
                 fileList.appendChild(selectzone_div);
                 // 填充資訊
-                // var elements = document.getElementsByClassName("fullPath");
-                // for (var index = 0; index < elements.length; index++) {
+                // let elements = document.getElementsByClassName("fullPath");
+                // for (let index = 0; index < elements.length; index++) {
                 //     elements[index].innerText = info.path_info.full_path;
                 // }
-                var elements = document.getElementsByClassName("breadcrumbs");
-                for (var index = 0; index < elements.length; index++) { // 可以試看看對調兩層的for，說不定會加快效率
-                    for (var index2 = 0; index2 < info.path_info.breadcrumbs.length; index2++) {
-                        var breadcrumbs_li = document.createElement("li");
+                let elements = document.getElementsByClassName("breadcrumbs");
+                for (let index = 0; index < elements.length; index++) { // 可以試看看對調兩層的for，說不定會加快效率
+                    for (let index2 = 0; index2 < info.path_info.breadcrumbs.length; index2++) {
+                        let breadcrumbs_li = document.createElement("li");
                         breadcrumbs_li.innerText = info.path_info.breadcrumbs[index2].name;
                         breadcrumbs_li.path_id = typeof info.path_info.breadcrumbs[index2].zip_path == "undefined" ? info.path_info.breadcrumbs[index2].id : info.path_info.id;
                         if (zip !== null) {
@@ -210,7 +245,7 @@ function listPath(path = null, zip = null) {
                     // elements[index].innerHTML = info.path_info.breadcrumbs.map(function(elem){return "<li path_id='" + (zip === null ? elem.id : info.path_info.id) + "'" + (zip === null ? "" : (" zip='" + elem.zip_path + "'")) + ">" + elem.name + "</li>";}).join("");
                 }
                 elements = document.getElementsByClassName("path");
-                for (var index = 0; index < elements.length; index++) {
+                for (let index = 0; index < elements.length; index++) {
                     elements[index].innerText = info.path_info.name;
                 }
             }
@@ -218,7 +253,7 @@ function listPath(path = null, zip = null) {
     };
     xhr.open('POST', 'api/list.php'); // 傳資料給list.php
     xhr.responseType = 'json';
-    var fd = new FormData();
+    let fd = new FormData();
     fd.append('id', path);
     if (zip !== null) {
         fd.append('zip', zip);
@@ -228,7 +263,7 @@ function listPath(path = null, zip = null) {
 // function downloadFile(url, file_name, target) {
 //     file_name = file_name || "";
 //     target = target || "";
-//     var link = document.createElement("a");
+//     let link = document.createElement("a");
 //     link.href = url;
 //     link.target = target;
 //     link.download = file_name;
@@ -238,7 +273,7 @@ function createNew(type, name) {
     type = (type || "folder") == "folder" ? "folder" : "file";
     name = name || null;
     console.log("create " + type + "(" + name + ") at " + path_id); // INFO:
-    var xhr = new XMLHttpRequest();
+    let xhr = new XMLHttpRequest();
     xhr.onreadystatechange = function() {
         if (xhr.readyState == 4) { // 確認 readyState
             if (xhr.status == 200) { // 確認 status
@@ -247,7 +282,7 @@ function createNew(type, name) {
         }
     };
     xhr.open('POST', 'functions/new.php'); // 傳資料給new.php
-    var fd = new FormData();
+    let fd = new FormData();
     if (name != null) {
         fd.append('name', name);
     }
@@ -261,7 +296,7 @@ function move(element, old_path, new_path) {
     new_path = new_path || null;
     console.log("move " + type + "(" + id + ") to " + new_path); // INFO:
     if (id && new_path) {
-        var xhr = new XMLHttpRequest();
+        let xhr = new XMLHttpRequest();
         xhr.onreadystatechange = function() {
             if (xhr.readyState == 4) { // 確認 readyState
                 if (xhr.status == 200) { // 確認 status
@@ -269,7 +304,7 @@ function move(element, old_path, new_path) {
                 }
             }
         };
-        var fd = new FormData();
+        let fd = new FormData();
         fd.append('id', id);
         fd.append('new_path', new_path);
         fd.append('type', type);
@@ -301,7 +336,7 @@ function raw(file_id, file_name, mime) {
 }
 function ace(file_id, another = false) {
     console.log("Ace " + file_id); // INFO:
-    var url = 'functions/ace.php?id=' + file_id;
+    let url = 'functions/ace.php?id=' + file_id;
     if (another) {
         window.open(url);
     } else {
@@ -309,7 +344,7 @@ function ace(file_id, another = false) {
     }
 }
 function reCalc(x = null, y = null) {
-    var selectzone = document.getElementsByClassName("selectzone")[0];
+    let selectzone = document.getElementsByClassName("selectzone")[0];
     if (!selectzone.limit) {
         selectzone.limit = {
             top: fileList.offsetTop + (document.getElementsByClassName("back").length ? document.getElementsByClassName("back")[0].offsetHeight : 0),
@@ -356,8 +391,8 @@ function preview(element) { // TODO: ZIP檔內部 typeof element.mime == "undefi
         // raw(element.file_id, element.file_name, element.mime);
     } else if (element.mime.match(/^(text|inode\/x-empty)/g)) {
         ace(element.file_id);
-    } else if (element.mime.match(/^(application\/zip)/g)) {
-        listPath(element.file_id, "");
+    // } else if (element.mime.match(/^(application\/zip)/g)) { // // TODO: ZIP功能(要嘛全都帶走，要嘛一無所有)
+    //     listPath(element.file_id, "");
     } else {
         raw(element.file_id, element.file_name, element.mime);
         // ace(evt.target.file_id);
@@ -367,13 +402,13 @@ function getElementType(element) {
     return element.classList.contains("folder") ? "folder" : (element.classList.contains("file") ? "file" : null);
 }
 function remove() {
-    for (var i = 0; i < selectedElements.length; i++) {
-        var element = selectedElements[i];
-        var type = getElementType(element);
-        var id = element.path_id || element.file_id || null;
+    for (let i = 0; i < selectedElements.length; i++) {
+        let element = selectedElements[i];
+        let type = getElementType(element);
+        let id = element.path_id || element.file_id || null;
         console.log("remove " + type + "(" + id + ")\"" + element.innerText + "\""); // INFO:
         if (id && type) {
-            var xhr = new XMLHttpRequest();
+            let xhr = new XMLHttpRequest();
             xhr.onreadystatechange = function() {
                 if (xhr.readyState == 4) { // 確認 readyState
                     if (xhr.status == 200) { // 確認 status
@@ -382,7 +417,7 @@ function remove() {
                 }
             };
             xhr.open('POST', 'functions/remove.php', false); // 傳資料給remove.php
-            var fd = new FormData();
+            let fd = new FormData();
             fd.append('id', id);
             fd.append('type', type);
             xhr.send(fd);
@@ -390,22 +425,22 @@ function remove() {
     }
 }
 function rename() {
-    var new_name = null;
+    let new_name = null;
     if (selectedElements.length == 0) {
-        alert("沒有選擇檔案");
+        alert(locale["No file selected!"]);
     } else {
         // FIXME: 假如是多檔案，有可能要保持檔名，不同副檔名
-        new_name = prompt("重新命名" + (typeof selectedElements[0].file_id == "undefined" ? "資料夾" : "檔案"), selectedElements[0].innerText);
-        if (new_name == selectedElements[0].innerText) {
+        new_name = prompt(locale["Rename {0}:"].format(typeof selectedElements[0].file_id == "undefined" ? locale["Folder"] : locale["File"]), selectedElements[0].file_name);
+        if (new_name == selectedElements[0].file_name) {
             new_name = null;
         }
-        for (var i = 0; i < selectedElements.length; i++) {
-            var element = selectedElements[i];
-            var type = getElementType(element);
-            var id = element.path_id || element.file_id || null;
-            console.log("rename " + type + "(" + id + ")\"" + element.innerText + "\""); // INFO:
+        for (let i = 0; i < selectedElements.length; i++) {
+            let element = selectedElements[i];
+            let type = getElementType(element);
+            let id = element.path_id || element.file_id || null;
+            console.log("rename " + type + "(" + id + ")\"" + element.file_name + "\""); // INFO:
             if (id && new_name && type) {
-                var xhr = new XMLHttpRequest();
+                let xhr = new XMLHttpRequest();
                 xhr.onreadystatechange = function() {
                     if (xhr.readyState == 4) { // 確認 readyState
                         if (xhr.status == 200) { // 確認 status
@@ -414,7 +449,7 @@ function rename() {
                     }
                 };
                 xhr.open('POST', 'functions/rename.php', false); // 傳資料給rename.php 非同步是因為會取到相同名字 FIXME: 之後非同步要淘汰
-                var fd = new FormData();
+                let fd = new FormData();
                 fd.append('id', id);
                 fd.append('new_name', new_name);
                 fd.append('type', type);
@@ -447,7 +482,7 @@ function finishSelect(evt) {
     // TODO: Shift鍵連續選取
     if (document.getElementsByClassName("selectzone")[0].style.display != "") {
         document.getElementsByClassName("selectzone")[0].style.display = "";
-        var zone = {
+        let zone = {
             top: parseInt(document.getElementsByClassName("selectzone")[0].style.top.replace("px", "")),
             left: parseInt(document.getElementsByClassName("selectzone")[0].style.left.replace("px", "")),
             height: parseInt(document.getElementsByClassName("selectzone")[0].style.height.replace("px", "")),
@@ -460,7 +495,7 @@ function finishSelect(evt) {
                 selectedElements.clearSelected();
             }
             elements = fileList.getElementsByTagName("div");
-            for (var index = 0; index < elements.length; index++) {
+            for (let index = 0; index < elements.length; index++) {
                 if (zone.top < elements[index].offsetTop + elements[index].offsetHeight) {
                     if (zone.top + zone.height > elements[index].offsetTop) {
                         // console.log(index, zone.top + zone.height , elements[index].offsetTop); // INFO:
@@ -535,7 +570,7 @@ document.ondragenter = function(evt) { // 拖曳進入
     if (evt.target.classList.contains("folder") || evt.target.classList.contains("back")) {
         document.getElementById("dropzone").classList.remove("show");
         evt.target.classList.add("drop");
-        tooltip.innerText = evt.target.innerText;
+        tooltip.innerText = locale["Move to {0}"].format(evt.target.file_name);
         tooltip.classList.add("show");
     } else {
         if (evt.dataTransfer.types.includes("Files")) {
@@ -562,7 +597,7 @@ fileList.ondragstart = function(evt) { // 開始拖曳
         //     selectedElements.addSelect(evt.target);
         // }
         document.getElementsByClassName("selectzone")[0].style.display = "";
-        for (var i = 0; i < selectedElements.length; i++) {
+        for (let i = 0; i < selectedElements.length; i++) {
             selectedElements[i].classList.add("drag");
         }
         evt.dataTransfer.setData(
@@ -577,7 +612,7 @@ fileList.ondragend = function(evt) { // 結束拖曳
     // tooltip.innerText = "";
     tooltip.classList.remove("show");
 
-    for (var i = 0; i < selectedElements.length; i++) {
+    for (let i = 0; i < selectedElements.length; i++) {
         selectedElements[i].classList.remove("drag");
     }
 }
@@ -585,11 +620,11 @@ fileList.ondrop = function(evt) { // 放下拖曳
     evt.preventDefault();
     document.getElementById("dropzone").classList.remove("show");
     if (evt.dataTransfer.types.includes("Files")) {
-        var xhr_upload = new XMLHttpRequest();
-        var upload_fd = new FormData(); // 要傳過去給upload.php的資料
-        var upload_files = evt.dataTransfer.files; // 要上傳的檔案
+        let xhr_upload = new XMLHttpRequest();
+        let upload_fd = new FormData(); // 要傳過去給upload.php的資料
+        let upload_files = evt.dataTransfer.files; // 要上傳的檔案
         upload_fd.append('path_id', evt.target.classList.contains("folder") || evt.target.classList.contains("back") ? evt.target.path_id : path_id);
-        for (var file_index in upload_files) {
+        for (let file_index in upload_files) {
             if (typeof(upload_files[file_index].type) != "undefined") { // 判斷是檔案
                 console.log(upload_files[file_index]); // INFO:
                 upload_fd.append('files[]', upload_files[file_index]);
@@ -602,7 +637,7 @@ fileList.ondrop = function(evt) { // 放下拖曳
         xhr_upload.onprogress = function (evt) {
             // 上傳進度
             if (evt.lengthComputable) {
-                var complete = (evt.loaded / evt.total * 100 | 0);
+                let complete = (evt.loaded / evt.total * 100 | 0);
                 if(100 == complete) {
                     complete = 99.9;
                 }
@@ -614,11 +649,11 @@ fileList.ondrop = function(evt) { // 放下拖曳
     } else if (evt.dataTransfer.types.includes("application/json")) {
         if (evt.target.classList.contains("folder") || evt.target.classList.contains("back")) {
             evt.preventDefault();
-            var data = JSON.parse(evt.dataTransfer.getData("application/json"));
+            let data = JSON.parse(evt.dataTransfer.getData("application/json"));
             if (data == "select") {
                 if (!selectedElements.includes(evt.target)) { // 排除拖曳到自己
-                    for (var i = 0; i < selectedElements.length; i++) {
-                        var element = selectedElements[i]; // , type, id
+                    for (let i = 0; i < selectedElements.length; i++) {
+                        let element = selectedElements[i]; // , type, id
                         /*
                          TODO: ctrlKey ? copy : [self] ? none : move;
                             if self {
@@ -697,7 +732,7 @@ window.onmousemove = function(evt) {
             function animate(element, propertie, value, step = 100, stop_condition = null) { // jQuery.animate模擬
                 // console.log("animate"); // INFO:
                 if (value == element[propertie]) return;
-                var step = (value < element[propertie] ? -1 : 1) * Math.abs(step), id = null;
+                let step = (value < element[propertie] ? -1 : 1) * Math.abs(step), id = null;
                 function frame() {
                     element[propertie] += step;
                     if (stop_condition || element[propertie] == value) {
@@ -861,17 +896,19 @@ audio.onloadeddata = function() {
         this.play();
     }
 };
-audio.ontimeupdate = function(evt) {
+function lyricUpdate(evt) {
     if (lyric.lyric) {
-        var i = 0;
+        let i = 0;
         for (; i < lyric.lyric.length && this.currentTime >= lyric.lyric[i][0]; ++i) {}
         if (--i >= 0 && i < lyric.lyric.length) {
             lyric.children[0].innerText = lyric.lyric[i][1];
         }
     }
 }
+video.ontimeupdate = lyricUpdate;
+audio.ontimeupdate = lyricUpdate;
 function getLyric(id) {
-    var xhr = new XMLHttpRequest();
+    let xhr = new XMLHttpRequest();
     xhr.onreadystatechange = function() {
         if (xhr.readyState == 4) { // 確認 readyState
             if (xhr.status == 200) { // 確認 status
@@ -881,23 +918,23 @@ function getLyric(id) {
     };
     xhr.responseType = 'text';
     xhr.open('POST', "functions/lyric.php"); // 傳資料給lyric.php
-    var fd = new FormData();
+    let fd = new FormData();
     fd.append('id', id);
     xhr.send(fd);
 }
 function parseLyric(lines) {
-    var pattern = /\[\d{2}:\d{2}.\d{2}\]/g, result = [];
+    let pattern = /\[\d{2}:\d{2}.\d{2}\]/g, result = [];
     while (!pattern.test(lines[0])) {
         lines = lines.slice(1);
     };
     lines[lines.length - 1].length === 0 && lines.pop();
     lines.forEach(function(value) {
         // [mm:ss.ms]
-        var time = value.match(pattern), value = value.replace(pattern, '');
+        let time = value.match(pattern), value = value.replace(pattern, '');
         time.forEach(function(value2) {
-            var time = value2.slice(1, -1).split(':');
+            let time = value2.slice(1, -1).split(':');
             time = parseInt(time[0], 10) * 60 + parseFloat(time[1]);
-            var i = 0;
+            let i = 0;
             for (; i < result.length && result[i][0] <= time; ++i) { // 按照順序插入(升冪)
                 if (result[i][0] == time) {
                     result[i][1] += value;
@@ -929,6 +966,7 @@ function exitVideo() {
     video.src = "about:blank";
 }
 function exitFloat() {
+    listPath(); // 有可能會修改，所以刷新
     floatWindow.classList.remove("show");
 }
 audio.onended = exitAudio;
@@ -952,6 +990,9 @@ audio.onclick = function(evt) {
 img.onclick = function(evt) {
     evt.stopPropagation();
 };
+lyric.onclick = function(evt) {
+    evt.stopPropagation();
+};
 floatWindow.onclick = function(evt) {
     if (iframe.classList.contains("show")) {
         exitFloat();
@@ -972,20 +1013,20 @@ window.AudioContext = window.AudioContext || window.webkitAudioContext || window
 
 // audio visualizer with controls  https://github.com/wayou/audio-visualizer-with-controls
 window.onload = function() {
-    var audio = document.getElementsByTagName('audio')[0];
-    var ctx = new AudioContext();
-    var analyser = ctx.createAnalyser();
-    var audioSrc = ctx.createMediaElementSource(audio);
+    let audio = document.getElementsByTagName('audio')[0];
+    let ctx = new AudioContext();
+    let analyser = ctx.createAnalyser();
+    let audioSrc = ctx.createMediaElementSource(audio);
     // we have to connect the MediaElementSource with the analyser
     audioSrc.connect(analyser);
     analyser.connect(ctx.destination);
     // we could configure the analyser: e.g. analyser.fftSize (for further infos read the spec)
     // analyser.fftSize = 64;
     // frequencyBinCount tells you how many values you'll receive from the analyser
-    var frequencyData = new Uint8Array(analyser.frequencyBinCount);
+    let frequencyData = new Uint8Array(analyser.frequencyBinCount);
 
     // we're ready to receive some data!
-    var canvas = document.getElementsByTagName('canvas')[0],
+    let canvas = document.getElementsByTagName('canvas')[0],
         cwidth = canvas.width,
         cheight = canvas.height - 2,
         meterWidth = 6, //width of the meters in the spectrum
@@ -1002,12 +1043,12 @@ window.onload = function() {
     gradient.addColorStop(0, '#f00');
     // loop
     function renderFrame() {
-        var array = new Uint8Array(analyser.frequencyBinCount);
+        let array = new Uint8Array(analyser.frequencyBinCount);
         analyser.getByteFrequencyData(array);
-        var step = Math.round(array.length / meterNum); //sample limited data from the total array
+        let step = Math.round(array.length / meterNum); //sample limited data from the total array
         ctx.clearRect(0, 0, cwidth, cheight);
-        for (var i = 0; i < meterNum; i++) {
-            var value = array[i * step];
+        for (let i = 0; i < meterNum; i++) {
+            let value = array[i * step];
             if (capYPositionArray.length < Math.round(meterNum)) {
                 capYPositionArray.push(value);
             };

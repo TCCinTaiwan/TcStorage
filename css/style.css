@@ -11,6 +11,8 @@
 * @since 0.1.5 2017-09-28 TCC: 修改字體順位
 * @since 0.1.6 2017-10-03 TCC: ZIP檔案路徑CSS
 * @since 0.1.7 2017-10-11 TCC: 加入tooltip
+* @since 0.1.7 2017-10-11 TCC: 檔案資訊(ctime、size)
+* @since 0.1.7 2017-10-11 TCC: lyric邊框
 */
 
 .breadcrumbs {
@@ -195,6 +197,7 @@ menu li span {
 #floatWindow > #lyric > div {
     color: white;
     text-align: center;
+    text-shadow: -1px 0 black, 0 1px black, 1px 0 black, 0 -1px black;
     bottom: 50%;
     font-size: 20px;
     position: absolute;
@@ -297,6 +300,24 @@ main > menu li[onclick]:hover {
     background-color: #CCFFCC;
     width: 100%;
     position: relative;
+    white-space: nowrap;
+}
+#fileList > div > * {
+    height: 20px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+#fileList > div > div {
+    float: right;
+    padding: 7px 0 7px 10px;
+}
+.ctime {
+    min-width: 253px;
+}
+.size {
+    min-width: 150px;
+    text-align: right;
 }
 #fileList > .breadcrumbs {
     position: fixed;

@@ -8,6 +8,7 @@
     * @since 0.1.1 2017-09-28 TCC: 首頁多語系完善
     * @since 0.1.2 2017-10-02 TCC: 選單加入複製貼上
     * @since 0.1.3 2017-10-11 TCC: 加入tooltip
+    * @since 0.1.3 2017-10-11 TCC: 加入js用的多國語言
     */
     if (!file_exists("functions/connect.inc")) { // DEBUG: 確認安裝
         header('Location: install/');
@@ -70,13 +71,24 @@
     </menu>
     <div id="floatWindow">
         <iframe id="iframe"><?=sprintf(_("Your browser not supply %s."), "&lt;iframe&gt;");?></iframe><!-- Ace Editer -->
+        <video id="video" autoplay autobuffer controls><?=sprintf(_("Your browser not supply %s."), "&lt;video&gt;");?></video><!-- poster="images/loading.gif" -->
         <canvas id="canvas" width="800" height="300"><?=sprintf(_("Your browser not supply %s."), "&lt;canvas&gt");?>;</canvas>
         <div id="lyric"><div></div></div>
-        <video id="video" autoplay autobuffer controls><?=sprintf(_("Your browser not supply %s."), "&lt;video&gt;");?></video><!-- poster="images/loading.gif" -->
         <audio id="audio" autoplay autobuffer controls><?=sprintf(_("Your browser not supply %s."), "&lt;audio&gt;");?></audio>
         <div id="img"></div>
     </div>
     <div id="tooltip">TEST</div>
+    <script>
+        var locale = {
+            "Go Back" : "<?=_('Go Back');?>",
+            "No file selected!" : "<?=_('No file selected!');?>",
+            "Rename {0}:" : "<?=_('Rename {0}:');?>",
+            "File" : "<?=_('File');?>",
+            "Folder" : "<?=_('Folder');?>",
+            "Move to {0}" : "<?=_('Move to {0}');?>",
+        };
+    </script>
+    <script src="js/common.js" charset="utf-8" async></script>
     <script src="js/main.js" charset="utf-8" async></script>
 </body>
 </html>

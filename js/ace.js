@@ -57,7 +57,7 @@ function save() {
         xhr.onreadystatechange = function() {
             if (xhr.readyState == 4) { // 確認 readyState
                 if (xhr.status == 200) { // 確認 status
-                    alert("save!!");
+                    alert(locale["Save!"]);
                 }
             }
         };
