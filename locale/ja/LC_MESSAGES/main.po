@@ -1,0 +1,109 @@
+msgid ""
+msgstr ""
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: POEditor.com\n"
+"Project-Id-Version: TcStorage\n"
+"Language: ja\n"
+
+#: functions/ace.php:92
+msgid "Save!"
+msgstr ""
+
+#: index.php:34
+msgid "TcStorage File Manager"
+msgstr ""
+
+#: index.php:41 index.php:69
+msgid "Refresh"
+msgstr ""
+
+#: index.php:42 index.php:67
+msgid "New Folder"
+msgstr ""
+
+#: index.php:43 index.php:68
+msgid "New File"
+msgstr ""
+
+#: index.php:44 index.php:64
+msgid "Rename"
+msgstr ""
+
+#: index.php:45
+msgid "Select All"
+msgstr ""
+
+#: index.php:46
+msgid "Select Invert"
+msgstr ""
+
+#: index.php:47
+msgid "View"
+msgstr ""
+
+#: index.php:48
+msgid "Sort by"
+msgstr ""
+
+#: index.php:59
+msgid "Open"
+msgstr ""
+
+#: index.php:60
+msgid "Preview"
+msgstr ""
+
+#: index.php:61
+msgid "Edit"
+msgstr "編修"
+
+#: index.php:62
+msgid "Download"
+msgstr ""
+
+#: index.php:63
+msgid "Delete"
+msgstr ""
+
+#: index.php:65
+msgid "Cut"
+msgstr ""
+
+#: index.php:66
+msgid "Copy"
+msgstr ""
+
+#: index.php:70
+msgid "Properties"
+msgstr ""
+
+#: index.php:73 index.php:74 index.php:75 index.php:77
+msgid "Your browser not supply %s."
+msgstr ""
+
+#: index.php:83
+msgid "Go Back"
+msgstr ""
+
+#: index.php:84
+msgid "No file selected!"
+msgstr ""
+
+#: index.php:85
+msgid "Rename {0}:"
+msgstr ""
+
+#: index.php:86
+msgid "File"
+msgstr ""
+
+#: index.php:87
+msgid "Folder"
+msgstr ""
+
+#: index.php:88
+msgid "Move to {0}"
+msgstr ""
+
