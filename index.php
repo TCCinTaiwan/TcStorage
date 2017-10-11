@@ -1,12 +1,13 @@
 <?
     /**
     * TcStorage 首頁
-    * @version 0.1.2
+    * @version 0.1.3
     * @author TCC <john987john987@gmail.com>
-    * @date 2017-10-02
+    * @date 2017-10-11
     * @since 0.1.0 2017-09-28 TCC: 加入多國語言
     * @since 0.1.1 2017-09-28 TCC: 首頁多語系完善
     * @since 0.1.2 2017-10-02 TCC: 選單加入複製貼上
+    * @since 0.1.3 2017-10-11 TCC: 加入tooltip
     */
     if (!file_exists("functions/connect.inc")) { // DEBUG: 確認安裝
         header('Location: install/');
@@ -75,6 +76,7 @@
         <audio id="audio" autoplay autobuffer controls><?=sprintf(_("Your browser not supply %s."), "&lt;audio&gt;");?></audio>
         <div id="img"></div>
     </div>
+    <div id="tooltip">TEST</div>
     <script src="js/main.js" charset="utf-8" async></script>
 </body>
 </html>

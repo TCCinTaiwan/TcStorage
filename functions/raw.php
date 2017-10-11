@@ -9,9 +9,9 @@
     *  @since 0.1.0 2017-09-27 TCC: 啟用讀檔紀錄
     *  @since 0.1.1 2017-09-28 TCC: raw.php讀檔微調，Log檔位置修正
     *
-    *  @param Number $_POST['id'] 檔案ID或ZIP檔案ID
-    *  @param String $_POST['name'] 檔案名稱 || ZIP檔案子路徑
-    *  @param Bool $_POST['zip'] FIXME: 是否為ZIP
+    *  @param {Number} $_POST['id'] 檔案ID或ZIP檔案ID
+    *  @param {String} $_POST['name'] 檔案名稱 || ZIP檔案子路徑
+    *  @param {Boolean} $_POST['zip'] FIXME: 是否為ZIP
     */
     include_once 'connect.inc';
     $id = (isset($_POST['id']) ? $_POST['id'] : (isset($_GET['id']) ? $_GET['id'] : 1));

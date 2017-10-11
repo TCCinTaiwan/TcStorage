@@ -8,9 +8,9 @@
     *  @since 0.1.0 2017-09-25 TCC: 基本重新命名功能(含重複名稱)
     *  @since 0.1.1 2017-09-29 TCC: 因應資料庫改動[path_id]
     *
-    *  @param Number $_POST['id'] 檔案ID
-    *  @param String $_POST['new_name'] 想要命名檔案/資料夾名稱
-    *  @param String $_POST['type'] 檔案/資料夾
+    *  @param {Number} $_POST['id'] 檔案ID
+    *  @param {String} $_POST['new_name'] 想要命名檔案/資料夾名稱
+    *  @param {String} $_POST['type'] 檔案/資料夾
     */
     include_once 'connect.inc';
     include_once 'functions.inc';

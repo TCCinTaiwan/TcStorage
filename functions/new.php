@@ -8,9 +8,9 @@
     *  @since 0.1.1 2017-09-25 TCC: 含重複名稱判別(合併move、rename)
     *  @since 0.1.2 2017-09-29 TCC: 修正$path_id為'0'資料庫應該是NULL問題
     *
-    *  @param Number $_POST['path_id'] 目標資料夾ID
-    *  @param String $_POST['type'] 檔案/資料夾
-    *  @param String $_POST['name'] 檔案/資料夾名稱
+    *  @param {Number} $_POST['path_id'] 目標資料夾ID
+    *  @param {String} $_POST['type'] 檔案/資料夾
+    *  @param {String} $_POST['name'] 檔案/資料夾名稱
     */
     include_once 'connect.inc';
     include_once 'functions.inc';

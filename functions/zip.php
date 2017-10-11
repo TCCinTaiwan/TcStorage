@@ -9,8 +9,8 @@
     *  @since 0.1.1 2017-10-01 TCC: 功能單一化，類似raw.php
     *  @since 0.1.2 2017-10-04 TCC: 多層ZIP草稿
     *
-    *  @param Number $_POST['id'] || $_GET['id'] ZIP檔案ID
-    *  @param String $_POST['file'] || $_GET['file'] ZIP檔案子路徑
+    *  @param {Number} $_POST['id'] || $_GET['id'] ZIP檔案ID
+    *  @param {String} $_POST['file'] || $_GET['file'] ZIP檔案子路徑
     */
     include_once 'functions.inc';
     header("Content-Type: application/json;charset=utf-8");

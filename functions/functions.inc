@@ -127,9 +127,9 @@
     *  @since 0.1.0 2017-09-25 TCC: 新增getNameWithSerial()
     *  @since 0.1.1 2017-09-25 TCC: 流水號檔名判斷，假如已經是流水號檔名，則繼續編號
     *
-    *  @param String $name 想要命名檔案/資料夾名稱
-    *  @param String $type 檔案/資料夾
-    *  @param String $path_id 檢查位置
+    *  @param {String} $name 想要命名檔案/資料夾名稱
+    *  @param {String} $type 檔案/資料夾
+    *  @param {String} $path_id 檢查位置
     *  @global Object $conn MySQL連線
     *  @return String 含有流水號的檔案/資料夾名稱
     */

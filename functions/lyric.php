@@ -11,8 +11,8 @@
     *  @since 0.1.3 2017-09-26 TCC: 文字轉小寫
     *  @since 0.1.4 2017-09-29 TCC: 因應資料庫改動[path_id]
     *
-    *  @param Number $_POST['id'] 要找歌詞的檔案ID
-    *  @param String $_POST['q'] 關鍵字
+    *  @param {Number} $_POST['id'] 要找歌詞的檔案ID
+    *  @param {String} $_POST['q'] 關鍵字
     */
 
     include_once 'connect.inc';

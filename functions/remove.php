@@ -8,8 +8,8 @@
     *  @since 0.1.0 2017-09-26 TCC: 基本刪除
     *  @todo 資料夾底下也要刪除，函數化應該比較適合遞迴
     *
-    *  @param Number $_POST['id'] 檔案ID
-    *  @param String $_POST['type'] 檔案/資料夾
+    *  @param {Number} $_POST['id'] 檔案ID
+    *  @param {String} $_POST['type'] 檔案/資料夾
     */
 
     include_once 'connect.inc';

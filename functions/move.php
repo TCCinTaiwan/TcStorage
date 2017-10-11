@@ -11,9 +11,9 @@
     *  @since 0.1.4 2017-09-29 TCC: 因應資料庫改動[path_id]
     *  @since 0.1.4 2017-09-29 TCC: 修正$path_id為'0'資料庫應該是NULL問題
     *
-    *  @param Number $_POST['id'] 檔案ID
-    *  @param Number $_POST['new_path'] 目標資料夾ID
-    *  @param String $_POST['type'] 檔案/資料夾
+    *  @param {Number} $_POST['id'] 檔案ID
+    *  @param {Number} $_POST['new_path'] 目標資料夾ID
+    *  @param {String} $_POST['type'] 檔案/資料夾
     */
     include_once 'connect.inc';
     include_once 'functions.inc';

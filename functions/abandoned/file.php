@@ -8,7 +8,7 @@
     *  @since 0.1.0 2017-09-29 TCC: 因應資料庫改動[path_id]
     *  @since 0.1.1 2017-10-01 TCC: 移到API資料夾
     *
-    *  @param Number $_POST['id'] 檔案ID
+    *  @param {Number} $_POST['id'] 檔案ID
     */
     include_once '../functions/connect.inc';
     include_once '../functions/functions.inc';

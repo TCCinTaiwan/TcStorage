@@ -7,8 +7,8 @@
     *  @date 2017-09-29
     *  @since 0.1.0 2017-09-29 TCC: 移除upload除錯用JSON
     *
-    *  @param Number $_FILES 上傳的檔案
-    *  @param Number $_POST['path_id'] 位置ID
+    *  @param {Number} $_FILES 上傳的檔案
+    *  @param {Number} $_POST['path_id'] 位置ID
     */
     $path_id = (isset($_POST['path_id']) ? $_POST['path_id'] : "0");
     if (isset($_FILES["files"])) {

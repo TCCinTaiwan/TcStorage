@@ -11,8 +11,8 @@
     *  @since 0.1.2 2017-10-02 TCC: 檔案清單增加更多時間資訊
     *  @since 0.1.2 2017-10-03 TCC: ZIP加到list
     *
-    *  @param Number $_POST['id'] 目標資料夾ID或ZIP資料夾ID
-    *  @param String $_POST['zip'] ZIP檔案子路徑
+    *  @param {Number} $_POST['id'] 目標資料夾ID或ZIP資料夾ID
+    *  @param {String} $_POST['zip'] ZIP檔案子路徑
     *  @todo zip路徑大小寫忽略
     */
     // if ($_SERVER['REQUEST_METHOD'] != "POST") { // DEBUG: 確保都是使用post

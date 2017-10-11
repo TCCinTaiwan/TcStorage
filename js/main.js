@@ -1,8 +1,8 @@
 /**
 * TcStorage
-* @version 0.1.11
+* @version 0.1.12
 * @author TCC <john987john987@gmail.com>
-* @date 2017-10-03
+* @date 2017-10-11
 *
 * @since 0.1.0 2017-09-25 TCC: 排除資料夾移動到自己
 * @since 0.1.0 2017-09-25 TCC: 移除與finishSelect功能衝突部分程式
@@ -38,6 +38,7 @@
 * @since 0.1.10 2017-10-01 TCC: 預覽ZIP前置作業
 * @since 0.1.11 2017-10-03 TCC: 加入預覽ZIP
 * @since 0.1.11 2017-10-03 TCC: 加入dirname()
+* @since 0.1.12 2017-10-11 TCC: 加入tooltip
 * @todo ZIP檔案中，讀取內容
 */
 var mouseInfo = {
@@ -511,7 +512,7 @@ document.onkeydown = function(evt) {
     }
 }
 document.ondragover = function(evt) { // 拖曳經過 TODO: 旁邊顯示目的地資料夾名稱
-    if (evt.dataTransfer.types.includes("application/json")) { // Firfox: includes->contains
+    if (evt.dataTransfer.types.includes("application/json")) { // TODO: Firfox: includes->contains
         if (evt.target.classList.contains("folder")) {
             evt.preventDefault();
             evt.dataTransfer.dropEffect = evt.ctrlKey ? 'copy' : selectedElements.includes(evt.target) ? 'none' : 'move'; // 排除拖曳到自己
@@ -527,14 +528,20 @@ document.ondragover = function(evt) { // 拖曳經過 TODO: 旁邊顯示目的�
         evt.preventDefault();
         evt.dataTransfer.dropEffect = 'copy';
     }
+    tooltip.style.top = evt.y + "px";
+    tooltip.style.left = evt.x + 10 + "px";
 };
 document.ondragenter = function(evt) { // 拖曳進入
     if (evt.target.classList.contains("folder") || evt.target.classList.contains("back")) {
         document.getElementById("dropzone").classList.remove("show");
         evt.target.classList.add("drop");
+        tooltip.innerText = evt.target.innerText;
+        tooltip.classList.add("show");
     } else {
         if (evt.dataTransfer.types.includes("Files")) {
             document.getElementById("dropzone").classList.add("show");
+        } else {
+            tooltip.classList.remove("show");
         }
     }
 }
@@ -567,6 +574,9 @@ fileList.ondragstart = function(evt) { // 開始拖曳
 }
 fileList.ondragend = function(evt) { // 結束拖曳
     // evt.target.classList.remove("drag");
+    // tooltip.innerText = "";
+    tooltip.classList.remove("show");
+
     for (var i = 0; i < selectedElements.length; i++) {
         selectedElements[i].classList.remove("drag");
     }

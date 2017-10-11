@@ -8,9 +8,9 @@
     *  @since 0.1.0 2017-09-26 TCC: 複製功能草稿
     *  @todo 資料夾底下也要複製，函數化應該比較適合遞迴
     *
-    *  @param Number $_POST['id'] 檔案ID
-    *  @param Number $_POST['path_id'] 目標資料夾ID
-    *  @param String $_POST['type'] 檔案/資料夾
+    *  @param {Number} $_POST['id'] 檔案ID
+    *  @param {Number} $_POST['path_id'] 目標資料夾ID
+    *  @param {String} $_POST['type'] 檔案/資料夾
     */
 
     include_once 'connect.inc';
