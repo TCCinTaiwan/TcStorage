@@ -729,10 +729,10 @@ window.onmousemove = function(evt) {
                 y: null
             };
         } else {
-            function animate(element, propertie, value, step = 100, stop_condition = null) { // jQuery.animate模擬
+            function animate(element, propertie, value, _step = 100, stop_condition = null) { // jQuery.animate模擬
                 // console.log("animate"); // INFO:
                 if (value == element[propertie]) return;
-                let step = (value < element[propertie] ? -1 : 1) * Math.abs(step), id = null;
+                let step = (value < element[propertie] ? -1 : 1) * Math.abs(_step), id = null;
                 function frame() {
                     element[propertie] += step;
                     if (stop_condition || element[propertie] == value) {
