@@ -29,6 +29,7 @@
     /* Clear floats */
     overflow: hidden;
     width: 100%;
+    cursor: initial;
 }
 
 .breadcrumbs li {
@@ -36,6 +37,7 @@
     /*padding: .7em 1em .7em 2em;*/
     padding: 2px 0px 2px 30px;
     float: left;
+    cursor: pointer;
     text-decoration: none;
     color: #444;
     position: relative;
@@ -286,7 +288,7 @@ main > menu li[onclick]:hover {
     overflow-x: hidden;
 }
 #fileList > ul {
-    cursor: pointer;
+    /* cursor: pointer; */
     border-style: solid;
     border-bottom-width: 1px;
     font-size: 20px;
