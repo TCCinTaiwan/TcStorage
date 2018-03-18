@@ -27,7 +27,7 @@
     git clone https://github.com/TCCinTaiwan/TcStorage
     ```
     * Download Github zip:
-        1. [ ![Download from Github](setup/download-from-github.png)](https://github.com/TCCinTaiwan/TcStorage/archive/master.zip)
+        1. [ ![Download from Github](install/download-from-github.png)](https://github.com/TCCinTaiwan/TcStorage/archive/master.zip)
         2. upzip to your web server's document root.
 
 2. Running install page or step by step.
