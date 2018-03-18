@@ -70,7 +70,7 @@
         <li for="any"><?=_("Properties");?></li>
     </menu>
     <div id="floatWindow">
-        <iframe id="iframe"><?=sprintf(_("Your browser not supply %s."), "&lt;iframe&gt;");?></iframe><!-- Ace Editer -->
+        <iframe id="iframe" src="about:blank"><?=sprintf(_("Your browser not supply %s."), "&lt;iframe&gt;");?></iframe><!-- Ace Editer -->
         <video id="video" autoplay autobuffer controls><?=sprintf(_("Your browser not supply %s."), "&lt;video&gt;");?></video><!-- poster="images/loading.gif" -->
         <canvas id="canvas" width="800" height="300"><?=sprintf(_("Your browser not supply %s."), "&lt;canvas&gt");?>;</canvas>
         <div id="lyric"><div></div></div>
