@@ -1,5 +1,5 @@
 # [:octocat:TcStorage](https://github.com/TCCinTaiwan/TcStorage)
-[![Version](https://img.shields.io/badge/lastest_version-0.1.2-blue.svg)](https://github.com/TCCinTaiwan/TcStorage/releases) [![Gitter](https://badges.gitter.im/TCCinTaiwan/TcStorage.svg)](https://gitter.im/TCCinTaiwan/TcStorage?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge)
+[![Version](https://img.shields.io/badge/lastest_version-0.1.3-blue.svg)](https://github.com/TCCinTaiwan/TcStorage/releases) [![Gitter](https://badges.gitter.im/TCCinTaiwan/TcStorage.svg)](https://gitter.im/TCCinTaiwan/TcStorage?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge)
 
 ## Contents[↶](#)
 * **[Introduction](#introduction)**
@@ -14,10 +14,10 @@
 * Structure: PHP + MySQL + HTML5 + CSS3 + JS
 
 這是以寫[:octocat:舊版](https://github.com/TCCinTaiwan/file-manager)的經驗為基礎，重構的新版本，多媒體參考[:octocat:TcTube](https://github.com/TCCinTaiwan/TcTube)部分內容，目前主要是在Chrome環境中執行，其他瀏覽器不一定支援。
-![截圖-選取功能](screenshot/selection.png)
-![截圖-影片功能](screenshot/video.png)
-![截圖-音樂功能](screenshot/audio.png)
-![截圖-Ace Editor功能](screenshot/ace-editor.png)
+![截圖-選取功能](screenshot/selection.gif)
+![截圖-影片功能](screenshot/video.gif)
+![截圖-動態歌詞功能](screenshot/multi-language-lyrics.gif)
+![截圖-Ace Editor功能](screenshot/ace-editor.gif)
 
 ## Installation[↶](#)
 1. Clone the repository.
