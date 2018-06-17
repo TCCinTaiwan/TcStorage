@@ -43,6 +43,7 @@
 * @since 0.1.13 2017-10-11 TCC: 修改var成let(ES6)
 * @since 0.1.13 2017-10-11 TCC: 增加檔案資訊
 * @since 0.1.13 2017-10-11 TCC: 影片LRC修正
+* @since 0.1.14 2018-06-17 TCC: [修正] 前端歌詞部分 JS 噴錯
 * @todo ZIP檔案中，讀取內容
 */
 let mouseInfo = {
@@ -930,7 +931,8 @@ function parseLyric(lines) {
     lines[lines.length - 1].length === 0 && lines.pop();
     lines.forEach(function(value) {
         // [mm:ss.ms]
-        let time = value.match(pattern), value = value.replace(pattern, '');
+        let time = value.match(pattern);
+        value = value.replace(pattern, '');
         time.forEach(function(value2) {
             let time = value2.slice(1, -1).split(':');
             time = parseInt(time[0], 10) * 60 + parseFloat(time[1]);

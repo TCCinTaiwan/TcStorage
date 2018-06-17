@@ -67,7 +67,7 @@
 * 使用提示
 
 ## History[↶](#)
-Latest version is 0.1.2 , for detailed changelog, check [CHANGELOG.md](CHANGELOG.md).
+Latest version is 0.1.3 , for detailed changelog, check [CHANGELOG.md](CHANGELOG.md).
 
 ## Contributing[↶](#)
 1. Create an issue and describe your idea
