@@ -833,9 +833,14 @@ fileList.onmouseout = function(evt) {
 };
 fileList.oncontextmenu = function(evt) {
     if (!document.getElementsByClassName("breadcrumbs")[0].contains(evt.target)) { // 麵包屑不顯示選單
+        console.log(evt.target, evt.target.tagName);
         if (!selectedElements.includes(evt.target)) {
             selectedElements.clearSelected(); //右鍵非選擇項目要先移除所選
-            selectedElements.addSelect(evt.target);
+            if (evt.target.tagName === "SPAN") { // 判斷假如是標籤，就往上一層
+                selectedElements.addSelect(evt.target.parentElement);
+            } else {
+                selectedElements.addSelect(evt.target);
+            }
         }
         fileList.classList.add("context");
         document.getElementById("context").classList.add("show");
