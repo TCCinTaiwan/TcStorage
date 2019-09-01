@@ -1,12 +1,13 @@
-<?
-    /**
-    *  安裝TcStorage
-    *
-    *  @version 0.1.0
-    *  @author TCC <john987john987@gmail.com>
-    *  @date 2017-09-27
-    *  @since 0.1.0 2017-09-27 TCC: 稍微整理一下快速安裝
-    */
+<?php
+/**
+ * 安裝TcStorage
+ *
+ * @version 0.1.1
+ * @author TCC <john987john987@gmail.com>
+ * @date 2019-09-01
+ * @since 0.1.0 2017-09-27 TCC: 稍微整理一下快速安裝
+ * @since 0.1.1 2019-09-01 TCC: 簡單調整 PHP 排版
+ */
 ?>
 <form action="install.php" method="post">
     <pre>

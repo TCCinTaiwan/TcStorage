@@ -1,5 +1,5 @@
 # [:octocat:TcStorage](https://github.com/TCCinTaiwan/TcStorage)
-[![Version](https://img.shields.io/badge/lastest_version-0.1.3-blue.svg)](https://github.com/TCCinTaiwan/TcStorage/releases) [![Gitter](https://badges.gitter.im/TCCinTaiwan/TcStorage.svg)](https://gitter.im/TCCinTaiwan/TcStorage?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge)
+[![Version](https://img.shields.io/badge/lastest_version-0.1.4-blue.svg)](https://github.com/TCCinTaiwan/TcStorage/releases) [![Gitter](https://badges.gitter.im/TCCinTaiwan/TcStorage.svg)](https://gitter.im/TCCinTaiwan/TcStorage?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge)
 
 ## Contents[↶](#)
 * **[Introduction](#introduction)**
@@ -21,14 +21,18 @@
 
 ## Installation[↶](#)
 1. Clone the repository.
-    * Use Command:
+    * Use Command(With submodule):
     ```bash
     cd C:/www/
-    git clone https://github.com/TCCinTaiwan/TcStorage
+    git clone --recursive https://github.com/TCCinTaiwan/TcStorage
     ```
     * Download Github zip:
         1. [ ![Download from Github](install/download-from-github.png)](https://github.com/TCCinTaiwan/TcStorage/archive/master.zip)
         2. upzip to your web server's document root.
+        3. clone submodule repository.
+        ```bash
+        git submodule update --init --recursive
+        ```
 
 2. Running install page or step by step.
     * Install Page
@@ -67,7 +71,7 @@
 * 使用提示
 
 ## History[↶](#)
-Latest version is 0.1.3 , for detailed changelog, check [CHANGELOG.md](CHANGELOG.md).
+Latest version is 0.1.4 , for detailed changelog, check [CHANGELOG.md](CHANGELOG.md).
 
 ## Contributing[↶](#)
 1. Create an issue and describe your idea
